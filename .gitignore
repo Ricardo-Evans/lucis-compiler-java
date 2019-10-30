@@ -25,5 +25,8 @@ hs_err_pid*
 # IntelliJ Idea Files
 .idea/
 
+# Backup Files
+backup/
+
 # Compiled Files
 out/
