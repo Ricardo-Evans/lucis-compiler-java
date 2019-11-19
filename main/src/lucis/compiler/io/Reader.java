@@ -13,9 +13,9 @@ public class Reader {
     private int buffer;
     private long position = 0;
     private boolean available = true;
-    private ByteBuffer byteBuffer = null;
-    private CharBuffer cacheBuffer = null;
-    private CharBuffer charBuffer = null;
+    private ByteBuffer rawDataBuffer = null;
+    private CharBuffer cacheDataBuffer = null;
+    private CharBuffer decodeDataBuffer = null;
     private CharsetDecoder decoder;
     private ReadableByteChannel channel;
 
@@ -44,28 +44,28 @@ public class Reader {
 
     private Character read() throws IOException {
         if (!available()) return null;
-        if (cacheBuffer != null && cacheBuffer.hasRemaining()) return cacheBuffer.get();
-        if (byteBuffer == null) byteBuffer = ByteBuffer.allocate(buffer);
-        while (charBuffer == null || !charBuffer.hasRemaining()) {
-            if (channel.read(byteBuffer) == -1) {
+        if (cacheDataBuffer != null && cacheDataBuffer.hasRemaining()) return cacheDataBuffer.get();
+        if (rawDataBuffer == null) rawDataBuffer = ByteBuffer.allocate(buffer);
+        while (decodeDataBuffer == null || !decodeDataBuffer.hasRemaining()) {
+            if (channel.read(rawDataBuffer) == -1) {
                 available = false;
                 return null;
             }
-            byteBuffer.flip();
-            charBuffer = decoder.decode(byteBuffer);
-            byteBuffer.compact();
+            rawDataBuffer.flip();
+            decodeDataBuffer = decoder.decode(rawDataBuffer);
+            rawDataBuffer.compact();
         }
-        return charBuffer.get();
+        return decodeDataBuffer.get();
     }
 
     public void put(Character c) {
         Objects.requireNonNull(c, "the character to be put to the reader cannot be null");
-        if (cacheBuffer == null) {
-            cacheBuffer = CharBuffer.allocate(buffer);
-            cacheBuffer.position(cacheBuffer.limit());
+        if (cacheDataBuffer == null) {
+            cacheDataBuffer = CharBuffer.allocate(buffer);
+            cacheDataBuffer.position(cacheDataBuffer.limit());
         }
-        cacheBuffer.put(cacheBuffer.position() - 1, c);
-        cacheBuffer.position(cacheBuffer.position() - 1);
+        cacheDataBuffer.put(cacheDataBuffer.position() - 1, c);
+        cacheDataBuffer.position(cacheDataBuffer.position() - 1);
         --position;
         available = true;
     }
