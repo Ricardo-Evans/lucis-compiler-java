@@ -211,6 +211,7 @@ public class DefaultTokenizer implements Tokenizer {
         notations.put("==", Tag.EQUAL);
         notations.put("<=", Tag.LESS_EQUAL);
         notations.put(">=", Tag.GREATER_EQUAL);
-        notations.put(".",Tag.DOT);
+        notations.put(".", Tag.DOT);
+        notations.put("?", Tag.QUESTION);
     }
 }
