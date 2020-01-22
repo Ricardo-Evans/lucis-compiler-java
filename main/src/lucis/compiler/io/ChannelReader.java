@@ -36,7 +36,8 @@ public class ChannelReader implements Reader {
         this.decoder = charset.newDecoder();
     }
 
-    private Character read() throws IOException {
+    @Override
+    public Character get() throws IOException {
         if (!available()) return null;
         if (cacheDataBuffer != null && cacheDataBuffer.hasRemaining()) return cacheDataBuffer.get();
         if (rawDataBuffer == null) rawDataBuffer = ByteBuffer.allocate(bufferSize);
@@ -49,14 +50,8 @@ public class ChannelReader implements Reader {
             decodeDataBuffer = decoder.decode(rawDataBuffer);
             rawDataBuffer.compact();
         }
+        ++position;
         return decodeDataBuffer.get();
-    }
-
-    @Override
-    public Character get() throws IOException {
-        Character c = read();
-        if (c != null) ++position;
-        return c;
     }
 
     @Override
