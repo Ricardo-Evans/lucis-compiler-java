@@ -1,84 +1,62 @@
 package lucis.compiler.io;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
-public class Reader {
-    private int buffer;
-    private long position = 0;
-    private boolean available = true;
-    private ByteBuffer rawDataBuffer = null;
-    private CharBuffer cacheDataBuffer = null;
-    private CharBuffer decodeDataBuffer = null;
-    private CharsetDecoder decoder;
-    private ReadableByteChannel channel;
+/**
+ * Used for read source files
+ *
+ * @author Ricardo Evans
+ * @version 1.0
+ */
+public interface Reader {
+    /**
+     * Get the next character
+     *
+     * @return the next character
+     * @throws IOException when underlying io fail
+     */
+    Character get() throws IOException;
 
-    public Reader(ReadableByteChannel channel) {
-        this(channel, 1024);
-    }
+    /**
+     * Put the given character as the next character
+     * The operation do not apply to the origin source, only work as a cache
+     *
+     * @param c the given character
+     * @throws IOException when underlying io fail
+     */
+    void put(Character c) throws IOException;
 
-    public Reader(ReadableByteChannel channel, int buffer) {
-        this(channel, buffer, StandardCharsets.UTF_8);
-    }
-
-    public Reader(ReadableByteChannel channel, int buffer, Charset charset) {
-        Objects.requireNonNull(channel, "the channel to be read by the reader cannot be null");
-        if (buffer <= 0) throw new IllegalArgumentException("the buffer size of the reader must be positive");
-        Objects.requireNonNull(charset, "the charset of the reader cannot be null");
-        this.channel = channel;
-        this.buffer = buffer;
-        this.decoder = charset.newDecoder();
-    }
-
-    public Character get() throws IOException {
-        Character c = read();
-        if (c != null) ++position;
+    /**
+     * Peek the next character without moving to next position
+     *
+     * @return The next character
+     * @throws IOException when underlying io fail
+     */
+    default Character peek() throws IOException {
+        Character c = get();
+        if (c != null) put(c);
         return c;
     }
 
-    private Character read() throws IOException {
-        if (!available()) return null;
-        if (cacheDataBuffer != null && cacheDataBuffer.hasRemaining()) return cacheDataBuffer.get();
-        if (rawDataBuffer == null) rawDataBuffer = ByteBuffer.allocate(buffer);
-        while (decodeDataBuffer == null || !decodeDataBuffer.hasRemaining()) {
-            if (channel.read(rawDataBuffer) == -1) {
-                available = false;
-                return null;
-            }
-            rawDataBuffer.flip();
-            decodeDataBuffer = decoder.decode(rawDataBuffer);
-            rawDataBuffer.compact();
-        }
-        return decodeDataBuffer.get();
-    }
+    /**
+     * Skip the next character
+     *
+     * @return true if skip the next character successful, false otherwise, (e.g)reach the end of the file
+     * @throws IOException when underlying io fail
+     */
+    boolean skip() throws IOException;
 
-    public void put(Character c) {
-        Objects.requireNonNull(c, "the character to be put to the reader cannot be null");
-        if (cacheDataBuffer == null) {
-            cacheDataBuffer = CharBuffer.allocate(buffer);
-            cacheDataBuffer.position(cacheDataBuffer.limit());
-        }
-        cacheDataBuffer.put(cacheDataBuffer.position() - 1, c);
-        cacheDataBuffer.position(cacheDataBuffer.position() - 1);
-        --position;
-        available = true;
-    }
+    /**
+     * Get the current position in the origin source
+     *
+     * @return the position
+     */
+    long position();
 
-    public boolean skip() throws IOException {
-        return get() != null;
-    }
-
-    public long position(){
-        return position;
-    }
-
-    public boolean available() {
-        return available;
-    }
+    /**
+     * Determine whether the reader can be read more
+     *
+     * @return whether the reader can be read more
+     */
+    boolean available();
 }

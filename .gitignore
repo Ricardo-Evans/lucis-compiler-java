@@ -24,9 +24,13 @@ hs_err_pid*
 
 # IntelliJ Idea Files
 .idea/
+*.iml
 
 # Backup Files
 backup/
 
 # Compiled Files
 out/
+
+# Test Source Files
+*.lux

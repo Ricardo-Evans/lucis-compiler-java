@@ -1,6 +1,7 @@
 package lucis.compiler.entity;
 
 public enum Tag {
+    LINE_BREAK,
     END,
 
     BOOLEAN,
