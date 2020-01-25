@@ -127,8 +127,9 @@ public class DefaultTokenizer implements Tokenizer {
 
     // Read a notation
     private Token readNotation(Position position) throws IOException {
-        String word = reader.get().toString();
-        return new Token(word, notations.get(word), position);
+        Character c = reader.get();
+        assert notationCharacters.contains(c);
+        return new Token(c.toString(), notations.get(c), position);
     }
 
     // Read a string
@@ -180,9 +181,9 @@ public class DefaultTokenizer implements Tokenizer {
 
     private static final Set<Character> blankCharacters = Set.of(' ', '\t', '\r', '\n');
     private static final Set<Character> digitCharacters = Set.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-    private static final Set<Character> notationCharacters = Set.of(',', '.', '+', '-', '*', '/', '%', '(', ')', '[', ']', '{', '}', '<', '>', '=', '!', '&', '|', '^', ':', ';', '?');
+    private static final Set<Character> notationCharacters = Set.of(',', '.', '+', '-', '*', '/', '%', '(', ')', '[', ']', '{', '}', '<', '>', '=', '!', '&', '|', '^', ':', '?');
     private static final Map<String, Tag> keywords = new HashMap<>();
-    private static final Map<String, Tag> notations = new HashMap<>();
+    private static final Map<Character, Tag> notations = new HashMap<>();
     private static final Map<Character, Character> escapes = new HashMap<>();
 
     // Initialize static data
@@ -198,13 +199,27 @@ public class DefaultTokenizer implements Tokenizer {
         keywords.put("else", Tag.ELSE);
         keywords.put("while", Tag.WHILE);
         // Construct the map of notations
-        notations.put("=", Tag.ASSIGN);
-        notations.put("<", Tag.LESS);
-        notations.put(">", Tag.GREATER);
-        notations.put("==", Tag.EQUAL);
-        notations.put("<=", Tag.LESS_EQUAL);
-        notations.put(">=", Tag.GREATER_EQUAL);
-        notations.put(".", Tag.DOT);
-        notations.put("?", Tag.QUESTION);
+        notations.put('<', Tag.LESS);
+        notations.put('>', Tag.GREATER);
+        notations.put('=', Tag.EQUAL);
+        notations.put('.', Tag.DOT);
+        notations.put(',', Tag.COMMA);
+        notations.put(':', Tag.COLON);
+        notations.put('?', Tag.QUESTION);
+        notations.put('&', Tag.AND);
+        notations.put('|', Tag.OR);
+        notations.put('!', Tag.NOT);
+        notations.put('^', Tag.XOR);
+        notations.put('+', Tag.PLUS);
+        notations.put('-', Tag.MINUS);
+        notations.put('*', Tag.MULTIPLY);
+        notations.put('/', Tag.DIVIDE);
+        notations.put('%', Tag.REMAINDER);
+        notations.put('(', Tag.LEFT_PARENTHESIS);
+        notations.put(')', Tag.RIGHT_PARENTHESIS);
+        notations.put('[', Tag.LEFT_BRACKET);
+        notations.put(']', Tag.RIGHT_BRACKET);
+        notations.put('{', Tag.LEFT_BRACE);
+        notations.put('}', Tag.RIGHT_BRACE);
     }
 }
