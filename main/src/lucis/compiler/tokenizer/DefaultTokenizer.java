@@ -39,21 +39,17 @@ public class DefaultTokenizer implements Tokenizer {
     // Get the next token
     private Token tokenize() {
         try {
-            Character c = null;
-            while (reader.available() && (c = reader.get()) != null) {
-                if (!blankCharacters.contains(c)) {
-                    reader.put(c);
-                    break;
-                }
-                if (c == '\n') {
-                    Token lineBreak = new Token(null, Tag.LINE_BREAK, new Position(lines, reader.position() - lineOffset + 1));
-                    ++lines;
-                    lineOffset = reader.position();
-                    return lineBreak;
-                }
-            }
+            while (reader.available() && blankCharacters.contains(reader.peek()))
+                reader.get();
+            Character c = reader.get();
             if (c == null) return Token.END;
             Position position = new Position(lines, reader.position() - lineOffset + 1);
+            if (c == '\n') {
+                Token lineBreak = new Token(null, Tag.LINE_BREAK, position);
+                ++lines;
+                lineOffset = reader.position();
+                return lineBreak;
+            }
             if (digitCharacters.contains(c) || c == '-') return readNumber(position);
             if (notationCharacters.contains(c)) return readNotation(position);
             if (c == '"') return readString(position);
