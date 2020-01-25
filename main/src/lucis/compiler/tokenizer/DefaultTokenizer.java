@@ -127,10 +127,7 @@ public class DefaultTokenizer implements Tokenizer {
 
     // Read a notation
     private Token readNotation(Position position) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        while (notationCharacters.contains(reader.peek()))
-            builder.append(reader.get());
-        String word = builder.toString();
+        String word = reader.get().toString();
         return new Token(word, notations.get(word), position);
     }
 
