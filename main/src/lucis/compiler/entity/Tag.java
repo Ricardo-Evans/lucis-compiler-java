@@ -4,6 +4,11 @@ public enum Tag {
     LINE_BREAK,
     END,
 
+    EXPORT,
+    IMPORT,
+    CLASS,
+    TRAIT,
+
     INTEGER,
     DECIMAL,
     COMMENT,

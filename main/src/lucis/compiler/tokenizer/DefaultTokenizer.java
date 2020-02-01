@@ -195,6 +195,10 @@ public class DefaultTokenizer implements Tokenizer {
         escapes.put('\\', '\\');
         escapes.put('"', '"');
         // Construct the map of keywords
+        keywords.put("export", Tag.EXPORT);
+        keywords.put("import", Tag.IMPORT);
+        keywords.put("class", Tag.CLASS);
+        keywords.put("trait", Tag.TRAIT);
         keywords.put("if", Tag.IF);
         keywords.put("else", Tag.ELSE);
         keywords.put("while", Tag.WHILE);

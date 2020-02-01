@@ -1,4 +1,5 @@
 package lucis.compiler.entity;
 
-public class ExpressionTree {
+public interface ExpressionTree extends SyntaxTree {
+    String getType();
 }
