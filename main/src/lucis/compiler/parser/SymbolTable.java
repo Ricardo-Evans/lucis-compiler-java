@@ -1,17 +1,15 @@
 package lucis.compiler.parser;
 
-import lucis.compiler.entity.FunctionDeclaration;
-import lucis.compiler.entity.TypeDeclaration;
-import lucis.compiler.entity.VariableDeclaration;
+import lucis.compiler.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolTable implements lucis.compiler.entity.SymbolTable {
     private SymbolTable parent = null;
-    private Map<String, TypeDeclaration> typeMap = new HashMap<>();
-    private Map<String, VariableDeclaration> variableMap = new HashMap<>();
-    private Map<String, FunctionDeclaration> functionMap = new HashMap<>();
+    private Map<String, Type> typeMap = new HashMap<>();
+    private Map<String, Variable> variableMap = new HashMap<>();
+    private Map<String, Function> functionMap = new HashMap<>();
 
     public SymbolTable() {
     }
@@ -21,32 +19,32 @@ public class SymbolTable implements lucis.compiler.entity.SymbolTable {
     }
 
     @Override
-    public TypeDeclaration getType(String name) {
+    public Type getType(String name) {
         return typeMap.getOrDefault(name, parent == null ? null : parent.getType(name));
     }
 
     @Override
-    public VariableDeclaration getVariable(String name) {
+    public Variable getVariable(String name) {
         return variableMap.getOrDefault(name, parent == null ? null : parent.getVariable(name));
     }
 
     @Override
-    public FunctionDeclaration getFunction(String name) {
+    public Function getFunction(String name) {
         return functionMap.getOrDefault(name, parent == null ? null : parent.getFunction(name));
     }
 
     @Override
-    public void setType(String name, TypeDeclaration type) {
+    public void setType(String name, Type type) {
         typeMap.put(name, type);
     }
 
     @Override
-    public void setVariable(String name, VariableDeclaration variable) {
+    public void setVariable(String name, Variable variable) {
         variableMap.put(name, variable);
     }
 
     @Override
-    public void setFunction(String name, FunctionDeclaration function) {
+    public void setFunction(String name, Function function) {
         functionMap.put(name, function);
     }
 }
