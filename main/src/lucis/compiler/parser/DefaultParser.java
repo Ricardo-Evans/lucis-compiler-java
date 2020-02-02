@@ -1,11 +1,7 @@
 package lucis.compiler.parser;
 
-import lucis.compiler.entity.Tag;
+import lucis.compiler.entity.*;
 import lucis.compiler.tokenizer.Tokenizer;
-import lucis.compiler.entity.DeclarationTree;
-import lucis.compiler.entity.ExpressionTree;
-import lucis.compiler.entity.StatementTree;
-import lucis.compiler.entity.SyntaxTree;
 
 import java.util.Objects;
 
@@ -27,6 +23,18 @@ public class DefaultParser implements Parser {
 
     @Override
     public DeclarationTree parseDeclaration() {
+        switch (tokenizer.peek().tag()) {
+            case CLASS:
+            case TRAIT:
+                return parseTypeDeclaration();
+            case IDENTIFIER:
+                if (tokenizer.peek(1).tag() == Tag.IDENTIFIER) {
+                    if (tokenizer.peek(2).tag() == Tag.LEFT_PARENTHESIS) {
+                        return parseFunctionDeclaration();
+                    }
+                    return parseVariableDeclaration();
+                }
+        }
         return null;
     }
 
@@ -37,6 +45,18 @@ public class DefaultParser implements Parser {
 
     @Override
     public ExpressionTree parseExpression() {
+        return null;
+    }
+
+    private TypeDeclaration parseTypeDeclaration() {
+        return null;
+    }
+
+    private FunctionDeclaration parseFunctionDeclaration() {
+        return null;
+    }
+
+    private VariableDeclaration parseVariableDeclaration() {
         return null;
     }
 }
