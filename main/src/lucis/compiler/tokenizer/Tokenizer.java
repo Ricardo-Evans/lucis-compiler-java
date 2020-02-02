@@ -12,11 +12,22 @@ public interface Tokenizer {
     Token next();
 
     /**
-     * Get the next token, but keep the position
+     * Peek the ith token, where i is 0-based
+     * This operation will not change the position of the tokenizer
+     *
+     * @param i the given index
+     * @return the ith token
+     */
+    Token peek(int i);
+
+    /**
+     * Peek the next token, same as peek(0)
      *
      * @return the next token
      */
-    Token peek();
+    default Token peek() {
+        return peek(0);
+    }
 
     /**
      * Skip tokens until the next token's tag is not the specified one

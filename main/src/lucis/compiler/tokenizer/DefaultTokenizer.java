@@ -6,11 +6,10 @@ import lucis.compiler.entity.Token;
 import lucis.compiler.io.Reader;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DefaultTokenizer implements Tokenizer {
+    private LinkedList<Token> tokenCache = new LinkedList<>();
     private Token nextToken = null;
     private Reader reader;
     private long lines = 1;
@@ -22,18 +21,14 @@ public class DefaultTokenizer implements Tokenizer {
 
     @Override
     public Token next() {
-        if (nextToken != null) {
-            Token token = nextToken;
-            nextToken = null;
-            return token;
-        }
+        if (!tokenCache.isEmpty()) return tokenCache.poll();
         return tokenize();
     }
 
     @Override
-    public Token peek() {
-        if (nextToken == null) nextToken = tokenize();
-        return nextToken;
+    public Token peek(int i) {
+        while (tokenCache.size() <= i) tokenCache.add(tokenize());
+        return tokenCache.get(i);
     }
 
     // Get the next token
