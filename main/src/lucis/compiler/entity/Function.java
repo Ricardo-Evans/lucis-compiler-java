@@ -2,7 +2,7 @@ package lucis.compiler.entity;
 
 import java.util.List;
 
-public interface Function {
+public interface Function extends Symbol {
     String getName();
 
     Type getResultType();
