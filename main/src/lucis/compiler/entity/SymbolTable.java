@@ -1,15 +1,15 @@
 package lucis.compiler.entity;
 
 public interface SymbolTable {
-    Type getType(String name);
+    TypeDeclaration getType(String name);
 
-    Variable getVariable(String name);
+    VariableDeclaration getVariable(String name);
 
-    Function getFunction(String name);
+    FunctionDeclaration getFunction(String name);
 
-    void setType(String name, Type type);
+    void setType(String name, TypeDeclaration type);
 
-    void setVariable(String name, Variable variable);
+    void setVariable(String name, VariableDeclaration variable);
 
-    void setFunction(String name, Function function);
+    void setFunction(String name, FunctionDeclaration function);
 }
