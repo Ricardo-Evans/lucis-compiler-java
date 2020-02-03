@@ -15,48 +15,46 @@ public class DefaultParser implements Parser {
 
     @Override
     public SyntaxTree parse() {
+        SymbolTable table = new SymbolTable();
         while (tokenizer.peek().tag() != Tag.END) {
             tokenizer.skip(Tag.LINE_BREAK);
         }
         return null;
     }
 
-    @Override
-    public DeclarationTree parseDeclaration() {
+    private DeclarationTree parseDeclaration(SymbolTable table) {
         switch (tokenizer.peek().tag()) {
             case CLASS:
             case TRAIT:
-                return parseTypeDeclaration();
+                return parseTypeDeclaration(table);
             case IDENTIFIER:
                 if (tokenizer.peek(1).tag() == Tag.IDENTIFIER) {
                     if (tokenizer.peek(2).tag() == Tag.LEFT_PARENTHESIS) {
-                        return parseFunctionDeclaration();
+                        return parseFunctionDeclaration(table);
                     }
-                    return parseVariableDeclaration();
+                    return parseVariableDeclaration(table);
                 }
         }
         return null;
     }
 
-    @Override
-    public StatementTree parseStatement() {
+    private StatementTree parseStatement(SymbolTable table) {
         return null;
     }
 
-    @Override
-    public ExpressionTree parseExpression() {
+    private ExpressionTree parseExpression(SymbolTable table) {
         return null;
     }
 
-    private TypeDeclaration parseTypeDeclaration() {
+    private TypeDeclaration parseTypeDeclaration(SymbolTable table) {
         return null;
     }
 
-    private FunctionDeclaration parseFunctionDeclaration() {
+    private FunctionDeclaration parseFunctionDeclaration(SymbolTable table) {
         return null;
     }
 
-    private VariableDeclaration parseVariableDeclaration() {
+    private VariableDeclaration parseVariableDeclaration(SymbolTable table) {
         return null;
     }
 }
