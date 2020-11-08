@@ -1,4 +1,4 @@
-package lucis.compiler.tokenizer;
+package lucis.compiler.lexer;
 
 public class LexicalException extends RuntimeException {
     LexicalException() {

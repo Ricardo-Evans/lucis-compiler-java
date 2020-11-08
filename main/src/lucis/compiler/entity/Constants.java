@@ -1,6 +1,6 @@
 package lucis.compiler.entity;
 
-import lucis.compiler.tokenizer.RegularExpression;
+import lucis.compiler.lexer.RegularExpression;
 
 public final class Constants {
     private Constants() {

@@ -1,25 +1,28 @@
-package lucis.compiler.tokenizer;
+package lucis.compiler.lexer;
 
 import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.io.Reader;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
+ * Lexer implemented with deterministic finite automation.
+ *
  * @author owl
  * @author Ricardo Evans
  */
 public class DFALexer implements Lexer {
     private final DFAState initialState;
 
-    public DFALexer(DFAState initialState) {
+    private DFALexer(DFAState initialState) {
         this.initialState = initialState;
     }
 
     @Override
-    public TokenStream resolve(Reader reader) {
+    public Supplier<SyntaxTree> resolve(Reader reader) {
         return () -> {
             try {
                 DFAState state = initialState;
@@ -29,7 +32,7 @@ public class DFALexer implements Lexer {
                 Integer codepoint = reader.next();
                 if (codepoint == null) return null;
                 while (state != null && codepoint != null) {
-                    if (state.tokenizer != null) {
+                    if (state.rule != null) {
                         terminate = state;
                         result = builder.toString();
                         reader.mark();
@@ -41,7 +44,7 @@ public class DFALexer implements Lexer {
                 if (terminate == null)
                     throw new LexicalException("cannot recognize " + builder.toString() + " as a lexical unit");
                 reader.reset();
-                return terminate.tokenizer.tokenize(result);
+                return terminate.rule.apply(result);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new LexicalException(e);
@@ -100,7 +103,7 @@ public class DFALexer implements Lexer {
 
     private static class DFAState implements Serializable {
         private final Map<Range, DFAState> transfer = new HashMap<>();
-        private Tokenizer tokenizer = null;
+        private Function<String, SyntaxTree> rule = null;
 
         public DFAState handle(Integer character) {
             for (Map.Entry<Range, DFAState> entry : transfer.entrySet())
@@ -111,17 +114,20 @@ public class DFALexer implements Lexer {
 
     private static class NFAState {
         private final Map<Range, Set<NFAState>> transfer = new HashMap<>();
-        private Tokenizer tokenizer = null;
+        private Function<String, SyntaxTree> rule = null;
     }
 
+    /**
+     * Builder used to construct a dfa lexer by defining lexical rules.
+     */
     public static class Builder {
         private final NFAState initialState = new NFAState();
-        private final Map<Tokenizer, Integer> priorities = new HashMap<>();
+        private final Map<Function<String, SyntaxTree>, Integer> priorities = new HashMap<>();
 
         public Builder() {
         }
 
-        public Builder define(RegularExpression expression, Tokenizer tokenizer, int priority) {
+        public Builder define(RegularExpression expression, Function<String, SyntaxTree> rule, int priority) {
             NFAState state = expression.visit(new RegularExpression.Visitor<>() {
                 private NFAState current = initialState;
 
@@ -200,13 +206,13 @@ public class DFALexer implements Lexer {
                     return state;
                 }
             });
-            state.tokenizer = tokenizer;
-            priorities.put(tokenizer, priority);
+            state.rule = rule;
+            priorities.put(rule, priority);
             return this;
         }
 
-        public Builder define(RegularExpression expression, Tokenizer tokenizer) {
-            return define(expression, tokenizer, 0);
+        public Builder define(RegularExpression expression, Function<String, SyntaxTree> rule) {
+            return define(expression, rule, 0);
         }
 
         public Lexer build() {
@@ -229,11 +235,11 @@ public class DFALexer implements Lexer {
                         }
                         dfaState.transfer.put(r, stateMap.get(s));
                     });
-                    states.stream().filter(s -> s.tokenizer != null).forEach(s -> {
-                        Tokenizer tokenizer = s.tokenizer;
-                        if (dfaState.tokenizer == null) dfaState.tokenizer = tokenizer;
-                        else if (priorities.get(tokenizer) > priorities.get(dfaState.tokenizer))
-                            dfaState.tokenizer = tokenizer;
+                    states.stream().filter(s -> s.rule != null).forEach(s -> {
+                        Function<String, SyntaxTree> rule = s.rule;
+                        if (dfaState.rule == null) dfaState.rule = rule;
+                        else if (priorities.get(rule) > priorities.get(dfaState.rule))
+                            dfaState.rule = rule;
                     });
                 }
                 remaining = changed;

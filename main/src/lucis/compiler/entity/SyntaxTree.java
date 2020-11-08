@@ -6,6 +6,6 @@ public interface SyntaxTree {
     //<R, D> R visit(Visitor<R, D> visitor, D data);
 
     interface Visitor<R, D> {
-        void visitToken(Token token);
+        void visitToken(Lexeme lexeme);
     }
 }

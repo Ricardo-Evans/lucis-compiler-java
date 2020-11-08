@@ -1,14 +1,13 @@
 package lucis.compiler.parser;
 
 import lucis.compiler.entity.SyntaxTree;
-import lucis.compiler.tokenizer.Lexer;
-import lucis.compiler.tokenizer.TokenStream;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface Parser {
-    SyntaxTree parse(TokenStream tokenStream);
+    SyntaxTree parse(Supplier<SyntaxTree> lexemes);
 
     interface Builder {
         Builder define(Grammar grammar);

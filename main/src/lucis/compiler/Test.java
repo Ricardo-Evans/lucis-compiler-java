@@ -2,32 +2,32 @@ package lucis.compiler;
 
 import lucis.compiler.entity.Constants;
 import lucis.compiler.entity.SyntaxTree;
-import lucis.compiler.entity.Token;
+import lucis.compiler.entity.Lexeme;
 import lucis.compiler.io.ChannelReader;
 import lucis.compiler.io.Reader;
 import lucis.compiler.parser.LRParser;
 import lucis.compiler.parser.Parser;
-import lucis.compiler.tokenizer.DFALexer;
-import lucis.compiler.tokenizer.Lexer;
-import lucis.compiler.tokenizer.TokenStream;
+import lucis.compiler.lexer.DFALexer;
+import lucis.compiler.lexer.Lexer;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.function.Supplier;
 
 public class Test {
     private static class SimpleLexer implements Lexer {
         private final String[] content = {"(", "(", ")", ")", "(", ")"};
 
         @Override
-        public TokenStream resolve(Reader reader) {
-            return new TokenStream() {
+        public Supplier<SyntaxTree> resolve(Reader reader) {
+            return new Supplier<>() {
                 private int index = 0;
 
                 @Override
-                public SyntaxTree next() {
-                    if (index < content.length) return new Token(null, content[index++], null);
+                public SyntaxTree get() {
+                    if (index < content.length) return new Lexeme(null, content[index++], null);
                     return null;
                 }
             };
@@ -126,10 +126,10 @@ public class Test {
                 .define(Constants.STRING_LITERAL, SimpleToken::new)
                 .build();
         File testSource = new File("test-source.lux");
-        TokenStream tokenStream = lexer.resolve(new ChannelReader(FileChannel.open(testSource.toPath(), StandardOpenOption.READ)));
-        SyntaxTree node;
-        while ((node = tokenStream.next()) != null) {
-            System.out.println(node);
+        Supplier<SyntaxTree> lexemes = lexer.resolve(new ChannelReader(FileChannel.open(testSource.toPath(), StandardOpenOption.READ)));
+        SyntaxTree lexeme;
+        while ((lexeme = lexemes.get()) != null) {
+            System.out.println(lexeme);
         }
     }
 

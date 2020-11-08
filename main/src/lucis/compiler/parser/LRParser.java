@@ -1,10 +1,9 @@
 package lucis.compiler.parser;
 
 import lucis.compiler.entity.SyntaxTree;
-import lucis.compiler.tokenizer.Lexer;
-import lucis.compiler.tokenizer.TokenStream;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LRParser implements Parser {
@@ -15,11 +14,11 @@ public class LRParser implements Parser {
     }
 
     @Override
-    public SyntaxTree parse(TokenStream tokenStream) {
+    public SyntaxTree parse(Supplier<SyntaxTree> lexemes) {
         Deque<State> states = new ArrayDeque<>();
         Deque<SyntaxTree> nodes = new ArrayDeque<>();
         states.push(initialState);
-        SyntaxTree node = tokenStream.next();
+        SyntaxTree node = lexemes.get();
         while (true) {
             State state = states.peek();
             assert state != null;
@@ -55,7 +54,7 @@ public class LRParser implements Parser {
                 case SHIFT: {
                     states.push(action.state());
                     nodes.push(node);
-                    node = tokenStream.next();
+                    node = lexemes.get();
                     break;
                 }
             }
