@@ -2,14 +2,13 @@ package lucis.compiler.entity;
 
 import java.io.Serializable;
 
-public final class Token implements Serializable {
+public final class Token implements Serializable, SyntaxTree {
     private static final long serialVersionUID = -3786791175193882275L;
-    public static final Token END = new Token(null, Tag.END, null);
     private final Position position;
     private final Object value;
-    private final Tag tag;
+    private final String tag;
 
-    public Token(Object value, Tag tag, Position position) {
+    public Token(Object value, String tag, Position position) {
         this.value = value;
         this.tag = tag;
         this.position = position;
@@ -19,7 +18,8 @@ public final class Token implements Serializable {
         return value;
     }
 
-    public Tag tag() {
+    @Override
+    public String tag() {
         return tag;
     }
 

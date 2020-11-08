@@ -3,40 +3,27 @@ package lucis.compiler.io;
 import java.io.IOException;
 
 /**
- * Used for read source files
+ * Used for read source files.
  *
  * @author Ricardo Evans
  * @version 1.0
  */
 public interface Reader {
     /**
-     * Get the next character
+     * Get the next character.
      *
      * @return the next character
      * @throws IOException when underlying io fail
      */
-    Character get() throws IOException;
+    Integer next() throws IOException;
 
     /**
-     * Put the given character as the next character
-     * The operation do not apply to the origin source, only work as a cache
-     *
-     * @param c the given character
-     * @throws IOException when underlying io fail
-     */
-    void put(Character c) throws IOException;
-
-    /**
-     * Peek the next character without moving to next position
+     * Peek the next character without moving to next position.
      *
      * @return The next character
      * @throws IOException when underlying io fail
      */
-    default Character peek() throws IOException {
-        Character c = get();
-        if (c != null) put(c);
-        return c;
-    }
+    Integer peek() throws IOException;
 
     /**
      * Skip the next character
@@ -47,16 +34,23 @@ public interface Reader {
     boolean skip() throws IOException;
 
     /**
-     * Get the current position in the origin source
-     *
-     * @return the position
-     */
-    long position();
-
-    /**
-     * Determine whether the reader can be read more
+     * Determine whether the reader can be read more.
      *
      * @return whether the reader can be read more
      */
     boolean available();
+
+    /**
+     * Mark the reader at the current state, may use reset in future to recover the state.
+     *
+     * @see Reader#reset()
+     */
+    void mark();
+
+    /**
+     * Reset the reader to the marked state before, makes no effect if not marked.
+     *
+     * @see Reader#mark()
+     */
+    void reset();
 }

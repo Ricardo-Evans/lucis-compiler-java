@@ -1,14 +1,7 @@
 package lucis.compiler.tokenizer;
 
-import lucis.compiler.entity.Position;
-import lucis.compiler.entity.Tag;
-import lucis.compiler.entity.Token;
-import lucis.compiler.io.Reader;
-
-import java.io.IOException;
-import java.util.*;
-
-public class DefaultTokenizer implements Tokenizer {
+public class DefaultTokenizer {
+    /*
     private LinkedList<Token> tokenCache = new LinkedList<>();
     private Token nextToken = null;
     private Reader reader;
@@ -221,4 +214,5 @@ public class DefaultTokenizer implements Tokenizer {
         notations.put('{', Tag.LEFT_BRACE);
         notations.put('}', Tag.RIGHT_BRACE);
     }
+     */
 }

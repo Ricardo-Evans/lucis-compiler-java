@@ -1,11 +1,11 @@
 package lucis.compiler.entity;
 
 public interface SyntaxTree {
-    SymbolTable getSymbolTable();
+    String tag();
 
-    <R, D> R visit(Visitor<R, D> visitor, D data);
+    //<R, D> R visit(Visitor<R, D> visitor, D data);
 
     interface Visitor<R, D> {
-        R visitSource(SourceTree that, D data);
+        void visitToken(Token token);
     }
 }

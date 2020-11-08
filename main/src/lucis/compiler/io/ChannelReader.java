@@ -3,21 +3,25 @@ package lucis.compiler.io;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.IntBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Queue;
 
 public class ChannelReader implements Reader {
-    private int bufferSize;
-    private long position = 0;
+    private final int bufferSize;
     private boolean available = true;
     private ByteBuffer rawDataBuffer = null;
-    private CharBuffer cacheDataBuffer = null;
     private CharBuffer decodeDataBuffer = null;
-    private CharsetDecoder decoder;
-    private ReadableByteChannel channel;
+    private final CharsetDecoder decoder;
+    private final ReadableByteChannel channel;
+    private final Queue<Integer> cache = new LinkedList<>();
+    private Integer peek = null;
+    private boolean marked = false;
 
     public ChannelReader(ReadableByteChannel channel) {
         this(channel, 1024);
@@ -36,10 +40,7 @@ public class ChannelReader implements Reader {
         this.decoder = charset.newDecoder();
     }
 
-    @Override
-    public Character get() throws IOException {
-        if (!available()) return null;
-        if (cacheDataBuffer != null && cacheDataBuffer.hasRemaining()) return cacheDataBuffer.get();
+    private Character read() throws IOException {
         if (rawDataBuffer == null) rawDataBuffer = ByteBuffer.allocate(bufferSize);
         while (decodeDataBuffer == null || !decodeDataBuffer.hasRemaining()) {
             if (channel.read(rawDataBuffer) == -1) {
@@ -50,35 +51,56 @@ public class ChannelReader implements Reader {
             decodeDataBuffer = decoder.decode(rawDataBuffer);
             rawDataBuffer.compact();
         }
-        ++position;
         return decodeDataBuffer.get();
     }
 
     @Override
-    public void put(Character c) {
-        Objects.requireNonNull(c, "the character to be put to the reader cannot be null");
-        if (cacheDataBuffer == null) {
-            cacheDataBuffer = CharBuffer.allocate(bufferSize);
-            cacheDataBuffer.position(cacheDataBuffer.limit());
+    public Integer next() throws IOException {
+        if (!available()) return null;
+        if (peek != null) {
+            Integer peek = this.peek;
+            this.peek = null;
+            return peek;
         }
-        cacheDataBuffer.put(cacheDataBuffer.position() - 1, c);
-        cacheDataBuffer.position(cacheDataBuffer.position() - 1);
-        --position;
-        available = true;
+        if (!marked && !cache.isEmpty()) return cache.poll();
+        Character c = read();
+        if (c == null) return null;
+        int integer;
+        if (Character.isSurrogate(c)) {
+            Character c_ = read();
+            if (c_ == null) throw new IOException("expect more data to form a surrogate pair");
+            if (!Character.isSurrogatePair(c, c_))
+                throw new IOException("expect a surrogate pair, but get " + c + " and " + c_ + " instead");
+            integer = Character.toCodePoint(c, c_);
+        } else integer = (int) c;
+        if (marked) cache.offer(integer);
+        return integer;
+    }
+
+    @Override
+    public Integer peek() throws IOException {
+        if (peek != null) return peek;
+        return peek = next();
     }
 
     @Override
     public boolean skip() throws IOException {
-        return get() != null;
-    }
-
-    @Override
-    public long position() {
-        return position;
+        return next() != null;
     }
 
     @Override
     public boolean available() {
         return available;
+    }
+    
+    @Override
+    public void mark() {
+        marked = true;
+        cache.clear();
+    }
+
+    @Override
+    public void reset() {
+        marked = false;
     }
 }
