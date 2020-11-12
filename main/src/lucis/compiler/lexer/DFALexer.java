@@ -25,25 +25,26 @@ public class DFALexer implements Lexer {
     public Supplier<SyntaxTree> resolve(Reader reader) {
         return () -> {
             try {
+                if (!reader.available()) return null;
                 DFAState state = initialState;
                 DFAState terminate = null;
                 String result = null;
                 StringBuilder builder = new StringBuilder();
-                Integer codepoint = reader.next();
-                if (codepoint == null) return null;
-                while (state != null && codepoint != null) {
+                reader.mark();
+                while (state != null && reader.available()) {
                     if (state.rule != null) {
                         terminate = state;
                         result = builder.toString();
                         reader.mark();
                     }
+                    Integer codepoint = reader.next();
+                    if (codepoint == null) break;
                     state = state.handle(codepoint);
                     builder.appendCodePoint(codepoint);
-                    codepoint = reader.next();
                 }
+                reader.reset();
                 if (terminate == null)
                     throw new LexicalException("cannot recognize " + builder.toString() + " as a lexical unit");
-                reader.reset();
                 return terminate.rule.apply(result);
             } catch (Exception e) {
                 e.printStackTrace();

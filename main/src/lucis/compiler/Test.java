@@ -5,6 +5,7 @@ import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.entity.Lexeme;
 import lucis.compiler.io.ChannelReader;
 import lucis.compiler.io.Reader;
+import lucis.compiler.lexer.RegularExpression;
 import lucis.compiler.parser.LRParser;
 import lucis.compiler.parser.Parser;
 import lucis.compiler.lexer.DFALexer;
@@ -42,7 +43,7 @@ public class Test {
         }
 
         @Override
-        public String tag() {
+        public String name() {
             return "pair";
         }
     }
@@ -57,7 +58,7 @@ public class Test {
         }
 
         @Override
-        public String tag() {
+        public String name() {
             return "list";
         }
     }
@@ -70,7 +71,7 @@ public class Test {
         }
 
         @Override
-        public String tag() {
+        public String name() {
             return "goal";
         }
     }
@@ -83,7 +84,7 @@ public class Test {
         }
 
         @Override
-        public String tag() {
+        public String name() {
             return null;
         }
 
