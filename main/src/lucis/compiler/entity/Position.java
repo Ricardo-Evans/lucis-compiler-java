@@ -14,17 +14,17 @@ public class Position implements Serializable {
     public final long error = -1;
 
     private final long line;
-    private final long column;
+    private final long offset;
 
     /**
-     * Construct a position of the given line and column
+     * Construct a position of the given line and offset
      *
      * @param line   the given line
-     * @param column the given column
+     * @param offset the given offset
      */
-    public Position(long line, long column) {
+    public Position(long line, long offset) {
         this.line = line;
-        this.column = column;
+        this.offset = offset;
     }
 
     /**
@@ -41,12 +41,12 @@ public class Position implements Serializable {
      *
      * @return the column
      */
-    public long column() {
-        return column;
+    public long offset() {
+        return offset;
     }
 
     @Override
     public String toString() {
-        return "line:" + line + ", column:" + column;
+        return line + ":" + offset;
     }
 }

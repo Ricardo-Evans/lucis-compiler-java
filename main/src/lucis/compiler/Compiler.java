@@ -13,8 +13,8 @@ public class Compiler {
     public Compiler() {
         LexicalRule rule = new LexicalRule();
         Lexer lexer = new DFALexer.Builder()
-                .define(Constants.STRING_LITERAL, rule.common("string"))
-                .define(Constants.NEWLINE, rule.newline("newline"))
+                .define(Constants.STRING_LITERAL, rule.rule("string", (p, s) -> new Position(p.line(), p.offset() + s.length())))
+                .define(Constants.NEWLINE, rule.rule("newline", (p, s) -> new Position(p.line() + 1, 1)))
                 .build();
     }
 
@@ -23,31 +23,17 @@ public class Compiler {
     }
 
     private static class LexicalRule {
-        private int line = 1;
-        private int offset = 1;
+        private Position position = new Position(1, 1);
 
-        public Function<String, SyntaxTree> common(String name) {
-            return content -> {
-                Lexeme lexeme = new Lexeme(name, content, new Position(line, offset));
-                offset += content.length();
-                return lexeme;
-            };
+        @FunctionalInterface
+        public interface Movement {
+            Position move(Position position, String content);
         }
 
-        public Function<String, SyntaxTree> newline(String name) {
+        public Function<String, SyntaxTree> rule(String name, Movement movement) {
             return content -> {
-                Lexeme lexeme = new Lexeme(name, content, new Position(line, offset));
-                ++line;
-                offset = 1;
-                return lexeme;
-            };
-        }
-
-        public Function<String, SyntaxTree> reset(String name) {
-            return content -> {
-                Lexeme lexeme = new Lexeme(name, content, new Position(line, offset));
-                line = 1;
-                offset = 1;
+                Lexeme lexeme = new Lexeme(name, content, position);
+                position = movement.move(position, content);
                 return lexeme;
             };
         }
