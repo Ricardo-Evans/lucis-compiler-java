@@ -14,7 +14,6 @@ import java.util.Queue;
 
 public class ChannelReader implements Reader {
     private final int bufferSize;
-    private boolean available = true;
     private ByteBuffer rawDataBuffer = null;
     private CharBuffer decodeDataBuffer = null;
     private final CharsetDecoder decoder;
@@ -43,10 +42,7 @@ public class ChannelReader implements Reader {
     private Character read() throws IOException {
         if (rawDataBuffer == null) rawDataBuffer = ByteBuffer.allocate(bufferSize);
         while (decodeDataBuffer == null || !decodeDataBuffer.hasRemaining()) {
-            if (channel.read(rawDataBuffer) == -1) {
-                available = false;
-                return null;
-            }
+            if (channel.read(rawDataBuffer) == -1) return null;
             rawDataBuffer.flip();
             decodeDataBuffer = decoder.decode(rawDataBuffer);
             rawDataBuffer.compact();
@@ -56,7 +52,6 @@ public class ChannelReader implements Reader {
 
     @Override
     public Integer next() throws IOException {
-        if (!available()) return null;
         if (peek != null) {
             Integer peek = this.peek;
             this.peek = null;
@@ -88,11 +83,6 @@ public class ChannelReader implements Reader {
         return next() != null;
     }
 
-    @Override
-    public boolean available() {
-        return available;
-    }
-    
     @Override
     public void mark() {
         marked = true;

@@ -38,7 +38,9 @@ public interface Reader {
      *
      * @return whether the reader can be read more
      */
-    boolean available();
+    default boolean available() throws IOException {
+        return peek() != null;
+    }
 
     /**
      * Mark the reader at the current state, may use reset in future to recover the state.
