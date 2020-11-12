@@ -13,8 +13,8 @@ public class Compiler {
     public Compiler() {
         LexicalRule rule = new LexicalRule();
         Lexer lexer = new DFALexer.Builder()
-                .define(Constants.STRING_LITERAL, rule.rule("string", (p, s) -> new Position(p.line(), p.offset() + s.length())))
-                .define(Constants.NEWLINE, rule.rule("newline", (p, s) -> new Position(p.line() + 1, 1)))
+                .define(Constants.STRING_LITERAL, rule.rule("string", (p, s) -> p.move(0, s.length())))
+                .define(Constants.NEWLINE, rule.rule("newline", (p, s) -> p.move(1, 1 - p.offset())))
                 .build();
     }
 
@@ -22,8 +22,11 @@ public class Compiler {
 
     }
 
-    private static class LexicalRule {
+    public static class LexicalRule {
         private Position position = new Position(1, 1);
+
+        public LexicalRule() {
+        }
 
         @FunctionalInterface
         public interface Movement {
