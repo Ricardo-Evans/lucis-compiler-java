@@ -14,17 +14,17 @@ public class LRParser implements Parser {
     }
 
     @Override
-    public SyntaxTree parse(Supplier<SyntaxTree> lexemes) {
+    public SyntaxTree parse(Supplier<? extends SyntaxTree> lexemes) {
         Deque<State> states = new ArrayDeque<>();
         Deque<SyntaxTree> nodes = new ArrayDeque<>();
         states.push(initialState);
-        SyntaxTree node = lexemes.get();
+        SyntaxTree lexeme = lexemes.get();
         while (true) {
             State state = states.peek();
             assert state != null;
-            Action action = state.handle(node);
+            Action action = state.handle(lexeme);
             if (action == null)
-                throw new GrammaticalException("cannot handle '" + nodes.stream().map(SyntaxTree::tag).reduce("", (s1, s2) -> s1 + " " + s2) + " ' as a grammatical structure");
+                throw new GrammaticalException("cannot handle '" + nodes.stream().map(SyntaxTree::name).reduce("", (s1, s2) -> s1 + " " + s2) + " ' as a grammatical structure");
             switch (action.type()) {
                 case ACCEPT: {
                     Grammar grammar = action.grammar();
@@ -53,8 +53,8 @@ public class LRParser implements Parser {
                 }
                 case SHIFT: {
                     states.push(action.state());
-                    nodes.push(node);
-                    node = lexemes.get();
+                    nodes.push(lexeme);
+                    lexeme = lexemes.get();
                     break;
                 }
             }
@@ -65,7 +65,7 @@ public class LRParser implements Parser {
         private final Map<String, Action> actionMap = new HashMap<>();
 
         public Action handle(SyntaxTree node) {
-            return actionMap.get(node == null ? null : node.tag());
+            return actionMap.get(node == null ? null : node.name());
         }
     }
 

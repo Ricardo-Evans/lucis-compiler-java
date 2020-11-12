@@ -1,7 +1,7 @@
 package lucis.compiler.entity;
 
 public interface SyntaxTree {
-    String tag();
+    String name();
 
     //<R, D> R visit(Visitor<R, D> visitor, D data);
 

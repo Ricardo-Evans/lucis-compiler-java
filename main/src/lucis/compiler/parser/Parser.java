@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface Parser {
-    SyntaxTree parse(Supplier<SyntaxTree> lexemes);
+    SyntaxTree parse(Supplier<? extends SyntaxTree> lexemes);
 
     interface Builder {
         Builder define(Grammar grammar);

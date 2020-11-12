@@ -4,23 +4,23 @@ import java.io.Serializable;
 
 public final class Lexeme implements Serializable, SyntaxTree {
     private static final long serialVersionUID = -3786791175193882275L;
+    private final String name;
+    private final String content;
     private final Position position;
-    private final Object value;
-    private final String tag;
 
-    public Lexeme(Object value, String tag, Position position) {
-        this.value = value;
-        this.tag = tag;
+    public Lexeme(String name, String content, Position position) {
+        this.name = name;
+        this.content = content;
         this.position = position;
     }
 
-    public Object value() {
-        return value;
+    @Override
+    public String name() {
+        return name;
     }
 
-    @Override
-    public String tag() {
-        return tag;
+    public String content() {
+        return content;
     }
 
     public Position position() {
