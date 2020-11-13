@@ -3,7 +3,6 @@ package lucis.compiler.io;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.IntBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -18,7 +17,8 @@ public class ChannelReader implements Reader {
     private CharBuffer decodeDataBuffer = null;
     private final CharsetDecoder decoder;
     private final ReadableByteChannel channel;
-    private final Queue<Integer> cache = new LinkedList<>();
+    private Queue<Integer> markingCache = null;
+    private Queue<Integer> markedCache = null;
     private Integer peek = null;
     private boolean marked = false;
 
@@ -42,7 +42,9 @@ public class ChannelReader implements Reader {
     private Character read() throws IOException {
         if (rawDataBuffer == null) rawDataBuffer = ByteBuffer.allocate(bufferSize);
         while (decodeDataBuffer == null || !decodeDataBuffer.hasRemaining()) {
-            if (channel.read(rawDataBuffer) == -1) return null;
+            if (channel.read(rawDataBuffer) == -1) {
+                return null;
+            }
             rawDataBuffer.flip();
             decodeDataBuffer = decoder.decode(rawDataBuffer);
             rawDataBuffer.compact();
@@ -55,9 +57,14 @@ public class ChannelReader implements Reader {
         if (peek != null) {
             Integer peek = this.peek;
             this.peek = null;
+            if (marked) markingCache.offer(peek);
             return peek;
         }
-        if (!marked && !cache.isEmpty()) return cache.poll();
+        if (markedCache != null && !markedCache.isEmpty()) {
+            int integer = markedCache.poll();
+            if (marked) markingCache.offer(integer);
+            return integer;
+        }
         Character c = read();
         if (c == null) return null;
         int integer;
@@ -68,7 +75,7 @@ public class ChannelReader implements Reader {
                 throw new IOException("expect a surrogate pair, but get " + c + " and " + c_ + " instead");
             integer = Character.toCodePoint(c, c_);
         } else integer = (int) c;
-        if (marked) cache.offer(integer);
+        if (marked) markingCache.offer(integer);
         return integer;
     }
 
@@ -86,11 +93,14 @@ public class ChannelReader implements Reader {
     @Override
     public void mark() {
         marked = true;
-        cache.clear();
+        markingCache = new LinkedList<>();
     }
 
     @Override
     public void reset() {
         marked = false;
+        if (markedCache != null && markingCache != null)
+            markedCache.forEach(markingCache::offer);
+        markedCache = markingCache;
     }
 }

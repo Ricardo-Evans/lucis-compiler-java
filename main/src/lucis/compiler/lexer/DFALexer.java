@@ -31,7 +31,7 @@ public class DFALexer implements Lexer {
                 String result = null;
                 StringBuilder builder = new StringBuilder();
                 reader.mark();
-                while (state != null && reader.available()) {
+                while (state != null) {
                     if (state.rule != null) {
                         terminate = state;
                         result = builder.toString();
