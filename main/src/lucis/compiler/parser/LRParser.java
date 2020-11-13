@@ -139,7 +139,7 @@ public class LRParser implements Parser {
             Map<Set<Item>, State> cc = new HashMap<>();
             Set<Set<Item>> remaining = new HashSet<>();
             Set<Item> cc0 = new HashSet<>();
-            for (Grammar g : grammars.get(goal))
+            for (Grammar g : grammars.getOrDefault(goal, Set.of()))
                 cc0.add(new Item(g, null));
             cc0 = closure(cc0);
             remaining.add(cc0);

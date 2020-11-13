@@ -20,6 +20,10 @@ public final class Constants {
     public static final RegularExpression MULTIPLY = RegularExpression.pure("*");
     public static final RegularExpression DIVISION = RegularExpression.pure("/");
 
+    public static final RegularExpression SINGLE_QUOTE = RegularExpression.pure("'");
+    public static final RegularExpression DOUBLE_QUOTE = RegularExpression.pure("\"");
+    public static final RegularExpression BACK_QUOTE = RegularExpression.pure("`");
+
     public static final RegularExpression L_ROUND_BRACKET = RegularExpression.pure("(");
     public static final RegularExpression R_ROUND_BRACKET = RegularExpression.pure(")");
     public static final RegularExpression L_SQUARE_BRACKET = RegularExpression.pure("[");
@@ -59,8 +63,8 @@ public final class Constants {
             DIGITS.multiple()
     );
     public static final RegularExpression STRING_LITERAL = RegularExpression.concatenate(
-            RegularExpression.pure("\""),
+            DOUBLE_QUOTE,
             RegularExpression.alternate(RegularExpression.pure("\\\""), RegularExpression.negate('"')).closure(),
-            RegularExpression.pure("\"")
+            DOUBLE_QUOTE
     );
 }

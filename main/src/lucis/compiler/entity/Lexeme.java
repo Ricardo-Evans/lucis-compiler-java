@@ -26,4 +26,9 @@ public final class Lexeme implements Serializable, SyntaxTree {
     public Position position() {
         return position;
     }
+
+    @Override
+    public String toString() {
+        return name + ":" + content + "@" + position;
+    }
 }
