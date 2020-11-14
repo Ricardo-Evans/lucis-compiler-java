@@ -3,7 +3,7 @@ package lucis.compiler.entity;
 import java.io.Serializable;
 
 /**
- * The combination of line and column
+ * The combination of line and offset
  *
  * @author Ricardo Evans
  * @version 1.0
@@ -35,9 +35,9 @@ public class Position implements Serializable {
     }
 
     /**
-     * Get the column
+     * Get the offset
      *
-     * @return the column
+     * @return the offset
      */
     public long offset() {
         return offset;
