@@ -1,5 +1,7 @@
 package lucis.compiler.io;
 
+import lucis.compiler.entity.Position;
+
 import java.io.IOException;
 
 /**
@@ -55,4 +57,11 @@ public interface Reader {
      * @see Reader#mark()
      */
     void reset();
+
+    /**
+     * Get the current position.
+     *
+     * @return the current position
+     */
+    Position position();
 }
