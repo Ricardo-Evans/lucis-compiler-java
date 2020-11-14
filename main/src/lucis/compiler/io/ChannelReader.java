@@ -1,5 +1,7 @@
 package lucis.compiler.io;
 
+import lucis.compiler.entity.Position;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -19,8 +21,10 @@ public class ChannelReader implements Reader {
     private final ReadableByteChannel channel;
     private Queue<Integer> markingCache = null;
     private Queue<Integer> markedCache = null;
-    private Integer peek = null;
     private boolean marked = false;
+    private Position markedPosition = null;
+    private long line = 1;
+    private long offset = 1;
 
     public ChannelReader(ReadableByteChannel channel) {
         this(channel, 1024);
@@ -39,7 +43,7 @@ public class ChannelReader implements Reader {
         this.decoder = charset.newDecoder();
     }
 
-    private Character read() throws IOException {
+    private Character readUTF16() throws IOException {
         if (rawDataBuffer == null) rawDataBuffer = ByteBuffer.allocate(bufferSize);
         while (decodeDataBuffer == null || !decodeDataBuffer.hasRemaining()) {
             if (channel.read(rawDataBuffer) == -1) {
@@ -52,37 +56,41 @@ public class ChannelReader implements Reader {
         return decodeDataBuffer.get();
     }
 
-    @Override
-    public Integer next() throws IOException {
-        if (peek != null) {
-            Integer peek = this.peek;
-            this.peek = null;
-            if (marked) markingCache.offer(peek);
-            return peek;
-        }
-        if (markedCache != null && !markedCache.isEmpty()) {
-            int integer = markedCache.poll();
-            if (marked) markingCache.offer(integer);
-            return integer;
-        }
-        Character c = read();
+    private Integer readUnicode() throws IOException {
+        if (markedCache != null && !markedCache.isEmpty()) return markedCache.poll();
+        Character c = readUTF16();
         if (c == null) return null;
-        int integer;
+        int unicode;
         if (Character.isSurrogate(c)) {
-            Character c_ = read();
+            Character c_ = readUTF16();
             if (c_ == null) throw new IOException("expect more data to form a surrogate pair");
             if (!Character.isSurrogatePair(c, c_))
                 throw new IOException("expect a surrogate pair, but get " + c + " and " + c_ + " instead");
-            integer = Character.toCodePoint(c, c_);
-        } else integer = (int) c;
-        if (marked) markingCache.offer(integer);
-        return integer;
+            unicode = Character.toCodePoint(c, c_);
+        } else unicode = (int) c;
+        return unicode;
+    }
+
+    @Override
+    public Integer next() throws IOException {
+        Integer unicode = readUnicode();
+        if (unicode == null) return unicode;
+        if (unicode == '\n') {
+            ++line;
+            offset = 1;
+        } else ++offset;
+        if (marked) markingCache.offer(unicode);
+        return unicode;
     }
 
     @Override
     public Integer peek() throws IOException {
-        if (peek != null) return peek;
-        return peek = next();
+        if (markedCache != null && !markedCache.isEmpty()) return markedCache.peek();
+        Integer unicode = readUnicode();
+        if (unicode == null) return unicode;
+        if (markedCache == null) markedCache = new LinkedList<>();
+        markedCache.offer(unicode);
+        return unicode;
     }
 
     @Override
@@ -91,9 +99,15 @@ public class ChannelReader implements Reader {
     }
 
     @Override
+    public Position position() {
+        return new Position(line, offset);
+    }
+
+    @Override
     public void mark() {
         marked = true;
         markingCache = new LinkedList<>();
+        markedPosition = position();
     }
 
     @Override
@@ -102,5 +116,9 @@ public class ChannelReader implements Reader {
         if (markedCache != null && markingCache != null)
             markedCache.forEach(markingCache::offer);
         markedCache = markingCache;
+        if (markedPosition != null) {
+            line = markedPosition.line();
+            offset = markedPosition.offset();
+        }
     }
 }
