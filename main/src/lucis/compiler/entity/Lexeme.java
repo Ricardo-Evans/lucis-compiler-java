@@ -29,6 +29,10 @@ public final class Lexeme implements Serializable, SyntaxTree {
 
     @Override
     public String toString() {
-        return name + ":" + content + "@" + position;
+        return "Lexeme{" +
+                "name='" + name + '\'' +
+                ", content='" + content + '\'' +
+                ", position=" + position +
+                '}';
     }
 }
