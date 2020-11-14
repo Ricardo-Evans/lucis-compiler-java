@@ -1,5 +1,6 @@
 package lucis.compiler.lexer;
 
+import lucis.compiler.entity.Position;
 import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.io.Reader;
 
@@ -28,13 +29,14 @@ public class DFALexer implements Lexer {
                 if (!reader.available()) return null;
                 DFAState state = initialState;
                 DFAState terminate = null;
-                String result = null;
+                String content = null;
+                Position position = reader.position();
                 StringBuilder builder = new StringBuilder();
                 reader.mark();
                 while (state != null) {
                     if (state.rule != null) {
                         terminate = state;
-                        result = builder.toString();
+                        content = builder.toString();
                         reader.mark();
                     }
                     Integer codepoint = reader.next();
@@ -45,7 +47,7 @@ public class DFALexer implements Lexer {
                 reader.reset();
                 if (terminate == null)
                     throw new LexicalException("cannot recognize " + builder.toString() + " as a lexical unit");
-                return terminate.rule.apply(result);
+                return terminate.rule.apply(content, position);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new LexicalException(e);
@@ -104,7 +106,7 @@ public class DFALexer implements Lexer {
 
     private static class DFAState implements Serializable {
         private final Map<Range, DFAState> transfer = new HashMap<>();
-        private Function<String, SyntaxTree> rule = null;
+        private LexicalRule rule = null;
 
         public DFAState handle(Integer character) {
             for (Map.Entry<Range, DFAState> entry : transfer.entrySet())
@@ -115,20 +117,20 @@ public class DFALexer implements Lexer {
 
     private static class NFAState {
         private final Map<Range, Set<NFAState>> transfer = new HashMap<>();
-        private Function<String, SyntaxTree> rule = null;
+        private LexicalRule rule = null;
     }
 
     /**
      * Builder used to construct a dfa lexer by defining lexical rules.
      */
-    public static class Builder {
+    public static class Builder implements Lexer.Builder {
         private final NFAState initialState = new NFAState();
-        private final Map<Function<String, SyntaxTree>, Integer> priorities = new HashMap<>();
+        private final Map<LexicalRule, Integer> priorities = new HashMap<>();
 
         public Builder() {
         }
 
-        public Builder define(RegularExpression expression, Function<String, SyntaxTree> rule, int priority) {
+        public Builder define(RegularExpression expression, LexicalRule rule, int priority) {
             NFAState state = expression.visit(new RegularExpression.Visitor<>() {
                 private NFAState current = initialState;
 
@@ -212,7 +214,7 @@ public class DFALexer implements Lexer {
             return this;
         }
 
-        public Builder define(RegularExpression expression, Function<String, SyntaxTree> rule) {
+        public Builder define(RegularExpression expression, LexicalRule rule) {
             return define(expression, rule, 0);
         }
 
@@ -237,7 +239,7 @@ public class DFALexer implements Lexer {
                         dfaState.transfer.put(r, stateMap.get(s));
                     });
                     states.stream().filter(s -> s.rule != null).forEach(s -> {
-                        Function<String, SyntaxTree> rule = s.rule;
+                        LexicalRule rule = s.rule;
                         if (dfaState.rule == null) dfaState.rule = rule;
                         else if (priorities.get(rule) > priorities.get(dfaState.rule))
                             dfaState.rule = rule;

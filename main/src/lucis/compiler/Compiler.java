@@ -1,6 +1,7 @@
 package lucis.compiler;
 
 import lucis.compiler.entity.Constants;
+import lucis.compiler.entity.Lexeme;
 import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.io.ChannelReader;
 import lucis.compiler.io.Reader;
@@ -44,42 +45,41 @@ public class Compiler {
         if (defaultLexer != null) return defaultLexer;
         synchronized (Compiler.class) {
             if (defaultLexer != null) return defaultLexer;
-            LexicalRule rule = new LexicalRule();
             defaultLexer = new DFALexer.Builder()
-                    .define(Constants.INTEGER_LITERAL, rule.normal("integer"))
-                    .define(Constants.DECIMAL_LITERAL, rule.normal("decimal"))
-                    .define(Constants.STRING_LITERAL, rule.normal("string"))
-                    .define(Constants.IDENTIFIER, rule.normal("identifier"))
+                    .define(Constants.INTEGER_LITERAL, rule("integer"))
+                    .define(Constants.DECIMAL_LITERAL, rule("decimal"))
+                    .define(Constants.STRING_LITERAL, rule("string"))
+                    .define(Constants.IDENTIFIER, rule("identifier"))
 
-                    .define(Constants.DISCARD, rule.normal("_"))
-                    .define(Constants.DOT, rule.normal("."))
-                    .define(Constants.COMMA, rule.normal(","))
-                    .define(Constants.COLON, rule.normal(":"))
-                    .define(Constants.SEMICOLON, rule.normal(";"))
-                    .define(Constants.QUESTION, rule.normal("?"))
-                    .define(Constants.AT, rule.normal("@"))
-                    .define(Constants.ELLIPSIS, rule.normal("..."))
-                    .define(Constants.SINGLE_QUOTE, rule.normal("'"))
-                    .define(Constants.DOUBLE_QUOTE, rule.normal("\""))
-                    .define(Constants.BACK_QUOTE, rule.normal("`"))
-                    .define(Constants.ASSIGN, rule.normal("="))
-                    .define(Constants.POSITIVE, rule.normal("+"))
-                    .define(Constants.NEGATIVE, rule.normal("-"))
-                    .define(Constants.MULTIPLY, rule.normal("*"))
-                    .define(Constants.DIVISION, rule.normal("/"))
+                    .define(Constants.DISCARD, rule("_"))
+                    .define(Constants.DOT, rule("."))
+                    .define(Constants.COMMA, rule(","))
+                    .define(Constants.COLON, rule(":"))
+                    .define(Constants.SEMICOLON, rule(";"))
+                    .define(Constants.QUESTION, rule("?"))
+                    .define(Constants.AT, rule("@"))
+                    .define(Constants.ELLIPSIS, rule("..."))
+                    .define(Constants.SINGLE_QUOTE, rule("'"))
+                    .define(Constants.DOUBLE_QUOTE, rule("\""))
+                    .define(Constants.BACK_QUOTE, rule("`"))
+                    .define(Constants.ASSIGN, rule("="))
+                    .define(Constants.POSITIVE, rule("+"))
+                    .define(Constants.NEGATIVE, rule("-"))
+                    .define(Constants.MULTIPLY, rule("*"))
+                    .define(Constants.DIVISION, rule("/"))
 
-                    .define(Constants.L_ROUND_BRACKET, rule.normal("("))
-                    .define(Constants.R_ROUND_BRACKET, rule.normal(")"))
-                    .define(Constants.L_SQUARE_BRACKET, rule.normal("["))
-                    .define(Constants.R_SQUARE_BRACKET, rule.normal("]"))
-                    .define(Constants.L_CURLY_BRACKET, rule.normal("{"))
-                    .define(Constants.R_CURLY_BRACKET, rule.normal("}"))
-                    .define(Constants.L_ANGLE_BRACKET, rule.normal("<"))
-                    .define(Constants.R_ANGLE_BRACKET, rule.normal(">"))
+                    .define(Constants.L_ROUND_BRACKET, rule("("))
+                    .define(Constants.R_ROUND_BRACKET, rule(")"))
+                    .define(Constants.L_SQUARE_BRACKET, rule("["))
+                    .define(Constants.R_SQUARE_BRACKET, rule("]"))
+                    .define(Constants.L_CURLY_BRACKET, rule("{"))
+                    .define(Constants.R_CURLY_BRACKET, rule("}"))
+                    .define(Constants.L_ANGLE_BRACKET, rule("<"))
+                    .define(Constants.R_ANGLE_BRACKET, rule(">"))
 
-                    .define(Constants.WHITESPACE, rule.normal("whitespace"))
-                    .define(Constants.TAB, rule.normal("tab"))
-                    .define(Constants.NEWLINE, rule.newline("newline"))
+                    .define(Constants.WHITESPACE, rule("whitespace"))
+                    .define(Constants.TAB, rule("tab"))
+                    .define(Constants.NEWLINE, rule("newline"))
                     .build();
         }
         return defaultLexer;
@@ -92,5 +92,9 @@ public class Compiler {
             defaultParser = new LRParser.Builder("goal").build();
         }
         return defaultParser;
+    }
+
+    private static LexicalRule rule(String name) {
+        return (content, position) -> new Lexeme(name, content, position);
     }
 }

@@ -19,4 +19,10 @@ public interface Lexer {
      * @return the lexeme stream
      */
     Supplier<SyntaxTree> resolve(Reader reader);
+
+    interface Builder {
+        Lexer build();
+
+        Builder define(RegularExpression expression, LexicalRule rule);
+    }
 }
