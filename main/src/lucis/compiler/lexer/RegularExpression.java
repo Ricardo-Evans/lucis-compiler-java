@@ -163,13 +163,13 @@ public interface RegularExpression {
     static RegularExpression negate(int... codepoints) {
         Set<Integer> sorted = new TreeSet<>();
         for (int codepoint : codepoints) sorted.add(codepoint);
-        int last = 0;
+        int last = -1;
         List<RegularExpression> expressions = new ArrayList<>(sorted.size() + 1);
         for (int codepoint : sorted) {
-            expressions.add(range(last, codepoint));
+            expressions.add(range(last + 1, codepoint));
             last = codepoint;
         }
-        expressions.add(range(last, Integer.MAX_VALUE));
+        expressions.add(range(last + 1, Integer.MAX_VALUE));
         return alternate(expressions.toArray(RegularExpression[]::new));
     }
 
