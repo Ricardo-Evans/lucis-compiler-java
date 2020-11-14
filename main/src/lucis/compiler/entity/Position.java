@@ -43,17 +43,6 @@ public class Position implements Serializable {
         return offset;
     }
 
-    /**
-     * Calculate the position after a given movement.
-     *
-     * @param lineMovement   movement on line axis
-     * @param offsetMovement movement on offset axis
-     * @return position after movement
-     */
-    public Position move(long lineMovement, long offsetMovement) {
-        return new Position(line + lineMovement, offset + offsetMovement);
-    }
-
     @Override
     public String toString() {
         return line + ":" + offset;
