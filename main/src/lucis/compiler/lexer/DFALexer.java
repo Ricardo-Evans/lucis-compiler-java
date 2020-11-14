@@ -46,7 +46,7 @@ public class DFALexer implements Lexer {
                 }
                 reader.reset();
                 if (terminate == null)
-                    throw new LexicalException("cannot recognize " + builder.toString() + " as a lexical unit");
+                    throw new LexicalException("cannot recognize " + builder.toString() + " at " + position + " as a lexical unit");
                 return terminate.rule.apply(content, position);
             } catch (Exception e) {
                 e.printStackTrace();
