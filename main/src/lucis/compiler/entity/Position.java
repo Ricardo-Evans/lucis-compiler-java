@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Ricardo Evans
  * @version 1.0
  */
-public class Position implements Serializable {
+public final class Position implements Serializable {
     private static final long serialVersionUID = 8729840806537371432L;
 
     private final long line;
