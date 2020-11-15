@@ -113,11 +113,28 @@ public class DFALexer implements Lexer {
                 if (entry.getKey().contains(character)) return entry.getValue();
             return null;
         }
+
+        public DFAState get(Range key) {
+            return transfer.get(key);
+        }
+
+        public void put(Range key, DFAState value) {
+            transfer.put(key, value);
+        }
     }
 
     private static class NFAState {
         private final Map<Range, Set<NFAState>> transfer = new HashMap<>();
         private LexicalRule rule = null;
+
+        public Set<NFAState> get(Range key) {
+            transfer.putIfAbsent(key, new HashSet<>());
+            return transfer.get(key);
+        }
+
+        public Set<NFAState> put(Range key, Set<NFAState> value) {
+            return transfer.put(key, value);
+        }
     }
 
     /**
@@ -137,8 +154,7 @@ public class DFALexer implements Lexer {
                 @Override
                 public NFAState visitEmpty() {
                     NFAState state = new NFAState();
-                    current.transfer.putIfAbsent(null, new HashSet<>());
-                    current.transfer.get(null).add(state);
+                    current.get(null).add(state);
                     return state;
                 }
 
@@ -146,8 +162,7 @@ public class DFALexer implements Lexer {
                 public NFAState visitAny() {
                     NFAState state = new NFAState();
                     Range wildcard = new Range(0, Integer.MAX_VALUE);
-                    current.transfer.putIfAbsent(wildcard, new HashSet<>());
-                    current.transfer.get(wildcard).add(state);
+                    current.get(wildcard).add(state);
                     return state;
                 }
 
@@ -157,9 +172,8 @@ public class DFALexer implements Lexer {
                     NFAState state = current;
                     while (iterator.hasNext()) {
                         Range range = Range.of(iterator.next());
-                        state.transfer.putIfAbsent(range, new HashSet<>());
                         NFAState next = new NFAState();
-                        state.transfer.get(range).add(next);
+                        state.get(range).add(next);
                         state = next;
                     }
                     return state;
@@ -169,8 +183,7 @@ public class DFALexer implements Lexer {
                 public NFAState visitRange(RegularExpression.Range expression) {
                     NFAState result = new NFAState();
                     Range range = new Range(expression.start, expression.end);
-                    current.transfer.putIfAbsent(range, new HashSet<>());
-                    current.transfer.get(range).add(result);
+                    current.get(range).add(result);
                     return result;
                 }
 
@@ -178,13 +191,11 @@ public class DFALexer implements Lexer {
                 public NFAState visitConcatenation(RegularExpression.Concatenation expression) {
                     NFAState state = current;
                     current = new NFAState();
-                    state.transfer.putIfAbsent(null, new HashSet<>());
-                    state.transfer.get(null).add(current);
+                    state.get(null).add(current);
                     for (RegularExpression e : expression.expressions) {
                         current = e.visit(this);
                         NFAState empty = new NFAState();
-                        current.transfer.putIfAbsent(null, new HashSet<>());
-                        current.transfer.get(null).add(empty);
+                        current.get(null).add(empty);
                         current = empty;
                     }
                     NFAState result = current;
@@ -195,14 +206,12 @@ public class DFALexer implements Lexer {
                 @Override
                 public NFAState visitAlternation(RegularExpression.Alternation expression) {
                     NFAState storage = current;
-                    storage.transfer.putIfAbsent(null, new HashSet<>());
                     NFAState result = new NFAState();
                     for (RegularExpression e : expression.expressions) {
                         current = new NFAState();
-                        storage.transfer.get(null).add(current);
+                        storage.get(null).add(current);
                         NFAState state = e.visit(this);
-                        state.transfer.putIfAbsent(null, new HashSet<>());
-                        state.transfer.get(null).add(result);
+                        state.get(null).add(result);
                     }
                     current = storage;
                     return result;
@@ -212,14 +221,12 @@ public class DFALexer implements Lexer {
                 public NFAState visitClosure(RegularExpression.Closure expression) {
                     NFAState result = new NFAState();
                     NFAState storage = current;
-                    storage.transfer.putIfAbsent(null, new HashSet<>());
                     current = new NFAState();
-                    storage.transfer.get(null).add(current);
-                    storage.transfer.get(null).add(result);
+                    storage.get(null).add(current);
+                    storage.get(null).add(result);
                     NFAState state = expression.expression.visit(this);
-                    state.transfer.putIfAbsent(null, new HashSet<>());
-                    state.transfer.get(null).add(result);
-                    state.transfer.get(null).add(current);
+                    state.get(null).add(result);
+                    state.get(null).add(current);
                     current = storage;
                     return result;
                 }
@@ -251,7 +258,7 @@ public class DFALexer implements Lexer {
                             changed.add(s);
                             stateMap.put(s, new DFAState());
                         }
-                        dfaState.transfer.put(r, stateMap.get(s));
+                        dfaState.put(r, stateMap.get(s));
                     });
                     states.stream().filter(s -> s.rule != null).forEach(s -> {
                         LexicalRule rule = s.rule;
@@ -274,7 +281,7 @@ public class DFALexer implements Lexer {
                 closure = new HashSet<>(states);
                 flag = false;
                 for (NFAState state : states)
-                    if (closure.addAll(state.transfer.getOrDefault(null, Set.of()))) flag = true;
+                    if (closure.addAll(state.get(null))) flag = true;
                 states = closure;
             }
             return closure;
