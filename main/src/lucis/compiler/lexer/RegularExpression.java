@@ -166,7 +166,8 @@ public interface RegularExpression {
         int last = -1;
         List<RegularExpression> expressions = new ArrayList<>(sorted.size() + 1);
         for (int codepoint : sorted) {
-            expressions.add(range(last + 1, codepoint));
+            if (codepoint != 0)
+                expressions.add(range(last + 1, codepoint));
             last = codepoint;
         }
         expressions.add(range(last + 1, Integer.MAX_VALUE));
