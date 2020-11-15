@@ -139,8 +139,6 @@ public class DFALexer implements Lexer {
                     NFAState state = new NFAState();
                     current.transfer.putIfAbsent(null, new HashSet<>());
                     current.transfer.get(null).add(state);
-                    state.transfer.putIfAbsent(null, new HashSet<>());
-                    state.transfer.get(null).add(current);
                     return state;
                 }
 
@@ -179,8 +177,16 @@ public class DFALexer implements Lexer {
                 @Override
                 public NFAState visitConcatenation(RegularExpression.Concatenation expression) {
                     NFAState state = current;
-                    for (RegularExpression e : expression.expressions)
+                    current = new NFAState();
+                    state.transfer.putIfAbsent(null, new HashSet<>());
+                    state.transfer.get(null).add(current);
+                    for (RegularExpression e : expression.expressions) {
                         current = e.visit(this);
+                        NFAState empty = new NFAState();
+                        current.transfer.putIfAbsent(null, new HashSet<>());
+                        current.transfer.get(null).add(empty);
+                        current = empty;
+                    }
                     NFAState result = current;
                     current = state;
                     return result;
@@ -188,25 +194,34 @@ public class DFALexer implements Lexer {
 
                 @Override
                 public NFAState visitAlternation(RegularExpression.Alternation expression) {
+                    NFAState storage = current;
+                    storage.transfer.putIfAbsent(null, new HashSet<>());
                     NFAState result = new NFAState();
                     for (RegularExpression e : expression.expressions) {
+                        current = new NFAState();
+                        storage.transfer.get(null).add(current);
                         NFAState state = e.visit(this);
                         state.transfer.putIfAbsent(null, new HashSet<>());
                         state.transfer.get(null).add(result);
-                        result.transfer.putIfAbsent(null, new HashSet<>());
-                        result.transfer.get(null).add(state);
                     }
+                    current = storage;
                     return result;
                 }
 
                 @Override
                 public NFAState visitClosure(RegularExpression.Closure expression) {
+                    NFAState result = new NFAState();
+                    NFAState storage = current;
+                    storage.transfer.putIfAbsent(null, new HashSet<>());
+                    current = new NFAState();
+                    storage.transfer.get(null).add(current);
+                    storage.transfer.get(null).add(result);
                     NFAState state = expression.expression.visit(this);
                     state.transfer.putIfAbsent(null, new HashSet<>());
+                    state.transfer.get(null).add(result);
                     state.transfer.get(null).add(current);
-                    current.transfer.putIfAbsent(null, new HashSet<>());
-                    current.transfer.get(null).add(state);
-                    return state;
+                    current = storage;
+                    return result;
                 }
             });
             state.rule = rule;
