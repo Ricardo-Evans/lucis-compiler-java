@@ -240,8 +240,9 @@ public class DFALexer implements Lexer {
                     });
                     states.stream().filter(s -> s.rule != null).forEach(s -> {
                         LexicalRule rule = s.rule;
-                        if (dfaState.rule == null) dfaState.rule = rule;
-                        else if (priorities.get(rule) > priorities.get(dfaState.rule))
+                        if (Objects.equals(priorities.get(rule), priorities.get(dfaState.rule)))
+                            throw new LexicalException("lexical rules conflict between " + rule + " and " + dfaState.rule);
+                        if (priorities.get(rule) > priorities.getOrDefault(dfaState.rule, Integer.MIN_VALUE))
                             dfaState.rule = rule;
                     });
                 }
