@@ -2,6 +2,7 @@ package lucis.compiler;
 
 import lucis.compiler.entity.Constants;
 import lucis.compiler.entity.Lexeme;
+import lucis.compiler.entity.Position;
 import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.io.ChannelReader;
 import lucis.compiler.io.Reader;
@@ -49,7 +50,7 @@ public class Compiler {
                     .define(Constants.INTEGER_LITERAL, rule("integer"))
                     .define(Constants.DECIMAL_LITERAL, rule("decimal"))
                     .define(Constants.STRING_LITERAL, rule("string"))
-                    .define(Constants.IDENTIFIER, rule("identifier"))
+                    .define(Constants.IDENTIFIER, rule("identifier"), -1)
 
                     .define(Constants.DISCARD, rule("_"))
                     .define(Constants.DOT, rule("."))
@@ -67,6 +68,10 @@ public class Compiler {
                     .define(Constants.NEGATIVE, rule("-"))
                     .define(Constants.MULTIPLY, rule("*"))
                     .define(Constants.DIVISION, rule("/"))
+                    .define(Constants.REMAINDER, rule("%"))
+                    .define(Constants.AND, rule("&"))
+                    .define(Constants.OR, rule("|"))
+                    .define(Constants.NOT, rule("!"))
 
                     .define(Constants.L_ROUND_BRACKET, rule("("))
                     .define(Constants.R_ROUND_BRACKET, rule(")"))
@@ -77,9 +82,21 @@ public class Compiler {
                     .define(Constants.L_ANGLE_BRACKET, rule("<"))
                     .define(Constants.R_ANGLE_BRACKET, rule(">"))
 
-                    .define(Constants.WHITESPACE, rule("whitespace"))
-                    .define(Constants.TAB, rule("tab"))
-                    .define(Constants.NEWLINE, rule("newline"))
+                    .define(Constants.IF, rule("if"))
+                    .define(Constants.ELSE, rule("else"))
+                    .define(Constants.WHEN, rule("when"))
+                    .define(Constants.WHILE, rule("while"))
+                    .define(Constants.BREAK, rule("break"))
+                    .define(Constants.CLASS, rule("class"))
+                    .define(Constants.TRAIT, rule("trait"))
+                    .define(Constants.IMPORT, rule("import"))
+                    .define(Constants.EXPORT, rule("export"))
+                    .define(Constants.NATIVE, rule("native"))
+                    .define(Constants.RETURN, rule("return"))
+
+                    .define(Constants.LINE_COMMENT, rule("line-comment"))
+                    .define(Constants.BLOCK_COMMENT, rule("block-comment"))
+                    .define(Constants.BLANK, rule("blank"))
                     .build();
         }
         return defaultLexer;
@@ -89,12 +106,23 @@ public class Compiler {
         if (defaultParser != null) return defaultParser;
         synchronized (Compiler.class) {
             if (defaultParser != null) return defaultParser;
-            defaultParser = new LRParser.Builder("goal").build();
+            defaultParser = new LRParser.Builder("goal")
+                    .build();
         }
         return defaultParser;
     }
 
     private static LexicalRule rule(String name) {
-        return (content, position) -> new Lexeme(name, content, position);
+        return new LexicalRule() {
+            @Override
+            public SyntaxTree apply(String content, Position position) {
+                return new Lexeme(name, content, position);
+            }
+
+            @Override
+            public String toString() {
+                return "rule: " + name;
+            }
+        };
     }
 }
