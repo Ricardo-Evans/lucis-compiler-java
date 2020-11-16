@@ -15,6 +15,7 @@ public class LRParser implements Parser {
 
     @Override
     public SyntaxTree parse(Supplier<? extends SyntaxTree> lexemes) {
+        Objects.requireNonNull(lexemes);
         Deque<State> states = new ArrayDeque<>();
         Deque<SyntaxTree> nodes = new ArrayDeque<>();
         states.push(initialState);
@@ -117,9 +118,11 @@ public class LRParser implements Parser {
         private final Map<String, Set<Grammar>> grammars = new HashMap<>();
         private Map<String, Set<String>> peekMap;
         private final String goal;
-        public final String empty;
+        private final String empty;
 
         public Builder(String goal, String empty) {
+            Objects.requireNonNull(goal, "the goal cannot be null");
+            Objects.requireNonNull(empty, "the empty cannot be null");
             this.goal = goal;
             this.empty = empty;
         }
