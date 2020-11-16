@@ -7,9 +7,9 @@ import java.util.Objects;
 public class Grammar implements Serializable {
     public final String left;
     public final String[] right;
-    public final Parser.Reduction reduction;
+    public final Reduction reduction;
 
-    public Grammar(String left, String[] right, Parser.Reduction reduction) {
+    public Grammar(String left, String[] right, Reduction reduction) {
         this.left = left;
         this.right = right;
         this.reduction = reduction;

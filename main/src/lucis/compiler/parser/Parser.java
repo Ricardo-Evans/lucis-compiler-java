@@ -23,8 +23,4 @@ public interface Parser {
         Parser build();
     }
 
-    @FunctionalInterface
-    interface Reduction {
-        SyntaxTree reduce(SyntaxTree... nodes);
-    }
 }
