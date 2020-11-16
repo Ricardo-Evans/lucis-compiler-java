@@ -273,7 +273,6 @@ public class DFALexer implements Lexer {
             return new DFALexer(state);
         }
 
-        // Assume (a -> b) <-> (b -> a) holds
         private static Set<NFAState> closure(Set<NFAState> states) {
             Set<NFAState> closure = null;
             boolean flag = true;
