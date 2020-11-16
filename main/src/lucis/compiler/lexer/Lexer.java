@@ -3,6 +3,8 @@ package lucis.compiler.lexer;
 import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.io.Reader;
 
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -14,11 +16,32 @@ import java.util.function.Supplier;
 @FunctionalInterface
 public interface Lexer {
     /**
-     * Get the lexeme stream resolved from the given reader
+     * Get the lexeme stream resolved from the given reader, without filter
      *
+     * @param reader reader of source
      * @return the lexeme stream
      */
     Supplier<SyntaxTree> resolve(Reader reader);
+
+    /**
+     * Get the filtered lexeme stream resolved from the given reader
+     *
+     * @param reader  reader of source
+     * @param ignores set of ignores
+     * @return the lexeme stream
+     */
+    default Supplier<SyntaxTree> resolve(Reader reader, Set<String> ignores) {
+        Objects.requireNonNull(ignores);
+        Supplier<SyntaxTree> lexemes = resolve(reader);
+        return () -> {
+            SyntaxTree lexeme;
+            do {
+                lexeme = lexemes.get();
+                if (lexeme == null) return null;
+            } while (ignores.contains(lexeme.name()));
+            return lexeme;
+        };
+    }
 
     interface Builder {
         Lexer build();
