@@ -24,6 +24,7 @@ public class DFALexer implements Lexer {
 
     @Override
     public Supplier<SyntaxTree> resolve(Reader reader) {
+        Objects.requireNonNull(reader);
         return () -> {
             try {
                 if (!reader.available()) return null;
@@ -148,6 +149,8 @@ public class DFALexer implements Lexer {
         }
 
         public Builder define(RegularExpression expression, LexicalRule rule, int priority) {
+            Objects.requireNonNull(expression);
+            Objects.requireNonNull(rule);
             NFAState state = expression.visit(new RegularExpression.Visitor<>() {
                 private NFAState current = initialState;
 
