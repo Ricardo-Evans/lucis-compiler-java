@@ -117,10 +117,11 @@ public class LRParser implements Parser {
         private final Map<String, Set<Grammar>> grammars = new HashMap<>();
         private Map<String, Set<String>> peekMap;
         private final String goal;
-        public static final String EMPTY = "";
+        public final String empty;
 
-        public Builder(String goal) {
+        public Builder(String goal, String empty) {
             this.goal = goal;
+            this.empty = empty;
         }
 
         public Builder define(Grammar grammar) {
@@ -188,7 +189,7 @@ public class LRParser implements Parser {
                     for (Grammar g : grammars.get(s)) {
                         for (String x : g.right) {
                             if (peekSet.addAll(peekMap.get(x))) flag = true;
-                            if (!peekSet.remove(EMPTY)) break;
+                            if (!peekSet.remove(empty)) break;
                         }
                     }
                 }
@@ -197,12 +198,12 @@ public class LRParser implements Parser {
 
         private Set<String> peek(Item item) {
             Set<String> peekSet = new HashSet<>();
-            peekSet.add(EMPTY);
+            peekSet.add(empty);
             for (int i = item.index + 1; i < item.grammar.length(); ++i) {
-                if (!peekSet.remove(EMPTY)) break;
+                if (!peekSet.remove(empty)) break;
                 peekSet.addAll(peekMap.get(item.grammar.right[i]));
             }
-            if (peekSet.remove(EMPTY)) peekSet.add(item.peek);
+            if (peekSet.remove(empty)) peekSet.add(item.peek);
             return peekSet;
         }
 
