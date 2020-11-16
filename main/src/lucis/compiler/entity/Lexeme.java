@@ -28,6 +28,11 @@ public final class Lexeme implements Serializable, SyntaxTree {
     }
 
     @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitLexeme(this, data);
+    }
+
+    @Override
     public String toString() {
         return "Lexeme{" +
                 "name='" + name + '\'' +

@@ -3,9 +3,15 @@ package lucis.compiler.entity;
 public interface SyntaxTree {
     String name();
 
-    //<R, D> R visit(Visitor<R, D> visitor, D data);
+    <R, D> R visit(Visitor<R, D> visitor, D data);
 
     interface Visitor<R, D> {
-        void visitToken(Lexeme lexeme);
+        R visitLexeme(Lexeme lexeme, D data);
+
+        R visitSource(Source source, D data);
+
+        R visitExpression(Expression expression, D data);
+
+        R visitStatement(Statement statement, D data);
     }
 }

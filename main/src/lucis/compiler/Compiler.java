@@ -49,7 +49,8 @@ public class Compiler {
             defaultLexer = new DFALexer.Builder()
                     .define(Constants.INTEGER_LITERAL, rule("integer"))
                     .define(Constants.DECIMAL_LITERAL, rule("decimal"))
-                    .define(Constants.STRING_LITERAL, rule("string"))
+                    .define(Constants.NORMAL_STRING_LITERAL, rule("normal-string"))
+                    .define(Constants.RAW_STRING_LITERAL, rule("raw-string"))
                     .define(Constants.IDENTIFIER, rule("identifier"), -1)
 
                     .define(Constants.DISCARD, rule("_"))
@@ -82,6 +83,9 @@ public class Compiler {
                     .define(Constants.L_ANGLE_BRACKET, rule("<"))
                     .define(Constants.R_ANGLE_BRACKET, rule(">"))
 
+                    .define(Constants.IN,rule("in"))
+                    .define(Constants.IS,rule("is"))
+                    .define(Constants.AS,rule("as"))
                     .define(Constants.IF, rule("if"))
                     .define(Constants.ELSE, rule("else"))
                     .define(Constants.WHEN, rule("when"))
@@ -91,10 +95,11 @@ public class Compiler {
                     .define(Constants.TRAIT, rule("trait"))
                     .define(Constants.IMPORT, rule("import"))
                     .define(Constants.EXPORT, rule("export"))
+                    .define(Constants.LAMBDA, rule("lambda"))
                     .define(Constants.NATIVE, rule("native"))
                     .define(Constants.RETURN, rule("return"))
 
-                    .define(Constants.LINE_COMMENT, rule("line-comment"))
+                    .define(Constants.LINE_COMMENT, rule("line-comment"),-1)
                     .define(Constants.BLOCK_COMMENT, rule("block-comment"))
                     .define(Constants.BLANK, rule("blank"))
                     .build();
