@@ -64,6 +64,7 @@ public final class Constants {
     public static final RegularExpression IMPORT = RegularExpression.pure("import");
     public static final RegularExpression EXPORT = RegularExpression.pure("export");
     public static final RegularExpression LAMBDA = RegularExpression.pure("lambda");
+    public static final RegularExpression ASSERT = RegularExpression.pure("assert");
     public static final RegularExpression NATIVE = RegularExpression.pure("native");
     public static final RegularExpression RETURN = RegularExpression.pure("return");
 

@@ -9,9 +9,18 @@ public class Source implements SyntaxTree {
         this.statements = statements;
     }
 
+    public List<Statement> statements() {
+        return statements;
+    }
+
     @Override
     public String name() {
         return "source";
+    }
+
+    @Override
+    public Position position() {
+        return statements.stream().findAny().map(SyntaxTree::position).orElse(Position.ROOT);
     }
 
     @Override

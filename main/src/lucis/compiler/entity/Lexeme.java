@@ -23,6 +23,7 @@ public final class Lexeme implements Serializable, SyntaxTree {
         return content;
     }
 
+    @Override
     public Position position() {
         return position;
     }

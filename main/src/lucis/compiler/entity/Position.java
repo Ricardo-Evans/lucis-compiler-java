@@ -11,6 +11,8 @@ import java.io.Serializable;
 public final class Position implements Serializable {
     private static final long serialVersionUID = 8729840806537371432L;
 
+    public static final Position ROOT = new Position(1, 1);
+
     private final long line;
     private final long offset;
 
