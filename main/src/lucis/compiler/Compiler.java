@@ -8,6 +8,7 @@ import lucis.compiler.lexer.Lexer;
 import lucis.compiler.lexer.LexicalRule;
 import lucis.compiler.parser.LRParser;
 import lucis.compiler.parser.Parser;
+import lucis.compiler.utility.Constants;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,5 +1,7 @@
 package lucis.compiler.entity;
 
+import lucis.compiler.utility.Name;
+
 public interface SyntaxTree {
     default String name() {
         Name name = getClass().getAnnotation(Name.class);

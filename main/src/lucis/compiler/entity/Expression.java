@@ -1,5 +1,7 @@
 package lucis.compiler.entity;
 
+import lucis.compiler.utility.Name;
+
 @Name("expression")
 public class Expression implements SyntaxTree {
     @Override

@@ -1,5 +1,7 @@
 package lucis.compiler.entity;
 
+import lucis.compiler.utility.Name;
+
 @Name("statement")
 public class Statement implements SyntaxTree {
     @Override

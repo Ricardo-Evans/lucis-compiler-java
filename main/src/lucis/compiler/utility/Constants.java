@@ -1,4 +1,4 @@
-package lucis.compiler.entity;
+package lucis.compiler.utility;
 
 import lucis.compiler.lexer.RegularExpression;
 

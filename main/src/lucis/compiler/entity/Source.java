@@ -1,5 +1,7 @@
 package lucis.compiler.entity;
 
+import lucis.compiler.utility.Name;
+
 import java.util.List;
 
 @Name("source")
