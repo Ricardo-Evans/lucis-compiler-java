@@ -2,6 +2,7 @@ package lucis.compiler.entity;
 
 import java.util.List;
 
+@Name("source")
 public class Source implements SyntaxTree {
     private final List<Statement> statements;
 
@@ -11,11 +12,6 @@ public class Source implements SyntaxTree {
 
     public List<Statement> statements() {
         return statements;
-    }
-
-    @Override
-    public String name() {
-        return "source";
     }
 
     @Override

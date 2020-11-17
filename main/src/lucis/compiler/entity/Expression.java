@@ -1,11 +1,7 @@
 package lucis.compiler.entity;
 
+@Name("expression")
 public class Expression implements SyntaxTree {
-    @Override
-    public String name() {
-        return "expression";
-    }
-
     @Override
     public Position position() {
         return null;

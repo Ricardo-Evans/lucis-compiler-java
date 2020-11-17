@@ -1,8 +1,5 @@
 package lucis.compiler.entity;
 
+@Name("functional-statement")
 public class FunctionStatement extends Statement {
-    @Override
-    public String name() {
-        return "function-statement";
-    }
 }

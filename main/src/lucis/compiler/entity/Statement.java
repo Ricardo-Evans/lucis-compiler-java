@@ -1,11 +1,7 @@
 package lucis.compiler.entity;
 
+@Name("statement")
 public class Statement implements SyntaxTree {
-    @Override
-    public String name() {
-        return "statement";
-    }
-
     @Override
     public Position position() {
         return null;

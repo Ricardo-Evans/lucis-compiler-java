@@ -1,9 +1,6 @@
 package lucis.compiler;
 
-import lucis.compiler.entity.Constants;
-import lucis.compiler.entity.Lexeme;
-import lucis.compiler.entity.Position;
-import lucis.compiler.entity.SyntaxTree;
+import lucis.compiler.entity.*;
 import lucis.compiler.io.ChannelReader;
 import lucis.compiler.io.Reader;
 import lucis.compiler.lexer.DFALexer;
@@ -16,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
+import java.util.LinkedList;
 import java.util.function.Supplier;
 
 public class Compiler {
@@ -40,6 +38,7 @@ public class Compiler {
         while ((lexeme = lexemes.get()) != null) {
             System.out.println(lexeme);
         }
+        // parser.parse(lexemes);
     }
 
     public static Lexer defaultLexer() {
@@ -83,9 +82,9 @@ public class Compiler {
                     .define(Constants.L_ANGLE_BRACKET, rule("<"))
                     .define(Constants.R_ANGLE_BRACKET, rule(">"))
 
-                    .define(Constants.IN,rule("in"))
-                    .define(Constants.IS,rule("is"))
-                    .define(Constants.AS,rule("as"))
+                    .define(Constants.IN, rule("in"))
+                    .define(Constants.IS, rule("is"))
+                    .define(Constants.AS, rule("as"))
                     .define(Constants.IF, rule("if"))
                     .define(Constants.ELSE, rule("else"))
                     .define(Constants.WHEN, rule("when"))
@@ -96,10 +95,11 @@ public class Compiler {
                     .define(Constants.IMPORT, rule("import"))
                     .define(Constants.EXPORT, rule("export"))
                     .define(Constants.LAMBDA, rule("lambda"))
+                    .define(Constants.ASSERT, rule("assert"))
                     .define(Constants.NATIVE, rule("native"))
                     .define(Constants.RETURN, rule("return"))
 
-                    .define(Constants.LINE_COMMENT, rule("line-comment"),-1)
+                    .define(Constants.LINE_COMMENT, rule("line-comment"), -1)
                     .define(Constants.BLOCK_COMMENT, rule("block-comment"))
                     .define(Constants.BLANK, rule("blank"))
                     .build();
@@ -111,7 +111,14 @@ public class Compiler {
         if (defaultParser != null) return defaultParser;
         synchronized (Compiler.class) {
             if (defaultParser != null) return defaultParser;
-            defaultParser = new LRParser.Builder("goal")
+            defaultParser = new LRParser.Builder("source", "empty")
+                    .define("source:statement source", nodes -> Reductions.source((Source) nodes[0], (Statement) nodes[1]))
+                    .define("source:empty", nodes -> Reductions.source())
+                    .define("statement:function-statement", nodes -> Reductions.source())
+                    .define("function-statement:identifier identifier ( parameter-list ) block-statement", nodes -> Reductions.source())
+                    .define("parameter-list:identifier identifier , parameter-list", nodes -> Reductions.source())
+                    .define("parameter-list:empty", nodes -> Reductions.source())
+                    .define("expression:identifier", nodes -> Reductions.expression((Lexeme) nodes[0]))
                     .build();
         }
         return defaultParser;
@@ -129,5 +136,20 @@ public class Compiler {
                 return "rule: " + name;
             }
         };
+    }
+
+    private static class Reductions {
+        private static Source source(Source source, Statement statement) {
+            source.statements().add(statement);
+            return source;
+        }
+
+        private static Source source() {
+            return new Source(new LinkedList<>());
+        }
+
+        private static Expression expression(Lexeme lexeme) {
+            return null;
+        }
     }
 }

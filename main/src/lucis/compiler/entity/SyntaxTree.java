@@ -1,7 +1,12 @@
 package lucis.compiler.entity;
 
 public interface SyntaxTree {
-    String name();
+    default String name() {
+        if (getClass().isAnnotationPresent(Name.class)) {
+            Name name = getClass().getAnnotation(Name.class);
+            return name.value();
+        } else throw new IllegalStateException(getClass() + " has no name");
+    }
 
     Position position();
 
