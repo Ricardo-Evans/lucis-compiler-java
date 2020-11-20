@@ -2,6 +2,9 @@ package lucis.compiler.entity;
 
 import lucis.compiler.utility.Name;
 
-@Name("functional-statement")
+@Name("function-statement")
 public class FunctionStatement extends Statement {
+    public FunctionStatement(Statement statement) {
+        super(statement);
+    }
 }

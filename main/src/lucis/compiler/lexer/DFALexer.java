@@ -2,6 +2,7 @@ package lucis.compiler.lexer;
 
 import lucis.compiler.entity.Position;
 import lucis.compiler.entity.SyntaxTree;
+import lucis.compiler.entity.Unit;
 import lucis.compiler.io.Reader;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
  *
  * @author owl
  * @author Ricardo Evans
+ * @version 1.1
  */
 public class DFALexer implements Lexer {
     private final DFAState initialState;
@@ -23,7 +25,7 @@ public class DFALexer implements Lexer {
     }
 
     @Override
-    public Supplier<SyntaxTree> resolve(Reader reader) {
+    public Supplier<Unit> resolve(Reader reader) {
         Objects.requireNonNull(reader);
         return () -> {
             try {
@@ -35,7 +37,7 @@ public class DFALexer implements Lexer {
                 StringBuilder builder = new StringBuilder();
                 reader.mark();
                 while (state != null) {
-                    if (state.rule != null) {
+                    if (state.name != null) {
                         terminate = state;
                         content = builder.toString();
                         reader.mark();
@@ -48,7 +50,7 @@ public class DFALexer implements Lexer {
                 reader.reset();
                 if (terminate == null)
                     throw new LexicalException("cannot recognize " + builder.toString() + " at " + position + " as a lexical unit");
-                return terminate.rule.apply(content, position);
+                return new Unit(terminate.name, content, position);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new LexicalException(e);
@@ -107,7 +109,7 @@ public class DFALexer implements Lexer {
 
     private static class DFAState implements Serializable {
         private final Map<Range, DFAState> transfer = new HashMap<>();
-        private LexicalRule rule = null;
+        private String name = null;
 
         public DFAState handle(Integer character) {
             for (Map.Entry<Range, DFAState> entry : transfer.entrySet())
@@ -126,7 +128,7 @@ public class DFALexer implements Lexer {
 
     private static class NFAState {
         private final Map<Range, Set<NFAState>> transfer = new HashMap<>();
-        private LexicalRule rule = null;
+        private String name = null;
 
         public Set<NFAState> get(Range key) {
             transfer.putIfAbsent(key, new HashSet<>());
@@ -143,14 +145,14 @@ public class DFALexer implements Lexer {
      */
     public static class Builder implements Lexer.Builder {
         private final NFAState initialState = new NFAState();
-        private final Map<LexicalRule, Integer> priorities = new HashMap<>();
+        private final Map<String, Integer> priorities = new HashMap<>();
 
         public Builder() {
         }
 
-        public Builder define(RegularExpression expression, LexicalRule rule, int priority) {
+        public Builder define(RegularExpression expression, String name, int priority) {
             Objects.requireNonNull(expression);
-            Objects.requireNonNull(rule);
+            Objects.requireNonNull(name);
             NFAState state = expression.visit(new RegularExpression.Visitor<>() {
                 private NFAState current = initialState;
 
@@ -234,13 +236,13 @@ public class DFALexer implements Lexer {
                     return result;
                 }
             });
-            state.rule = rule;
-            priorities.put(rule, priority);
+            state.name = name;
+            priorities.put(name, priority);
             return this;
         }
 
-        public Builder define(RegularExpression expression, LexicalRule rule) {
-            return define(expression, rule, 0);
+        public Builder define(RegularExpression expression, String name) {
+            return define(expression, name, 0);
         }
 
         public Lexer build() {
@@ -263,12 +265,12 @@ public class DFALexer implements Lexer {
                         }
                         dfaState.put(r, stateMap.get(s));
                     });
-                    states.stream().filter(s -> s.rule != null).forEach(s -> {
-                        LexicalRule rule = s.rule;
-                        if (Objects.equals(priorities.get(rule), priorities.get(dfaState.rule)))
-                            throw new LexicalException("lexical rules conflict between " + rule + " and " + dfaState.rule);
-                        if (priorities.get(rule) > priorities.getOrDefault(dfaState.rule, Integer.MIN_VALUE))
-                            dfaState.rule = rule;
+                    states.stream().filter(s -> s.name != null).forEach(s -> {
+                        String name = s.name;
+                        if (Objects.equals(priorities.get(name), priorities.get(dfaState.name)))
+                            throw new LexicalException("lexical rules conflict between " + name + " and " + dfaState.name);
+                        if (priorities.get(name) > priorities.getOrDefault(dfaState.name, Integer.MIN_VALUE))
+                            dfaState.name = name;
                     });
                 }
                 remaining = changed;

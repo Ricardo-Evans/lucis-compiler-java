@@ -5,7 +5,6 @@ import lucis.compiler.io.ChannelReader;
 import lucis.compiler.io.Reader;
 import lucis.compiler.lexer.DFALexer;
 import lucis.compiler.lexer.Lexer;
-import lucis.compiler.lexer.LexicalRule;
 import lucis.compiler.parser.LRParser;
 import lucis.compiler.parser.Parser;
 import lucis.compiler.utility.Constants;
@@ -24,7 +23,7 @@ public class Compiler {
     private final Parser parser;
 
     public Compiler() {
-        this(defaultLexer(), defaultParser());
+        this(defaultLexer(), null);
     }
 
     public Compiler(Lexer lexer, Parser parser) {
@@ -34,8 +33,8 @@ public class Compiler {
 
     public void compile(File file) throws IOException {
         Reader reader = new ChannelReader(FileChannel.open(file.toPath(), StandardOpenOption.READ));
-        Supplier<SyntaxTree> lexemes = lexer.resolve(reader);
-        SyntaxTree lexeme;
+        Supplier<Unit> lexemes = lexer.resolve(reader);
+        Unit lexeme;
         while ((lexeme = lexemes.get()) != null) {
             System.out.println(lexeme);
         }
@@ -47,62 +46,62 @@ public class Compiler {
         synchronized (Compiler.class) {
             if (defaultLexer != null) return defaultLexer;
             defaultLexer = new DFALexer.Builder()
-                    .define(Constants.INTEGER_LITERAL, rule("integer"))
-                    .define(Constants.DECIMAL_LITERAL, rule("decimal"))
-                    .define(Constants.NORMAL_STRING_LITERAL, rule("normal-string"))
-                    .define(Constants.RAW_STRING_LITERAL, rule("raw-string"))
-                    .define(Constants.IDENTIFIER, rule("identifier"), -1)
+                    .define(Constants.INTEGER_LITERAL, "integer")
+                    .define(Constants.DECIMAL_LITERAL, "decimal")
+                    .define(Constants.NORMAL_STRING_LITERAL, "normal-string")
+                    .define(Constants.RAW_STRING_LITERAL, "raw-string")
+                    .define(Constants.IDENTIFIER, "identifier", -1)
 
-                    .define(Constants.DISCARD, rule("_"))
-                    .define(Constants.DOT, rule("."))
-                    .define(Constants.COMMA, rule(","))
-                    .define(Constants.COLON, rule(":"))
-                    .define(Constants.SEMICOLON, rule(";"))
-                    .define(Constants.QUESTION, rule("?"))
-                    .define(Constants.AT, rule("@"))
-                    .define(Constants.ELLIPSIS, rule("..."))
-                    .define(Constants.SINGLE_QUOTE, rule("'"))
-                    .define(Constants.DOUBLE_QUOTE, rule("\""))
-                    .define(Constants.BACK_QUOTE, rule("`"))
-                    .define(Constants.ASSIGN, rule("="))
-                    .define(Constants.POSITIVE, rule("+"))
-                    .define(Constants.NEGATIVE, rule("-"))
-                    .define(Constants.MULTIPLY, rule("*"))
-                    .define(Constants.DIVISION, rule("/"))
-                    .define(Constants.REMAINDER, rule("%"))
-                    .define(Constants.AND, rule("&"))
-                    .define(Constants.OR, rule("|"))
-                    .define(Constants.NOT, rule("!"))
+                    .define(Constants.DISCARD, "_")
+                    .define(Constants.DOT, ".")
+                    .define(Constants.COMMA, ",")
+                    .define(Constants.COLON, ":")
+                    .define(Constants.SEMICOLON, ";")
+                    .define(Constants.QUESTION, "?")
+                    .define(Constants.AT, "@")
+                    .define(Constants.ELLIPSIS, "...")
+                    .define(Constants.SINGLE_QUOTE, "'")
+                    .define(Constants.DOUBLE_QUOTE, "\"")
+                    .define(Constants.BACK_QUOTE, "`")
+                    .define(Constants.ASSIGN, "=")
+                    .define(Constants.POSITIVE, "+")
+                    .define(Constants.NEGATIVE, "-")
+                    .define(Constants.MULTIPLY, "*")
+                    .define(Constants.DIVISION, "/")
+                    .define(Constants.REMAINDER, "%")
+                    .define(Constants.AND, "&")
+                    .define(Constants.OR, "|")
+                    .define(Constants.NOT, "!")
 
-                    .define(Constants.L_ROUND_BRACKET, rule("("))
-                    .define(Constants.R_ROUND_BRACKET, rule(")"))
-                    .define(Constants.L_SQUARE_BRACKET, rule("["))
-                    .define(Constants.R_SQUARE_BRACKET, rule("]"))
-                    .define(Constants.L_CURLY_BRACKET, rule("{"))
-                    .define(Constants.R_CURLY_BRACKET, rule("}"))
-                    .define(Constants.L_ANGLE_BRACKET, rule("<"))
-                    .define(Constants.R_ANGLE_BRACKET, rule(">"))
+                    .define(Constants.L_ROUND_BRACKET, "(")
+                    .define(Constants.R_ROUND_BRACKET, ")")
+                    .define(Constants.L_SQUARE_BRACKET, "[")
+                    .define(Constants.R_SQUARE_BRACKET, "]")
+                    .define(Constants.L_CURLY_BRACKET, "{")
+                    .define(Constants.R_CURLY_BRACKET, "}")
+                    .define(Constants.L_ANGLE_BRACKET, "<")
+                    .define(Constants.R_ANGLE_BRACKET, ">")
 
-                    .define(Constants.IN, rule("in"))
-                    .define(Constants.IS, rule("is"))
-                    .define(Constants.AS, rule("as"))
-                    .define(Constants.IF, rule("if"))
-                    .define(Constants.ELSE, rule("else"))
-                    .define(Constants.WHEN, rule("when"))
-                    .define(Constants.WHILE, rule("while"))
-                    .define(Constants.BREAK, rule("break"))
-                    .define(Constants.CLASS, rule("class"))
-                    .define(Constants.TRAIT, rule("trait"))
-                    .define(Constants.IMPORT, rule("import"))
-                    .define(Constants.EXPORT, rule("export"))
-                    .define(Constants.LAMBDA, rule("lambda"))
-                    .define(Constants.ASSERT, rule("assert"))
-                    .define(Constants.NATIVE, rule("native"))
-                    .define(Constants.RETURN, rule("return"))
+                    .define(Constants.IN, "in")
+                    .define(Constants.IS, "is")
+                    .define(Constants.AS, "as")
+                    .define(Constants.IF, "if")
+                    .define(Constants.ELSE, "else")
+                    .define(Constants.WHEN, "when")
+                    .define(Constants.WHILE, "while")
+                    .define(Constants.BREAK, "break")
+                    .define(Constants.CLASS, "class")
+                    .define(Constants.TRAIT, "trait")
+                    .define(Constants.IMPORT, "import")
+                    .define(Constants.EXPORT, "export")
+                    .define(Constants.LAMBDA, "lambda")
+                    .define(Constants.ASSERT, "assert")
+                    .define(Constants.NATIVE, "native")
+                    .define(Constants.RETURN, "return")
 
-                    .define(Constants.LINE_COMMENT, rule("line-comment"), -1)
-                    .define(Constants.BLOCK_COMMENT, rule("block-comment"))
-                    .define(Constants.BLANK, rule("blank"))
+                    .define(Constants.LINE_COMMENT, "line-comment", -1)
+                    .define(Constants.BLOCK_COMMENT, "block-comment")
+                    .define(Constants.BLANK, "blank")
                     .build();
         }
         return defaultLexer;
@@ -115,7 +114,7 @@ public class Compiler {
             defaultParser = new LRParser.Builder("source", "empty")
                     .define("source:statement source", nodes -> Reductions.source((Source) nodes[0], (Statement) nodes[1]))
                     .define("source:empty", nodes -> Reductions.source())
-                    .define("statement:function-statement", nodes -> Reductions.source())
+                    .define("statement:function-statement", nodes -> Reductions.statement((FunctionStatement) nodes[0]))
                     .define("function-statement:identifier identifier ( parameter-list ) block-statement", nodes -> Reductions.source())
                     .define("parameter-list:identifier identifier , parameter-list", nodes -> Reductions.source())
                     .define("parameter-list:empty", nodes -> Reductions.source())
@@ -123,20 +122,6 @@ public class Compiler {
                     .build();
         }
         return defaultParser;
-    }
-
-    private static LexicalRule rule(String name) {
-        return new LexicalRule() {
-            @Override
-            public SyntaxTree apply(String content, Position position) {
-                return new Lexeme(name, content, position);
-            }
-
-            @Override
-            public String toString() {
-                return "rule: " + name;
-            }
-        };
     }
 
     private static class Reductions {
@@ -147,6 +132,10 @@ public class Compiler {
 
         private static Source source() {
             return new Source(new LinkedList<>());
+        }
+
+        private static Statement statement(FunctionStatement function) {
+            return new Statement(function);
         }
 
         private static Expression expression(Lexeme lexeme) {

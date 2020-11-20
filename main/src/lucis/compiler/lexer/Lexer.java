@@ -1,6 +1,7 @@
 package lucis.compiler.lexer;
 
 import lucis.compiler.entity.SyntaxTree;
+import lucis.compiler.entity.Unit;
 import lucis.compiler.io.Reader;
 
 import java.util.Objects;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
  * Lexer is used to resolve character stream into lexeme stream.
  *
  * @author Ricardo Evans
- * @version 1.0
+ * @version 1.1
  */
 @FunctionalInterface
 public interface Lexer {
@@ -21,7 +22,7 @@ public interface Lexer {
      * @param reader reader of source
      * @return the lexeme stream
      */
-    Supplier<SyntaxTree> resolve(Reader reader);
+    Supplier<Unit> resolve(Reader reader);
 
     /**
      * Get the filtered lexeme stream resolved from the given reader
@@ -30,22 +31,22 @@ public interface Lexer {
      * @param ignores set of ignores
      * @return the lexeme stream
      */
-    default Supplier<SyntaxTree> resolve(Reader reader, Set<String> ignores) {
+    default Supplier<Unit> resolve(Reader reader, Set<String> ignores) {
         Objects.requireNonNull(ignores);
-        Supplier<SyntaxTree> lexemes = resolve(reader);
+        Supplier<Unit> lexemes = resolve(reader);
         return () -> {
-            SyntaxTree lexeme;
+            Unit unit;
             do {
-                lexeme = lexemes.get();
-                if (lexeme == null) return null;
-            } while (ignores.contains(lexeme.name()));
-            return lexeme;
+                unit = lexemes.get();
+                if (unit == null) return null;
+            } while (ignores.contains(unit.name()));
+            return unit;
         };
     }
 
     interface Builder {
         Lexer build();
 
-        Builder define(RegularExpression expression, LexicalRule rule);
+        Builder define(RegularExpression expression, String name);
     }
 }
