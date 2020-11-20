@@ -15,6 +15,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Compiler {
     private static Lexer defaultLexer = null;
@@ -33,11 +34,8 @@ public class Compiler {
 
     public void compile(File file) throws IOException {
         Reader reader = new ChannelReader(FileChannel.open(file.toPath(), StandardOpenOption.READ));
-        Supplier<Unit> lexemes = lexer.resolve(reader);
-        Unit lexeme;
-        while ((lexeme = lexemes.get()) != null) {
-            System.out.println(lexeme);
-        }
+        Stream<Unit> lexemes = lexer.resolve(reader);
+        lexemes.forEach(System.out::println);
         // parser.parse(lexemes);
     }
 

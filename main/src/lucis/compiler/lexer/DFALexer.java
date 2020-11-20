@@ -1,14 +1,12 @@
 package lucis.compiler.lexer;
 
 import lucis.compiler.entity.Position;
-import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.entity.Unit;
 import lucis.compiler.io.Reader;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Lexer implemented with deterministic finite automation.
@@ -25,9 +23,9 @@ public class DFALexer implements Lexer {
     }
 
     @Override
-    public Supplier<Unit> resolve(Reader reader) {
+    public Stream<Unit> resolve(Reader reader) {
         Objects.requireNonNull(reader);
-        return () -> {
+        return Stream.generate(() -> {
             try {
                 if (!reader.available()) return null;
                 DFAState state = initialState;
@@ -55,7 +53,7 @@ public class DFALexer implements Lexer {
                 e.printStackTrace();
                 throw new LexicalException(e);
             }
-        };
+        }).takeWhile(Objects::nonNull);
     }
 
     private static class Range implements Serializable, Comparable<Range> {

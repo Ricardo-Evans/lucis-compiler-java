@@ -7,6 +7,7 @@ import lucis.compiler.io.Reader;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Lexer is used to resolve character stream into lexeme stream.
@@ -22,27 +23,7 @@ public interface Lexer {
      * @param reader reader of source
      * @return the lexeme stream
      */
-    Supplier<Unit> resolve(Reader reader);
-
-    /**
-     * Get the filtered lexeme stream resolved from the given reader
-     *
-     * @param reader  reader of source
-     * @param ignores set of ignores
-     * @return the lexeme stream
-     */
-    default Supplier<Unit> resolve(Reader reader, Set<String> ignores) {
-        Objects.requireNonNull(ignores);
-        Supplier<Unit> lexemes = resolve(reader);
-        return () -> {
-            Unit unit;
-            do {
-                unit = lexemes.get();
-                if (unit == null) return null;
-            } while (ignores.contains(unit.name()));
-            return unit;
-        };
-    }
+    Stream<Unit> resolve(Reader reader);
 
     interface Builder {
         Lexer build();
