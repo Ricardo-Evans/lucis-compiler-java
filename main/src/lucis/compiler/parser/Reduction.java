@@ -1,8 +1,8 @@
 package lucis.compiler.parser;
 
-import lucis.compiler.entity.SyntaxTree;
+import lucis.compiler.entity.Unit;
 
 @FunctionalInterface
 public interface Reduction {
-    SyntaxTree reduce(SyntaxTree... nodes);
+    Unit reduce(Unit... nodes);
 }

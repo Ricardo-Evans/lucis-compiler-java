@@ -1,13 +1,15 @@
 package lucis.compiler.parser;
 
 import lucis.compiler.entity.SyntaxTree;
+import lucis.compiler.entity.Unit;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @FunctionalInterface
 public interface Parser {
-    SyntaxTree parse(Supplier<? extends SyntaxTree> lexemes);
+    Unit parse(Stream<? extends Unit> lexemes);
 
     interface Builder {
         Builder define(Grammar grammar);

@@ -1,10 +1,12 @@
 package lucis.compiler.parser;
 
 import lucis.compiler.entity.SyntaxTree;
+import lucis.compiler.entity.Unit;
 
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LRParser implements Parser {
     private final State initialState;
@@ -14,23 +16,24 @@ public class LRParser implements Parser {
     }
 
     @Override
-    public SyntaxTree parse(Supplier<? extends SyntaxTree> lexemes) {
+    public Unit parse(Stream<? extends Unit> lexemes) {
         Objects.requireNonNull(lexemes);
         Deque<State> states = new ArrayDeque<>();
-        Deque<SyntaxTree> nodes = new ArrayDeque<>();
+        Deque<Unit> nodes = new ArrayDeque<>();
         states.push(initialState);
-        SyntaxTree lexeme = lexemes.get();
+        Iterator<? extends Unit> iterator = lexemes.iterator();
+        Unit lexeme = iterator.next();
         while (true) {
             State state = states.peek();
             assert state != null;
             Action action = state.handle(lexeme);
             if (action == null)
-                throw new GrammaticalException("cannot handle '" + nodes.stream().map(SyntaxTree::name).reduce("", (s1, s2) -> s1 + " " + s2) + " ' as a grammatical structure");
+                throw new GrammaticalException("cannot handle '" + nodes.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + " ' as a grammatical structure");
             switch (action.type()) {
                 case ACCEPT: {
                     Grammar grammar = action.grammar();
                     int length = grammar.length();
-                    SyntaxTree[] handle = new SyntaxTree[length];
+                    Unit[] handle = new Unit[length];
                     for (int i = 0; i < length; ++i) {
                         handle[length - i - 1] = nodes.pop();
                         states.pop();
@@ -40,14 +43,14 @@ public class LRParser implements Parser {
                 case REDUCE: {
                     Grammar grammar = action.grammar();
                     int length = grammar.length();
-                    SyntaxTree[] handle = new SyntaxTree[length];
+                    Unit[] handle = new Unit[length];
                     for (int i = 0; i < length; ++i) {
                         handle[length - i - 1] = nodes.pop();
                         states.pop();
                     }
                     state = states.peek();
                     assert state != null;
-                    SyntaxTree reduction = grammar.reduction.reduce(handle);
+                    Unit reduction = grammar.reduction.reduce(handle);
                     nodes.push(reduction);
                     states.push(state.handle(reduction).state());
                     break;
@@ -55,7 +58,7 @@ public class LRParser implements Parser {
                 case SHIFT: {
                     states.push(action.state());
                     nodes.push(lexeme);
-                    lexeme = lexemes.get();
+                    lexeme = iterator.next();
                     break;
                 }
             }
@@ -65,7 +68,7 @@ public class LRParser implements Parser {
     private static class State {
         private final Map<String, Action> actionMap = new HashMap<>();
 
-        public Action handle(SyntaxTree node) {
+        public Action handle(Unit node) {
             return actionMap.get(node == null ? null : node.name());
         }
     }
