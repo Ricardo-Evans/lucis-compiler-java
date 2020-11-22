@@ -1,10 +1,8 @@
 package lucis.compiler.parser;
 
-import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.entity.Unit;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,48 +17,50 @@ public class LRParser implements Parser {
     public Unit parse(Stream<? extends Unit> lexemes) {
         Objects.requireNonNull(lexemes);
         Deque<State> states = new ArrayDeque<>();
-        Deque<Unit> nodes = new ArrayDeque<>();
+        Deque<Unit> units = new ArrayDeque<>();
         states.push(initialState);
-        Iterator<? extends Unit> iterator = lexemes.iterator();
-        Unit lexeme = iterator.next();
-        while (true) {
-            State state = states.peek();
-            assert state != null;
-            Action action = state.handle(lexeme);
-            if (action == null)
-                throw new GrammaticalException("cannot handle '" + nodes.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + " ' as a grammatical structure");
-            switch (action.type()) {
-                case ACCEPT: {
-                    Grammar grammar = action.grammar();
-                    int length = grammar.length();
-                    Unit[] handle = new Unit[length];
-                    for (int i = 0; i < length; ++i) {
-                        handle[length - i - 1] = nodes.pop();
-                        states.pop();
-                    }
-                    return grammar.reduction.reduce(handle);
+        lexemes.forEach(unit -> handle(unit, states, units));
+        return units.pop();
+    }
+
+    private void handle(Unit unit, Deque<State> states, Deque<Unit> units) {
+        State state = states.peek();
+        assert state != null;
+        Action action = state.handle(unit);
+        if (action == null)
+            throw new GrammaticalException("cannot handle '" + units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + " ' as a grammatical structure");
+        switch (action.type()) {
+            case ACCEPT: {
+                Grammar grammar = action.grammar();
+                int length = grammar.length();
+                Unit[] handle = new Unit[length];
+                for (int i = 0; i < length; ++i) {
+                    handle[length - i - 1] = units.pop();
+                    states.pop();
                 }
-                case REDUCE: {
-                    Grammar grammar = action.grammar();
-                    int length = grammar.length();
-                    Unit[] handle = new Unit[length];
-                    for (int i = 0; i < length; ++i) {
-                        handle[length - i - 1] = nodes.pop();
-                        states.pop();
-                    }
-                    state = states.peek();
-                    assert state != null;
-                    Unit reduction = grammar.reduction.reduce(handle);
-                    nodes.push(reduction);
-                    states.push(state.handle(reduction).state());
-                    break;
+                units.push(grammar.reduction.reduce(handle));
+                break;
+            }
+            case REDUCE: {
+                Grammar grammar = action.grammar();
+                int length = grammar.length();
+                Unit[] handle = new Unit[length];
+                for (int i = 0; i < length; ++i) {
+                    handle[length - i - 1] = units.pop();
+                    states.pop();
                 }
-                case SHIFT: {
-                    states.push(action.state());
-                    nodes.push(lexeme);
-                    lexeme = iterator.next();
-                    break;
-                }
+                state = states.peek();
+                assert state != null;
+                Unit reduction = grammar.reduction.reduce(handle);
+                units.push(reduction);
+                states.push(state.handle(reduction).state());
+                handle(unit, states, units);
+                break;
+            }
+            case SHIFT: {
+                states.push(action.state());
+                units.push(unit);
+                break;
             }
         }
     }
@@ -191,12 +191,14 @@ public class LRParser implements Parser {
             while (flag) {
                 flag = false;
                 for (String s : vn) {
-                    Set<String> peekSet = peekMap.get(s);
                     for (Grammar g : grammars.get(s)) {
+                        Set<String> peekSet = new HashSet<>();
+                        peekSet.add(empty);
                         for (String x : g.right) {
-                            if (peekSet.addAll(peekMap.get(x))) flag = true;
                             if (!peekSet.remove(empty)) break;
+                            peekSet.addAll(peekMap.get(x));
                         }
+                        if (peekMap.get(s).addAll(peekSet)) flag = true;
                     }
                 }
             }

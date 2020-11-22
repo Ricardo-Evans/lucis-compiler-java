@@ -110,13 +110,6 @@ public class Compiler {
         synchronized (Compiler.class) {
             if (defaultParser != null) return defaultParser;
             defaultParser = new LRParser.Builder("source", "empty")
-                    .define("source:statement source", nodes -> Reductions.source((Source) nodes[0], (Statement) nodes[1]))
-                    .define("source:empty", nodes -> Reductions.source())
-                    .define("statement:function-statement", nodes -> Reductions.statement((FunctionStatement) nodes[0]))
-                    .define("function-statement:identifier identifier ( parameter-list ) block-statement", nodes -> Reductions.source())
-                    .define("parameter-list:identifier identifier , parameter-list", nodes -> Reductions.source())
-                    .define("parameter-list:empty", nodes -> Reductions.source())
-                    .define("expression:identifier", nodes -> Reductions.expression((Lexeme) nodes[0]))
                     .build();
         }
         return defaultParser;

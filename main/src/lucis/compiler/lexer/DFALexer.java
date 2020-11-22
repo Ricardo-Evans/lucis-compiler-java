@@ -25,7 +25,7 @@ public class DFALexer implements Lexer {
     @Override
     public Stream<Unit> resolve(Reader reader) {
         Objects.requireNonNull(reader);
-        return Stream.generate(() -> {
+        return Stream.concat(Stream.generate(() -> {
             try {
                 if (!reader.available()) return null;
                 DFAState state = initialState;
@@ -53,7 +53,7 @@ public class DFALexer implements Lexer {
                 e.printStackTrace();
                 throw new LexicalException(e);
             }
-        }).takeWhile(Objects::nonNull);
+        }).takeWhile(Objects::nonNull), Stream.of(new Unit(null, null, null)));
     }
 
     private static class Range implements Serializable, Comparable<Range> {
