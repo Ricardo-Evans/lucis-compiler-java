@@ -4,5 +4,5 @@ import lucis.compiler.entity.Unit;
 
 @FunctionalInterface
 public interface Reduction {
-    Unit reduce(Unit... nodes);
+    Object reduce(Unit... nodes);
 }
