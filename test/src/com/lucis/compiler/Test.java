@@ -14,15 +14,15 @@ public class Test {
 
     public static void main(String[] args) throws IOException {
         Parser parser = new LRParser.Builder("goal")
-                .define("goal:list", units -> new Unit("goal", units[0].value(), null))
+                .define("goal:list", units -> units[0].value())
                 .define("list:list pair", units -> {
                     List<Integer> list = units[0].value();
                     list.add(units[1].value());
-                    return new Unit("list", list, null);
+                    return list;
                 })
-                .define("list: ", units -> new Unit("list", new LinkedList<>(), null))
-                .define("pair:( pair )", units -> new Unit("pair", (Integer) units[1].value() + 1, null))
-                .define("pair:( )", units -> new Unit("pair", 1, null))
+                .define("list: ", units -> new LinkedList<>())
+                .define("pair:( pair )", units -> (Integer) units[1].value() + 1)
+                .define("pair:( )", units -> 1)
                 .build();
         String[] source = {"(", ")", "(", "(", ")", ")"};
         Unit goal = parser.parse(Stream.concat(Arrays.stream(source).map(s -> new Unit(s, s, null)), Stream.of((Unit) null)));

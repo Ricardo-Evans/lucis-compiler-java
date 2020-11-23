@@ -1,5 +1,6 @@
 package lucis.compiler.parser;
 
+import lucis.compiler.entity.Position;
 import lucis.compiler.entity.Unit;
 
 import java.util.*;
@@ -19,50 +20,15 @@ public class LRParser implements Parser {
         Deque<State> states = new ArrayDeque<>();
         Deque<Unit> units = new ArrayDeque<>();
         states.push(initialState);
-        lexemes.forEach(unit -> handle(unit, states, units));
+        lexemes.forEach(unit -> {
+            State state = states.peek();
+            assert state != null;
+            Action action = state.handle(unit);
+            if (action == null)
+                throw new GrammaticalException("cannot handle '" + units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + "' as a grammatical structure");
+            action.act(unit, units, states);
+        });
         return units.pop();
-    }
-
-    private void handle(Unit unit, Deque<State> states, Deque<Unit> units) {
-        State state = states.peek();
-        assert state != null;
-        Action action = state.handle(unit);
-        if (action == null)
-            throw new GrammaticalException("cannot handle '" + units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + "' as a grammatical structure");
-        switch (action.type()) {
-            case ACCEPT: {
-                Grammar grammar = action.grammar();
-                int length = grammar.length();
-                Unit[] handle = new Unit[length];
-                for (int i = 0; i < length; ++i) {
-                    handle[length - i - 1] = units.pop();
-                    states.pop();
-                }
-                units.push(grammar.reduction.reduce(handle));
-                break;
-            }
-            case REDUCE: {
-                Grammar grammar = action.grammar();
-                int length = grammar.length();
-                Unit[] handle = new Unit[length];
-                for (int i = 0; i < length; ++i) {
-                    handle[length - i - 1] = units.pop();
-                    states.pop();
-                }
-                state = states.peek();
-                assert state != null;
-                Unit reduction = grammar.reduction.reduce(handle);
-                units.push(reduction);
-                states.push(state.handle(reduction).state());
-                handle(unit, states, units);
-                break;
-            }
-            case SHIFT: {
-                states.push(action.state());
-                units.push(unit);
-                break;
-            }
-        }
     }
 
     private static class State {
@@ -73,45 +39,51 @@ public class LRParser implements Parser {
         }
     }
 
-    private static class Action {
-        private final Type type;
-        private final State state;
-        private final Grammar grammar;
+    @FunctionalInterface
+    private interface Action {
+        void act(Unit unit, Deque<Unit> units, Deque<State> states);
 
-        enum Type {
-            SHIFT,
-            REDUCE,
-            ACCEPT,
+        static Action accept(Grammar grammar) {
+            return (unit, units, states) -> {
+                int length = grammar.length();
+                Unit[] handle = new Unit[length];
+                Position position = null;
+                for (int i = 0; i < length; ++i) {
+                    Unit u = units.pop();
+                    position = u.position();
+                    handle[length - i - 1] = u;
+                    states.pop();
+                }
+                units.push(new Unit(grammar.left, grammar.reduction.reduce(handle), position));
+            };
         }
 
-        public Action(Type type, State state, Grammar grammar) {
-            this.type = type;
-            this.state = state;
-            this.grammar = grammar;
+        static Action reduce(Grammar grammar) {
+            return (unit, units, states) -> {
+                int length = grammar.length();
+                Unit[] handle = new Unit[length];
+                Position position = null;
+                for (int i = 0; i < length; ++i) {
+                    Unit u = units.pop();
+                    position = u.position();
+                    handle[length - i - 1] = u;
+                    states.pop();
+                }
+                State state = states.peek();
+                assert state != null;
+                Unit reduction = new Unit(grammar.left, grammar.reduction.reduce(handle), position);
+                state.handle(reduction).act(reduction, units, states);
+                state = states.peek();
+                assert state != null;
+                state.handle(unit).act(unit,units,states);
+            };
         }
 
-        public Type type() {
-            return type;
-        }
-
-        public State state() {
-            return state;
-        }
-
-        public Grammar grammar() {
-            return grammar;
-        }
-
-        public static Action accept(Grammar grammar) {
-            return new Action(Type.ACCEPT, null, grammar);
-        }
-
-        public static Action shift(State state) {
-            return new Action(Type.SHIFT, state, null);
-        }
-
-        public static Action reduce(Grammar grammar) {
-            return new Action(Type.REDUCE, null, grammar);
+        static Action shift(State state) {
+            return (unit, units, states) -> {
+                states.push(state);
+                units.push(unit);
+            };
         }
     }
 

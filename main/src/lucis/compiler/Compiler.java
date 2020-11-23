@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -110,6 +111,15 @@ public class Compiler {
         synchronized (Compiler.class) {
             if (defaultParser != null) return defaultParser;
             defaultParser = new LRParser.Builder("source")
+                    .define("source:statement-list", units -> {
+                        List<Statement> statements = units[0].value();
+                        return null;
+                    })
+                    .define("statement-list:statement-list statement", units -> {
+                        List<Statement> statements = units[0].value();
+                        statements.add(units[1].value());
+                        return new Unit("statement-list", statements, units[1].position());
+                    })
                     .build();
         }
         return defaultParser;
