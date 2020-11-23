@@ -28,7 +28,7 @@ public class LRParser implements Parser {
         assert state != null;
         Action action = state.handle(unit);
         if (action == null)
-            throw new GrammaticalException("cannot handle '" + units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + " ' as a grammatical structure");
+            throw new GrammaticalException("cannot handle '" + units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + "' as a grammatical structure");
         switch (action.type()) {
             case ACCEPT: {
                 Grammar grammar = action.grammar();
@@ -121,13 +121,10 @@ public class LRParser implements Parser {
         private final Map<String, Set<Grammar>> grammars = new HashMap<>();
         private Map<String, Set<String>> peekMap;
         private final String goal;
-        private final String empty;
 
-        public Builder(String goal, String empty) {
+        public Builder(String goal) {
             Objects.requireNonNull(goal, "the goal cannot be null");
-            Objects.requireNonNull(empty, "the empty cannot be null");
             this.goal = goal;
-            this.empty = empty;
         }
 
         public Builder define(Grammar grammar) {
@@ -193,9 +190,9 @@ public class LRParser implements Parser {
                 for (String s : vn) {
                     for (Grammar g : grammars.get(s)) {
                         Set<String> peekSet = new HashSet<>();
-                        peekSet.add(empty);
+                        peekSet.add(null);
                         for (String x : g.right) {
-                            if (!peekSet.remove(empty)) break;
+                            if (!peekSet.remove(null)) break;
                             peekSet.addAll(peekMap.get(x));
                         }
                         if (peekMap.get(s).addAll(peekSet)) flag = true;
@@ -206,12 +203,12 @@ public class LRParser implements Parser {
 
         private Set<String> peek(Item item) {
             Set<String> peekSet = new HashSet<>();
-            peekSet.add(empty);
+            peekSet.add(null);
             for (int i = item.index + 1; i < item.grammar.length(); ++i) {
-                if (!peekSet.remove(empty)) break;
+                if (!peekSet.remove(null)) break;
                 peekSet.addAll(peekMap.get(item.grammar.right[i]));
             }
-            if (peekSet.remove(empty)) peekSet.add(item.peek);
+            if (peekSet.remove(null)) peekSet.add(item.peek);
             return peekSet;
         }
 

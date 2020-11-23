@@ -109,7 +109,7 @@ public class Compiler {
         if (defaultParser != null) return defaultParser;
         synchronized (Compiler.class) {
             if (defaultParser != null) return defaultParser;
-            defaultParser = new LRParser.Builder("source", "empty")
+            defaultParser = new LRParser.Builder("source")
                     .build();
         }
         return defaultParser;
