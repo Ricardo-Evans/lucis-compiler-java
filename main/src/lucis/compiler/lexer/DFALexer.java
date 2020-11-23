@@ -53,7 +53,7 @@ public class DFALexer implements Lexer {
                 e.printStackTrace();
                 throw new LexicalException(e);
             }
-        }).takeWhile(Objects::nonNull), Stream.of(new Unit(null, null, null)));
+        }).takeWhile(Objects::nonNull), Stream.of((Unit) null));
     }
 
     private static class Range implements Serializable, Comparable<Range> {

@@ -29,7 +29,7 @@ public class Test {
                 .define("pair:( )", units -> new Unit("pair", 1, null))
                 .build();
         String[] source = {"(", ")", "(", "(", ")", ")"};
-        Unit goal = parser.parse(Stream.concat(Arrays.stream(source).map(s -> new Unit(s, s, null)), Stream.of(new Unit(null, null, null))));
+        Unit goal = parser.parse(Stream.concat(Arrays.stream(source).map(s -> new Unit(s, s, null)), Stream.of((Unit) null)));
         System.out.println("parse successfully");
     }
 }
