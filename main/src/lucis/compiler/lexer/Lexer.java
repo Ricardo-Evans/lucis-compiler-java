@@ -1,12 +1,8 @@
 package lucis.compiler.lexer;
 
-import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.entity.Unit;
 import lucis.compiler.io.Reader;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**

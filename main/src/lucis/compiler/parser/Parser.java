@@ -16,9 +16,12 @@ public interface Parser {
         default Builder define(String grammar, Function<Unit[], ?> reduction) {
             Objects.requireNonNull(grammar, "the grammar cannot be null");
             Objects.requireNonNull(reduction, "the reduction cannot be null");
-            String[] parts = grammar.split(":");
-            if (parts.length != 2) throw new IllegalArgumentException("grammar in wrong format: " + grammar);
-            return define(new Grammar(parts[0], parts[1].split(" "), reduction));
+            int index = grammar.indexOf(':');
+            if (index < 0 || index >= grammar.length())
+                throw new IllegalArgumentException("grammar in wrong format: " + grammar);
+            String left = grammar.substring(0, index);
+            String right = grammar.substring(index + 1);
+            return define(new Grammar(left, right.split(" "), reduction));
         }
 
         Parser build();

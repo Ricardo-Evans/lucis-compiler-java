@@ -1,10 +1,9 @@
-package lucis.compiler.entity;
+package lucis.compiler.syntax;
 
-import lucis.compiler.utility.Name;
+import lucis.compiler.entity.Position;
 
 import java.util.List;
 
-@Name("source")
 public class Source implements SyntaxTree {
     private final List<Statement> statements;
 

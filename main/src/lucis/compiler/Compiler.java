@@ -7,6 +7,7 @@ import lucis.compiler.lexer.DFALexer;
 import lucis.compiler.lexer.Lexer;
 import lucis.compiler.parser.LRParser;
 import lucis.compiler.parser.Parser;
+import lucis.compiler.syntax.*;
 import lucis.compiler.utility.Constants;
 
 import java.io.File;
@@ -15,7 +16,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class Compiler {
@@ -25,7 +25,7 @@ public class Compiler {
     private final Parser parser;
 
     public Compiler() {
-        this(defaultLexer(), null);
+        this(defaultLexer(), defaultParser());
     }
 
     public Compiler(Lexer lexer, Parser parser) {
@@ -113,34 +113,24 @@ public class Compiler {
             defaultParser = new LRParser.Builder("source")
                     .define("source:statement-list", units -> {
                         List<Statement> statements = units[0].value();
-                        return null;
+                        return new Source(statements);
                     })
                     .define("statement-list:statement-list statement", units -> {
                         List<Statement> statements = units[0].value();
                         statements.add(units[1].value());
-                        return new Unit("statement-list", statements, units[1].position());
+                        return statements;
                     })
+                    .define("statement-list: ", units -> new LinkedList<Statement>())
+                    .define("statement:function-statement", units -> units[0])
+                    .define("function-statement:expression identifier ( parameter-list ) : expression", units -> new FunctionStatement(units[0].value(), units[1].value(), units[3].value(), units[6].value()))
+                    .define("parameter-list:parameter-list parameter", units -> {
+                        List<Parameter> parameters = units[0].value();
+                        parameters.add(units[1].value());
+                        return parameters;
+                    })
+                    .define("parameter-list: ", units -> new LinkedList<Parameter>())
                     .build();
         }
         return defaultParser;
-    }
-
-    private static class Reductions {
-        private static Source source(Source source, Statement statement) {
-            source.statements().add(statement);
-            return source;
-        }
-
-        private static Source source() {
-            return new Source(new LinkedList<>());
-        }
-
-        private static Statement statement(FunctionStatement function) {
-            return new Statement(function);
-        }
-
-        private static Expression expression(Lexeme lexeme) {
-            return null;
-        }
     }
 }

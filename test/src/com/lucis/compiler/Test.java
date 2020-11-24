@@ -1,9 +1,11 @@
 package com.lucis.compiler;
 
+import lucis.compiler.Compiler;
 import lucis.compiler.entity.Unit;
 import lucis.compiler.parser.LRParser;
 import lucis.compiler.parser.Parser;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -12,7 +14,7 @@ import java.util.stream.Stream;
 
 public class Test {
 
-    public static void main(String[] args) throws IOException {
+    private static void testBracketGrammar() {
         Parser parser = new LRParser.Builder("goal")
                 .define("goal:list", units -> units[0].value())
                 .define("list:list pair", units -> {
@@ -27,5 +29,10 @@ public class Test {
         String[] source = {"(", ")", "(", "(", ")", ")"};
         Unit goal = parser.parse(Stream.concat(Arrays.stream(source).map(s -> new Unit(s, s, null)), Stream.of((Unit) null)));
         System.out.println("parse successfully");
+    }
+
+    public static void main(String[] args) throws IOException {
+        Compiler compiler = new Compiler();
+        compiler.compile(new File("test-source.lux"));
     }
 }
