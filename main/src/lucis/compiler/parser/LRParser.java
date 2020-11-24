@@ -43,39 +43,32 @@ public class LRParser implements Parser {
     private interface Action {
         void act(Unit unit, Deque<Unit> units, Deque<State> states);
 
-        static Action accept(Grammar grammar) {
-            return (unit, units, states) -> {
-                int length = grammar.length();
-                Unit[] handle = new Unit[length];
-                Position position = null;
-                for (int i = 0; i < length; ++i) {
-                    Unit u = units.pop();
-                    position = u.position();
-                    handle[length - i - 1] = u;
-                    states.pop();
-                }
-                units.push(new Unit(grammar.left, grammar.reduction.reduce(handle), position));
-            };
+        static Unit reduce(Grammar grammar, Deque<Unit> units, Deque<State> states) {
+            int length = grammar.length();
+            Unit[] handle = new Unit[length];
+            Position position = null;
+            for (int i = 0; i < length; ++i) {
+                Unit u = units.pop();
+                position = u.position();
+                handle[length - i - 1] = u;
+                states.pop();
+            }
+            return new Unit(grammar.left, grammar.reduction.reduce(handle), position);
         }
 
-        static Action reduce(Grammar grammar) {
+        static Action accept(Grammar grammar) {
+            return (unit, units, states) -> units.push(reduce(grammar, units, states));
+        }
+
+        static Action reduction(Grammar grammar) {
             return (unit, units, states) -> {
-                int length = grammar.length();
-                Unit[] handle = new Unit[length];
-                Position position = null;
-                for (int i = 0; i < length; ++i) {
-                    Unit u = units.pop();
-                    position = u.position();
-                    handle[length - i - 1] = u;
-                    states.pop();
-                }
+                Unit reduction = reduce(grammar,units,states);
                 State state = states.peek();
                 assert state != null;
-                Unit reduction = new Unit(grammar.left, grammar.reduction.reduce(handle), position);
                 state.handle(reduction).act(reduction, units, states);
                 state = states.peek();
                 assert state != null;
-                state.handle(unit).act(unit,units,states);
+                state.handle(unit).act(unit, units, states);
             };
         }
 
@@ -131,7 +124,7 @@ public class LRParser implements Parser {
                             if (Objects.equals(item.grammar.left, goal))
                                 actionMap.put(item.peek, Action.accept(item.grammar));
                             else
-                                actionMap.put(item.peek, Action.reduce(item.grammar));
+                                actionMap.put(item.peek, Action.reduction(item.grammar));
                         } else {
                             movement.putIfAbsent(item.current(), new HashSet<>());
                             movement.get(item.current()).add(item.next());

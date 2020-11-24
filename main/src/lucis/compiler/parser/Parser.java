@@ -1,10 +1,8 @@
 package lucis.compiler.parser;
 
-import lucis.compiler.entity.SyntaxTree;
 import lucis.compiler.entity.Unit;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @FunctionalInterface
