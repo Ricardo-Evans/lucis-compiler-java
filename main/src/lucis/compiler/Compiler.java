@@ -35,7 +35,10 @@ public class Compiler {
 
     public void compile(File file) throws IOException {
         Reader reader = new ChannelReader(FileChannel.open(file.toPath(), StandardOpenOption.READ));
-        Stream<Unit> lexemes = lexer.resolve(reader);
+        Stream<Unit> lexemes = lexer.resolve(reader)
+                .filter(unit -> !"line-comment".equals(unit.name()))
+                .filter(unit -> !"block-comment".equals(unit.name()))
+                .filter(unit -> !"blank".equals(unit.name()));
         lexemes.forEach(System.out::println);
         // parser.parse(lexemes);
     }
@@ -122,6 +125,7 @@ public class Compiler {
                     })
                     .define("statement-list: ", units -> new LinkedList<Statement>())
                     .define("statement:function-statement", units -> units[0])
+                    .define("statement:return-statement", units -> units[0])
                     .define("function-statement:expression identifier ( parameter-list ) : expression", units -> new FunctionStatement(units[0].value(), units[1].value(), units[3].value(), units[6].value()))
                     .define("parameter-list:parameter-list parameter", units -> {
                         List<Parameter> parameters = units[0].value();
@@ -129,6 +133,9 @@ public class Compiler {
                         return parameters;
                     })
                     .define("parameter-list: ", units -> new LinkedList<Parameter>())
+                    .define("expression:identifier", units -> new IdentifierExpression(units[0].value()))
+                    .define("expression:{ statement-list return-statement }", units -> new BlockExpression(units[1].value(), units[2].value()))
+                    .define("return-statement:return expression", units -> new ReturnStatement(units[1].value()))
                     .build();
         }
         return defaultParser;

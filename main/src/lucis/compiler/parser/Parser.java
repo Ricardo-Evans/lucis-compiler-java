@@ -20,8 +20,8 @@ public interface Parser {
             if (index < 0 || index >= grammar.length())
                 throw new IllegalArgumentException("grammar in wrong format: " + grammar);
             String left = grammar.substring(0, index);
-            String right = grammar.substring(index + 1);
-            return define(new Grammar(left, right.split(" "), reduction));
+            String[] right = grammar.substring(index + 1).split(" ");
+            return define(new Grammar(left, right, reduction));
         }
 
         Parser build();
