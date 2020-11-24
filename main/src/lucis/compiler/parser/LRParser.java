@@ -53,7 +53,7 @@ public class LRParser implements Parser {
                 handle[length - i - 1] = u;
                 states.pop();
             }
-            return new Unit(grammar.left, grammar.reduction.reduce(handle), position);
+            return new Unit(grammar.left, grammar.handler.apply(handle), position);
         }
 
         static Action accept(Grammar grammar) {
