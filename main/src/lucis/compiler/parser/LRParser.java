@@ -62,7 +62,7 @@ public class LRParser implements Parser {
 
         static Action reduction(Grammar grammar) {
             return (unit, units, states) -> {
-                Unit reduction = reduce(grammar,units,states);
+                Unit reduction = reduce(grammar, units, states);
                 State state = states.peek();
                 assert state != null;
                 state.handle(reduction).act(reduction, units, states);
@@ -131,14 +131,16 @@ public class LRParser implements Parser {
                         }
                     }
                     movement.replaceAll((k, v) -> closure(v));
+                    Map<String, Action> shiftMap = new HashMap<>();
                     movement.forEach((symbol, ccy) -> {
                         if (!cc.containsKey(ccy)) {
                             cc.put(ccy, new State());
                             changed.add(ccy);
                         }
-                        if (actionMap.containsKey(symbol)) conflictGrammars(ccx);
-                        actionMap.put(symbol, Action.shift(cc.get(ccy)));
+                        if (shiftMap.containsKey(symbol)) conflictGrammars(ccx);
+                        shiftMap.put(symbol, Action.shift(cc.get(ccy)));
                     });
+                    actionMap.putAll(shiftMap);
                 }
                 remaining = changed;
             }
@@ -251,6 +253,15 @@ public class LRParser implements Parser {
             @Override
             public int hashCode() {
                 return Objects.hash(grammar, peek, index);
+            }
+
+            @Override
+            public String toString() {
+                return "Item{" +
+                        "grammar=" + grammar +
+                        ", peek='" + peek + '\'' +
+                        ", index=" + index +
+                        '}';
             }
         }
     }
