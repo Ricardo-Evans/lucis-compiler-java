@@ -2,6 +2,7 @@ package lucis.compiler.parser;
 
 import lucis.compiler.entity.Unit;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -12,6 +13,11 @@ public interface Parser {
 
     interface Builder {
         Builder define(Grammar grammar);
+
+        default Builder define(List<Grammar> grammars) {
+            grammars.forEach(this::define);
+            return this;
+        }
 
         default Builder define(String grammar, Function<Unit[], ?> reduction) {
             Objects.requireNonNull(grammar, "the grammar cannot be null");
