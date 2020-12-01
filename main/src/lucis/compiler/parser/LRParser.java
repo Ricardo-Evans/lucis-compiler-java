@@ -21,14 +21,28 @@ public class LRParser implements Parser {
         Deque<Unit> units = new ArrayDeque<>();
         states.push(initialState);
         lexemes.forEach(unit -> {
-            State state = states.peek();
-            assert state != null;
-            Action action = state.handle(unit);
-            if (action == null)
-                throw new GrammaticalException("cannot handle '" + units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2) + "' as a grammatical structure");
-            action.act(unit, units, states);
+            try {
+                State state = states.peek();
+                assert state != null;
+                Action action = state.handle(unit);
+                if (action == null)
+                    throw new GrammaticalException("cannot handle '" + string(units) + "' as a grammatical structure");
+                action.act(unit, units, states);
+            } catch (Exception e) {
+                throw new GrammaticalException(e);
+            }
         });
+        State state = states.peek();
+        if (state == null) throw new GrammaticalException("remain " + string(units) + " cannot be recognized after parsing");
+        Action action = states.peek().handle(null);
+        action.act(null, units, states);
+        if (units.size() != 1 || states.size() != 1)
+            throw new GrammaticalException("accident occur during parsing, remain " + string(units) + " not recognized");
         return units.pop();
+    }
+
+    private static String string(Collection<? extends Unit> units) {
+        return units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2);
     }
 
     private static class State {
