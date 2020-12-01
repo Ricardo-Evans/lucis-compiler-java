@@ -1,21 +1,15 @@
 package lucis.compiler.syntax;
 
-import lucis.compiler.entity.Position;
-
 public class IdentifierExpression implements Expression {
+    public final Expression parent;
     public final String identifier;
 
-    public IdentifierExpression(String identifier) {
+    public IdentifierExpression(IdentifierExpression parent, String identifier) {
+        this.parent = parent;
         this.identifier = identifier;
     }
 
-    @Override
-    public Position position() {
-        return null;
-    }
-
-    @Override
-    public <R, D> R visit(Visitor<R, D> visitor, D data) {
-        return null;
+    public IdentifierExpression(String identifier) {
+        this(null, identifier);
     }
 }
