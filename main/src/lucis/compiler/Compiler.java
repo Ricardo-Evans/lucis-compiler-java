@@ -151,7 +151,7 @@ public class Compiler {
                     .define("return-statement:return expression", units -> new ReturnStatement(units[1].value()))
                     .define("discard-statement:_ = expression", units -> new DiscardStatement(units[2].value()))
                     .define("function-statement:identifier-expression identifier ( parameter-list ) : expression", units -> new FunctionStatement(units[0].value(), units[1].value(), units[3].value(), units[6].value()))
-                    .define("parameter:identifier-expression identifier", units -> new Parameter(units[0].value(), units[1].value()))
+                    .define("parameter:identifier-expression identifier", units -> new FunctionStatement.Parameter(units[0].value(), units[1].value()))
                     .define("expression-statement:expression", units -> new ExpressionStatement(units[0].value()))
 
                     .define(prior("expression", priorities))
