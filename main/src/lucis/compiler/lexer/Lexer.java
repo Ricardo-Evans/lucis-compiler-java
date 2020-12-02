@@ -3,6 +3,7 @@ package lucis.compiler.lexer;
 import lucis.compiler.entity.Unit;
 import lucis.compiler.io.Reader;
 
+import java.io.Serializable;
 import java.util.stream.Stream;
 
 /**
@@ -12,7 +13,7 @@ import java.util.stream.Stream;
  * @version 1.1
  */
 @FunctionalInterface
-public interface Lexer {
+public interface Lexer extends Serializable {
     /**
      * Get the lexeme stream resolved from the given reader, without filter
      *

@@ -2,13 +2,14 @@ package lucis.compiler.parser;
 
 import lucis.compiler.entity.Unit;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 @FunctionalInterface
-public interface Parser {
+public interface Parser extends Serializable {
     Unit parse(Stream<? extends Unit> lexemes);
 
     interface Builder {

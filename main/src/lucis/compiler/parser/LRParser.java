@@ -3,11 +3,13 @@ package lucis.compiler.parser;
 import lucis.compiler.entity.Position;
 import lucis.compiler.entity.Unit;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LRParser implements Parser {
+    private static final long serialVersionUID = 7616064053119080359L;
     private final State initialState;
 
     private LRParser(State initialState) {
@@ -48,7 +50,8 @@ public class LRParser implements Parser {
         return names.stream().reduce("", (s1, s2) -> s1 + " " + s2);
     }
 
-    private static class State {
+    private static class State implements Serializable {
+        private static final long serialVersionUID = 7681443543917405304L;
         private final Map<String, Action> actionMap = new HashMap<>();
 
         public Action handle(Unit node) {
@@ -57,7 +60,7 @@ public class LRParser implements Parser {
     }
 
     @FunctionalInterface
-    private interface Action {
+    private interface Action extends Serializable {
         void act(Unit unit, Deque<Unit> units, Deque<State> states);
 
         static Unit reduce(Grammar grammar, Deque<Unit> units, Deque<State> states) {

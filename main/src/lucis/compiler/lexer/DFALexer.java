@@ -16,6 +16,7 @@ import java.util.stream.Stream;
  * @version 1.1
  */
 public class DFALexer implements Lexer {
+    private static final long serialVersionUID = -4547807007049067905L;
     private final DFAState initialState;
 
     private DFALexer(DFAState initialState) {
@@ -57,6 +58,7 @@ public class DFALexer implements Lexer {
     }
 
     private static class Range implements Serializable, Comparable<Range> {
+        private static final long serialVersionUID = -1515000752677691088L;
         private final int start;
         private final int end;
 
@@ -106,6 +108,7 @@ public class DFALexer implements Lexer {
     }
 
     private static class DFAState implements Serializable {
+        private static final long serialVersionUID = -4570551895811702569L;
         private final Map<Range, DFAState> transfer = new HashMap<>();
         private String name = null;
 
@@ -124,7 +127,8 @@ public class DFALexer implements Lexer {
         }
     }
 
-    private static class NFAState {
+    private static class NFAState implements Serializable {
+        private static final long serialVersionUID = 1876342921192679272L;
         private final Map<Range, Set<NFAState>> transfer = new HashMap<>();
         private String name = null;
 
