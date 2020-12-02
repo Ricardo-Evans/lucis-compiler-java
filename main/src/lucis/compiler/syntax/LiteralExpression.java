@@ -1,7 +1,7 @@
 package lucis.compiler.syntax;
 
-public class LiteralExpression {
-    public enum Type{
+public class LiteralExpression implements Expression {
+    public enum Type {
         INTEGER,
         DECIMAL,
         STRING,

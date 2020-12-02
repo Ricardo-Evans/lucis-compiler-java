@@ -1,9 +1,9 @@
 package lucis.compiler.syntax;
 
-public class DiscardStatement implements SyntaxTree {
+public class ExpressionStatement implements SyntaxTree {
     public final Expression expression;
 
-    public DiscardStatement(Expression expression) {
+    public ExpressionStatement(Expression expression) {
         this.expression = expression;
     }
 }

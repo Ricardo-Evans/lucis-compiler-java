@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Compiler {
@@ -130,33 +127,32 @@ public class Compiler {
         synchronized (Compiler.class) {
             if (defaultParser != null) return defaultParser;
             defaultParser = new LRParser.Builder("source")
-                    .define("source:declaration-list", units -> {
-                        List<Declaration> declarations = units[0].value();
-                        return new Source(declarations);
+                    .define("source:statement-list", units -> {
+                        List<Statement> statements = units[0].value();
+                        return new Source(statements);
                     })
                     .define(list("statement"))
                     .define(list("parameter", ",", true))
                     .define(list("expression", ",", true))
                     .define(list("identifier", ",", false))
-                    .define(list("declaration"))
-
-                    .define("declaration:import-declaration", units -> units[0].value())
-                    .define("declaration:export-declaration", units -> units[0].value())
-                    .define("declaration:function-declaration", units -> units[0].value())
-                    .define("function-declaration:identifier-expression identifier ( parameter-list ) : expression", units -> new FunctionDeclaration(units[0].value(), units[1].value(), units[3].value(), units[6].value()))
-                    .define("parameter:identifier-expression identifier", units -> new Parameter(units[0].value(), units[1].value()))
 
                     .define("statement:block-statement", units -> units[0].value())
                     .define("statement:assign-statement", units -> units[0].value())
                     .define("statement:branch-statement", units -> units[0].value())
                     .define("statement:define-statement", units -> units[0].value())
+                    .define("statement:export-statement", units -> units[0].value())
+                    .define("statement:import-statement", units -> units[0].value())
                     .define("statement:return-statement", units -> units[0].value())
                     .define("statement:discard-statement", units -> units[0].value())
                     .define("statement:function-statement", units -> units[0].value())
+                    .define("statement:expression-statement", units -> units[0].value())
                     .define("assign-statement:identifier = expression", units -> new AssignStatement(units[0].value(), units[2].value()))
                     .define("define-statement:identifier-expression identifier = expression", units -> new DefineStatement(units[0].value(), units[1].value(), units[3].value()))
                     .define("return-statement:return expression", units -> new ReturnStatement(units[1].value()))
                     .define("discard-statement:_ = expression", units -> new DiscardStatement(units[2].value()))
+                    .define("function-statement:identifier-expression identifier ( parameter-list ) : expression", units -> new FunctionStatement(units[0].value(), units[1].value(), units[3].value(), units[6].value()))
+                    .define("parameter:identifier-expression identifier", units -> new Parameter(units[0].value(), units[1].value()))
+                    .define("expression-statement:expression", units -> new ExpressionStatement(units[0].value()))
 
                     .define(prior("expression", priorities))
 

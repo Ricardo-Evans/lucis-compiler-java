@@ -1,6 +1,6 @@
 package lucis.compiler.syntax;
 
-public class AssignStatement implements Statement{
+public class AssignStatement implements SyntaxTree {
     public final String identifier;
     public final Expression content;
 

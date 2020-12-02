@@ -3,9 +3,9 @@ package lucis.compiler.syntax;
 import java.util.List;
 
 public class Source implements SyntaxTree {
-    public final List<Declaration> declarations;
+    public final List<Statement> statements;
 
-    public Source(List<Declaration> declarations) {
-        this.declarations = declarations;
+    public Source(List<Statement> statements) {
+        this.statements = statements;
     }
 }
