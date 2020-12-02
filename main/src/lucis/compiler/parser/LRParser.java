@@ -33,7 +33,8 @@ public class LRParser implements Parser {
             }
         });
         State state = states.peek();
-        if (state == null) throw new GrammaticalException("remain " + string(units) + " cannot be recognized after parsing");
+        if (state == null)
+            throw new GrammaticalException("remain " + string(units) + " cannot be recognized after parsing");
         Action action = states.peek().handle(null);
         action.act(null, units, states);
         if (units.size() != 1 || states.size() != 1)
@@ -42,7 +43,9 @@ public class LRParser implements Parser {
     }
 
     private static String string(Collection<? extends Unit> units) {
-        return units.stream().map(Unit::name).reduce("", (s1, s2) -> s1 + " " + s2);
+        List<String> names = units.stream().map(Unit::name).collect(Collectors.toList());
+        Collections.reverse(names);
+        return names.stream().reduce("", (s1, s2) -> s1 + " " + s2);
     }
 
     private static class State {
