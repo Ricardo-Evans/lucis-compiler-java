@@ -136,7 +136,6 @@ public class Compiler {
                     .define(list("expression", ",", true))
                     .define(list("identifier", ",", false))
 
-                    .define("statement:block-statement", units -> units[0].value())
                     .define("statement:assign-statement", units -> units[0].value())
                     .define("statement:branch-statement", units -> units[0].value())
                     .define("statement:define-statement", units -> units[0].value())
@@ -147,7 +146,10 @@ public class Compiler {
                     .define("statement:function-statement", units -> units[0].value())
                     .define("statement:expression-statement", units -> units[0].value())
                     .define("assign-statement:identifier = expression", units -> new AssignStatement(units[0].value(), units[2].value()))
+                    .define("branch-statement:if expression : statement", units -> new BranchStatement(units[1].value(), units[3].value(), null))
+                    .define("branch-statement:if expression : statement else statement", units -> new BranchStatement(units[1].value(), units[3].value(), units[5].value()))
                     .define("define-statement:identifier-expression identifier = expression", units -> new DefineStatement(units[0].value(), units[1].value(), units[3].value()))
+                    .define("define-statement:identifier : = expression", units -> new DefineStatement(null, units[0].value(), units[3].value()))
                     .define("return-statement:return expression", units -> new ReturnStatement(units[1].value()))
                     .define("discard-statement:_ = expression", units -> new DiscardStatement(units[2].value()))
                     .define("function-statement:identifier-expression identifier ( parameter-list ) : expression", units -> new FunctionStatement(units[0].value(), units[1].value(), units[3].value(), units[6].value()))
