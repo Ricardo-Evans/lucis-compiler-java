@@ -1,9 +1,9 @@
 package lucis.compiler.entity;
 
-public class Array {
+public class Handle {
     private final Object[] content;
 
-    public Array(Object[] content) {
+    public Handle(Object[] content) {
         this.content = content;
     }
 

@@ -1,5 +1,6 @@
 package lucis.compiler.parser;
 
+import lucis.compiler.entity.Handle;
 import lucis.compiler.entity.Position;
 import lucis.compiler.entity.Unit;
 
@@ -17,7 +18,7 @@ public class LRParser implements Parser {
     }
 
     @Override
-    public Unit parse(Stream<? extends Unit> lexemes) {
+    public <T> T parse(Stream<? extends Unit> lexemes) {
         Objects.requireNonNull(lexemes);
         Deque<State> states = new ArrayDeque<>();
         Deque<Unit> units = new ArrayDeque<>();
@@ -41,7 +42,7 @@ public class LRParser implements Parser {
         action.act(null, units, states);
         if (units.size() != 1 || states.size() != 1)
             throw new GrammaticalException("accident occur during parsing, remain " + string(units) + " not recognized");
-        return units.pop();
+        return units.pop().value();
     }
 
     private static String string(Collection<? extends Unit> units) {
@@ -63,24 +64,11 @@ public class LRParser implements Parser {
     private interface Action extends Serializable {
         void act(Unit unit, Deque<Unit> units, Deque<State> states);
 
-        static Unit reduce(Grammar grammar, Deque<Unit> units, Deque<State> states) {
-            int length = grammar.length();
-            Unit[] handle = new Unit[length];
-            Position position = null;
-            for (int i = 0; i < length; ++i) {
-                Unit u = units.pop();
-                position = u.position();
-                handle[length - i - 1] = u;
-                states.pop();
-            }
-            return new Unit(grammar.left, grammar.handler.apply(handle), position);
-        }
-
         static Action accept(Grammar grammar) {
             return (unit, units, states) -> units.push(reduce(grammar, units, states));
         }
 
-        static Action reduction(Grammar grammar) {
+        static Action reduce(Grammar grammar) {
             return (unit, units, states) -> {
                 Unit reduction = reduce(grammar, units, states);
                 State state = states.peek();
@@ -97,6 +85,19 @@ public class LRParser implements Parser {
                 states.push(state);
                 units.push(unit);
             };
+        }
+
+        private static Unit reduce(Grammar grammar, Deque<Unit> units, Deque<State> states) {
+            int length = grammar.length();
+            Object[] handle = new Object[length];
+            Position position = null;
+            for (int i = 0; i < length; ++i) {
+                Unit u = units.pop();
+                position = u.position();
+                handle[length - i - 1] = u.value();
+                states.pop();
+            }
+            return new Unit(grammar.left, grammar.handler.apply(new Handle(handle)), position);
         }
     }
 
@@ -144,7 +145,7 @@ public class LRParser implements Parser {
                             if (Objects.equals(item.grammar.left, goal))
                                 actionMap.put(item.peek, Action.accept(item.grammar));
                             else
-                                actionMap.put(item.peek, Action.reduction(item.grammar));
+                                actionMap.put(item.peek, Action.reduce(item.grammar));
                         } else {
                             movement.putIfAbsent(item.current(), new HashSet<>());
                             movement.get(item.current()).add(item.next());

@@ -16,18 +16,18 @@ public class Test {
 
     private static void testBracketGrammar() {
         Parser parser = new LRParser.Builder("goal")
-                .define("goal:list", units -> units[0].value())
-                .define("list:list pair", units -> {
-                    List<Integer> list = units[0].value();
-                    list.add(units[1].value());
+                .define("goal:list", handle -> handle.at(0))
+                .define("list:list pair", handle -> {
+                    List<Integer> list = handle.at(0);
+                    list.add(handle.at(1));
                     return list;
                 })
-                .define("list: ", units -> new LinkedList<>())
-                .define("pair:( pair )", units -> (Integer) units[1].value() + 1)
-                .define("pair:( )", units -> 1)
+                .define("list: ", handle -> new LinkedList<>())
+                .define("pair:( pair )", handle -> (Integer) handle.at(1) + 1)
+                .define("pair:( )", handle -> 1)
                 .build();
         String[] source = {"(", ")", "(", "(", ")", ")"};
-        Unit goal = parser.parse(Stream.concat(Arrays.stream(source).map(s -> new Unit(s, s, null)), Stream.of((Unit) null)));
+        LinkedList<Integer> list = parser.parse(Stream.concat(Arrays.stream(source).map(s -> new Unit(s, s, null)), Stream.of((Unit) null)));
         System.out.println("parse successfully");
     }
 

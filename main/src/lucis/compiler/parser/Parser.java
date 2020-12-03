@@ -1,5 +1,6 @@
 package lucis.compiler.parser;
 
+import lucis.compiler.entity.Handle;
 import lucis.compiler.entity.Unit;
 
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.util.stream.Stream;
 
 @FunctionalInterface
 public interface Parser extends Serializable {
-    Unit parse(Stream<? extends Unit> lexemes);
+    <T> T parse(Stream<? extends Unit> lexemes);
 
     interface Builder {
         Builder define(Grammar grammar);
@@ -20,7 +21,7 @@ public interface Parser extends Serializable {
             return this;
         }
 
-        default Builder define(String grammar, Function<Unit[], ?> reduction) {
+        default Builder define(String grammar, Function<Handle, ?> reduction) {
             Objects.requireNonNull(grammar, "the grammar cannot be null");
             Objects.requireNonNull(reduction, "the reduction cannot be null");
             int index = grammar.indexOf(':');
@@ -33,5 +34,4 @@ public interface Parser extends Serializable {
 
         Parser build();
     }
-
 }

@@ -1,5 +1,6 @@
 package lucis.compiler.parser;
 
+import lucis.compiler.entity.Handle;
 import lucis.compiler.entity.Unit;
 
 import java.io.Serializable;
@@ -10,9 +11,9 @@ import java.util.function.Function;
 public class Grammar implements Serializable {
     public final String left;
     public final String[] right;
-    public final Function<Unit[], ?> handler;
+    public final Function<Handle, ?> handler;
 
-    public Grammar(String left, String[] right, Function<Unit[], ?> handler) {
+    public Grammar(String left, String[] right, Function<Handle, ?> handler) {
         this.left = left;
         this.right = right;
         this.handler = handler;
