@@ -73,12 +73,9 @@ public final class Constants {
             RegularExpression.alternate(LETTERS, DISCARD),
             RegularExpression.alternate(LETTERS, DIGITS, DISCARD).closure()
     );
-    public static final RegularExpression INTEGER_LITERAL = RegularExpression.concatenate(
-            RegularExpression.alternate(POSITIVE, NEGATIVE).optional(),
-            RegularExpression.alternate(
-                    ZERO,
-                    RegularExpression.concatenate(NONZERO, DIGITS.closure())
-            )
+    public static final RegularExpression INTEGER_LITERAL = RegularExpression.alternate(
+            ZERO,
+            RegularExpression.concatenate(NONZERO, DIGITS.closure())
     );
     public static final RegularExpression DECIMAL_LITERAL = RegularExpression.concatenate(
             INTEGER_LITERAL,
