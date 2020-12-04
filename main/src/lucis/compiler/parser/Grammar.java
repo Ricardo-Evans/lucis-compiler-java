@@ -1,7 +1,6 @@
 package lucis.compiler.parser;
 
 import lucis.compiler.entity.Handle;
-import lucis.compiler.entity.Unit;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -11,12 +10,12 @@ import java.util.function.Function;
 public class Grammar implements Serializable {
     public final String left;
     public final String[] right;
-    public final Function<Handle, ?> handler;
+    public final Function<Handle, ?> Reduction;
 
-    public Grammar(String left, String[] right, Function<Handle, ?> handler) {
+    public Grammar(String left, String[] right, Function<Handle, ?> Reduction) {
         this.left = left;
         this.right = right;
-        this.handler = handler;
+        this.Reduction = Reduction;
     }
 
     public int length() {
@@ -30,12 +29,12 @@ public class Grammar implements Serializable {
         Grammar grammar = (Grammar) o;
         return Objects.equals(left, grammar.left) &&
                 Arrays.equals(right, grammar.right) &&
-                Objects.equals(handler, grammar.handler);
+                Objects.equals(Reduction, grammar.Reduction);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(left, handler);
+        int result = Objects.hash(left, Reduction);
         result = 31 * result + Arrays.hashCode(right);
         return result;
     }
