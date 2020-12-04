@@ -1,6 +1,6 @@
 package lucis.compiler.entity;
 
-public class Unit {
+public final class Unit {
     private final String name;
     private final Object value;
     private final Position position;

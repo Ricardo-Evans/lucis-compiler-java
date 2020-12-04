@@ -6,6 +6,7 @@ import lucis.compiler.entity.Unit;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -97,7 +98,7 @@ public class LRParser implements Parser {
                 handle[length - i - 1] = u.value();
                 states.pop();
             }
-            return new Unit(grammar.left, grammar.handler.apply(new Handle(handle)), position);
+            return new Unit(grammar.left, grammar.handler.apply(new Handle(handle, position)), position);
         }
     }
 
@@ -113,6 +114,7 @@ public class LRParser implements Parser {
             this.goal = goal;
         }
 
+        @Override
         public Builder define(Grammar grammar) {
             Objects.requireNonNull(grammar, "the grammar cannot be null");
             grammars.putIfAbsent(grammar.left, new HashSet<>());

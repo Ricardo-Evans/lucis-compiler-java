@@ -1,10 +1,16 @@
 package lucis.compiler.entity;
 
-public class Handle {
+public final class Handle {
     private final Object[] content;
+    private final Position position;
 
-    public Handle(Object[] content) {
+    public Handle(Object[] content, Position position) {
         this.content = content;
+        this.position = position;
+    }
+
+    public Position position() {
+        return position;
     }
 
     @SuppressWarnings("unchecked")
