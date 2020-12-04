@@ -10,12 +10,12 @@ import java.util.function.Function;
 public class Grammar implements Serializable {
     public final String left;
     public final String[] right;
-    public final Function<Handle, ?> Reduction;
+    public final Function<Handle, ?> reduction;
 
     public Grammar(String left, String[] right, Function<Handle, ?> Reduction) {
         this.left = left;
         this.right = right;
-        this.Reduction = Reduction;
+        this.reduction = Reduction;
     }
 
     public int length() {
@@ -29,12 +29,12 @@ public class Grammar implements Serializable {
         Grammar grammar = (Grammar) o;
         return Objects.equals(left, grammar.left) &&
                 Arrays.equals(right, grammar.right) &&
-                Objects.equals(Reduction, grammar.Reduction);
+                Objects.equals(reduction, grammar.reduction);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(left, Reduction);
+        int result = Objects.hash(left, reduction);
         result = 31 * result + Arrays.hashCode(right);
         return result;
     }
