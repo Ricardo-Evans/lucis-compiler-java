@@ -1,6 +1,6 @@
 package lucis.compiler.syntax;
 
-public class IndexExpression implements Expression {
+public class IndexExpression extends Expression {
     public final Expression array;
     public final Expression index;
 

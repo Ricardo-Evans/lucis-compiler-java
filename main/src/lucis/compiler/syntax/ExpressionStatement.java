@@ -1,6 +1,6 @@
 package lucis.compiler.syntax;
 
-public class ExpressionStatement implements Statement {
+public class ExpressionStatement extends Statement {
     public final Expression expression;
 
     public ExpressionStatement(Expression expression) {

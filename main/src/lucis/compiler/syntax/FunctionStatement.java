@@ -2,7 +2,7 @@ package lucis.compiler.syntax;
 
 import java.util.List;
 
-public class FunctionStatement implements Statement {
+public class FunctionStatement extends Statement {
     public final Expression type;
     public final String identifier;
     public final List<Parameter> parameters;
@@ -15,7 +15,7 @@ public class FunctionStatement implements Statement {
         this.body = body;
     }
 
-    public static class Parameter implements SyntaxTree {
+    public static class Parameter extends SyntaxTree {
         public final Expression type;
         public final String identifier;
 

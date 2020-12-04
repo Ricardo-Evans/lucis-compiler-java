@@ -1,6 +1,6 @@
 package lucis.compiler.syntax;
 
-public abstract class OperatorExpression implements Expression {
+public abstract class OperatorExpression extends Expression {
     public enum Operator {
         AND,
         DIVISION,

@@ -1,4 +1,6 @@
 package lucis.compiler.syntax;
 
-public interface Expression extends SyntaxTree {
+public abstract class Expression extends SyntaxTree {
+    protected Expression() {
+    }
 }

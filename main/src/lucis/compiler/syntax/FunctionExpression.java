@@ -2,7 +2,7 @@ package lucis.compiler.syntax;
 
 import java.util.List;
 
-public class FunctionExpression implements Expression {
+public class FunctionExpression extends Expression {
     public final Expression function;
     public final List<Expression> parameters;
 

@@ -1,13 +1,25 @@
 package lucis.compiler.syntax;
 
-public interface SyntaxTree {
-    /*
-    Position position();
+import lucis.compiler.entity.Position;
 
-    <R, D> R visit(Visitor<R, D> visitor, D data);
+public abstract class SyntaxTree {
+    private Position position;
 
-    interface Visitor<R, D> {
+    protected SyntaxTree() {
+    }
+
+    public Position position() {
+        return position;
+    }
+
+    public SyntaxTree position(Position position) {
+        this.position = position;
+        return this;
+    }
+
+    // public abstract <R, D> R visit(Visitor<R, D> visitor, D data);
+
+    public interface Visitor<R, D> {
         R visitSource(Source source, D data);
     }
-    */
 }

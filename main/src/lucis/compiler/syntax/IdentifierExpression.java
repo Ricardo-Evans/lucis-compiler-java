@@ -1,6 +1,6 @@
 package lucis.compiler.syntax;
 
-public class IdentifierExpression implements Expression {
+public class IdentifierExpression extends Expression {
     public final Expression parent;
     public final String identifier;
 

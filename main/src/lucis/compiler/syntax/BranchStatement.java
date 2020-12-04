@@ -1,6 +1,6 @@
 package lucis.compiler.syntax;
 
-public class BranchStatement implements Statement {
+public class BranchStatement extends Statement {
     public final Expression condition;
     public final Statement positive, negative;
 

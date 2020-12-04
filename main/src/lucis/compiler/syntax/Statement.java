@@ -1,4 +1,6 @@
 package lucis.compiler.syntax;
 
-public interface Statement {
+public abstract class Statement extends SyntaxTree {
+    protected Statement() {
+    }
 }

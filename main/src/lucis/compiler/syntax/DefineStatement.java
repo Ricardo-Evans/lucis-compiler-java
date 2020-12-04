@@ -1,6 +1,6 @@
 package lucis.compiler.syntax;
 
-public class DefineStatement implements SyntaxTree {
+public class DefineStatement extends Statement {
     public final Expression type;
     public final String identifier;
     public final Expression value;

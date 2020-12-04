@@ -2,7 +2,7 @@ package lucis.compiler.syntax;
 
 import java.util.List;
 
-public class BlockExpression implements Expression {
+public class BlockExpression extends Expression {
     public final List<Statement> statements;
 
     public BlockExpression(List<Statement> statements) {
