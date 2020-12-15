@@ -9,4 +9,9 @@ public class BranchStatement extends Statement {
         this.positive = positive;
         this.negative = negative;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitBranchStatement(this, data);
+    }
 }

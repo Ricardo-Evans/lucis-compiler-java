@@ -8,4 +8,9 @@ public class AssignStatement extends Statement {
         this.identifier = identifier;
         this.content = content;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitAssignStatement(this, data);
+    }
 }

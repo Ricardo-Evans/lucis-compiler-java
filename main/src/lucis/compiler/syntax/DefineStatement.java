@@ -10,4 +10,9 @@ public class DefineStatement extends Statement {
         this.identifier = identifier;
         this.value = value;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitDefineStatement(this, data);
+    }
 }

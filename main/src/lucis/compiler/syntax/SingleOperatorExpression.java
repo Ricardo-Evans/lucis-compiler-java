@@ -7,4 +7,9 @@ public class SingleOperatorExpression extends OperatorExpression {
         super(operator);
         this.expression = expression;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitSingleOperatorExpression(this, data);
+    }
 }

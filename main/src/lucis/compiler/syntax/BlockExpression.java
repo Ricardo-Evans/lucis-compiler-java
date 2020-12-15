@@ -8,4 +8,9 @@ public class BlockExpression extends Expression {
     public BlockExpression(List<Statement> statements) {
         this.statements = statements;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitBlockExpression(this, data);
+    }
 }

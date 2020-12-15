@@ -8,4 +8,9 @@ public class DoubleOperatorExpression extends OperatorExpression {
         this.expression1 = expression1;
         this.expression2 = expression2;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitDoubleOperatorExpression(this, data);
+    }
 }

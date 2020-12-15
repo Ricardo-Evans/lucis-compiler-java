@@ -10,4 +10,9 @@ public class FunctionExpression extends Expression {
         this.function = function;
         this.parameters = parameters;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitFunctionExpression(this, data);
+    }
 }

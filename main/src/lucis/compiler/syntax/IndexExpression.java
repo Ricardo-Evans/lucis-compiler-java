@@ -8,4 +8,9 @@ public class IndexExpression extends Expression {
         this.array = array;
         this.index = index;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitIndexExpression(this, data);
+    }
 }

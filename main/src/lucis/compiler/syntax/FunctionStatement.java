@@ -15,7 +15,12 @@ public class FunctionStatement extends Statement {
         this.body = body;
     }
 
-    public static class Parameter extends SyntaxTree {
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitFunctionStatement(this, data);
+    }
+
+    public static class Parameter {
         public final Expression type;
         public final String identifier;
 

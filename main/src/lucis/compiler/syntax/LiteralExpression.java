@@ -14,4 +14,9 @@ public class LiteralExpression extends Expression {
         this.type = type;
         this.value = value;
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitLiteralExpression(this, data);
+    }
 }

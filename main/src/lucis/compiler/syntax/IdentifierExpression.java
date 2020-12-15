@@ -12,4 +12,9 @@ public class IdentifierExpression extends Expression {
     public IdentifierExpression(String identifier) {
         this(null, identifier);
     }
+
+    @Override
+    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+        return visitor.visitIdentifierExpression(this, data);
+    }
 }
