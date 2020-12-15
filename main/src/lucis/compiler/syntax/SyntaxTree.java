@@ -26,6 +26,8 @@ public abstract class SyntaxTree {
 
         R visitBranchStatement(BranchStatement statement, D data);
 
+        R visitClassStatement(ClassStatement statement, D data);
+
         R visitDefineStatement(DefineStatement statement, D data);
 
         R visitDiscardStatement(DiscardStatement statement, D data);
@@ -53,5 +55,7 @@ public abstract class SyntaxTree {
         R visitSingleOperatorExpression(SingleOperatorExpression expression, D data);
 
         R visitSource(Source source, D data);
+
+        R visitTraitStatement(TraitStatement statement, D data);
     }
 }
