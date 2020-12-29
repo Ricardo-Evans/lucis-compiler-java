@@ -10,7 +10,7 @@ public class BlockExpression extends Expression {
     }
 
     @Override
-    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+    public <T> T visit(Visitor<T> visitor, T data) {
         return visitor.visitBlockExpression(this, data);
     }
 }

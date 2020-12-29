@@ -17,45 +17,265 @@ public abstract class SyntaxTree {
         return this;
     }
 
-    public abstract <R, D> R visit(Visitor<R, D> visitor, D data);
+    public abstract <T> T visit(Visitor<T> visitor, T data);
 
-    public interface Visitor<R, D> {
-        R visitAssignStatement(AssignStatement statement, D data);
+    public interface Visitor<T> {
+        T visitAssignStatement(AssignStatement statement, T data);
 
-        R visitBlockExpression(BlockExpression expression, D data);
+        T visitBlockExpression(BlockExpression expression, T data);
 
-        R visitBranchStatement(BranchStatement statement, D data);
+        T visitBranchStatement(BranchStatement statement, T data);
 
-        R visitClassStatement(ClassStatement statement, D data);
+        T visitClassStatement(ClassStatement statement, T data);
 
-        R visitDefineStatement(DefineStatement statement, D data);
+        T visitDefineStatement(DefineStatement statement, T data);
 
-        R visitDiscardStatement(DiscardStatement statement, D data);
+        T visitDiscardStatement(DiscardStatement statement, T data);
 
-        R visitDoubleOperatorExpression(DoubleOperatorExpression expression, D data);
+        T visitDoubleOperatorExpression(DoubleOperatorExpression expression, T data);
 
-        R visitExportStatement(ExportStatement statement, D data);
+        T visitExportStatement(ExportStatement statement, T data);
 
-        R visitExpressionStatement(ExpressionStatement statement, D data);
+        T visitExpressionStatement(ExpressionStatement statement, T data);
 
-        R visitFunctionExpression(FunctionExpression expression, D data);
+        T visitFunctionExpression(FunctionExpression expression, T data);
 
-        R visitFunctionStatement(FunctionStatement statement, D data);
+        T visitFunctionStatement(FunctionStatement statement, T data);
 
-        R visitIdentifierExpression(IdentifierExpression expression, D data);
+        T visitIdentifierExpression(IdentifierExpression expression, T data);
 
-        R visitImportStatement(ImportStatement statement, D data);
+        T visitImportStatement(ImportStatement statement, T data);
 
-        R visitIndexExpression(IndexExpression expression, D data);
+        T visitIndexExpression(IndexExpression expression, T data);
 
-        R visitLiteralExpression(LiteralExpression expression, D data);
+        T visitLiteralExpression(LiteralExpression expression, T data);
 
-        R visitReturnStatement(ReturnStatement statement, D data);
+        T visitReturnStatement(ReturnStatement statement, T data);
 
-        R visitSingleOperatorExpression(SingleOperatorExpression expression, D data);
+        T visitSingleOperatorExpression(SingleOperatorExpression expression, T data);
 
-        R visitSource(Source source, D data);
+        T visitSource(Source source, T data);
 
-        R visitTraitStatement(TraitStatement statement, D data);
+        T visitTraitStatement(TraitStatement statement, T data);
+    }
+
+    public interface SearchVisitor<T> extends Visitor<T> {
+        @Override
+        default T visitAssignStatement(AssignStatement statement, T data) {
+            data = statement.content.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitBlockExpression(BlockExpression expression, T data) {
+            for (SyntaxTree tree : expression.statements) data = tree.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitBranchStatement(BranchStatement statement, T data) {
+            data = statement.condition.visit(this, data);
+            if (statement.positive != null) data = statement.positive.visit(this, data);
+            if (statement.negative != null) data = statement.negative.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitClassStatement(ClassStatement statement, T data) {
+            for (SyntaxTree tree : statement.bases) data = tree.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitDefineStatement(DefineStatement statement, T data) {
+            data = statement.type.visit(this, data);
+            data = statement.value.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitDiscardStatement(DiscardStatement statement, T data) {
+            data = statement.expression.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitDoubleOperatorExpression(DoubleOperatorExpression expression, T data) {
+            data = expression.expression1.visit(this, data);
+            data = expression.expression2.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitExportStatement(ExportStatement statement, T data) {
+            data = statement.expression.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitExpressionStatement(ExpressionStatement statement, T data) {
+            data = statement.expression.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitFunctionExpression(FunctionExpression expression, T data) {
+            data = expression.function.visit(this, data);
+            for (SyntaxTree tree : expression.parameters) data = tree.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitFunctionStatement(FunctionStatement statement, T data) {
+            data = statement.type.visit(this, data);
+            data = statement.body.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitIdentifierExpression(IdentifierExpression expression, T data) {
+            data = expression.parent.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitImportStatement(ImportStatement statement, T data) {
+            data = statement.expression.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitIndexExpression(IndexExpression expression, T data) {
+            data = expression.array.visit(this, data);
+            data = expression.index.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitLiteralExpression(LiteralExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitReturnStatement(ReturnStatement statement, T data) {
+            data = statement.value.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitSingleOperatorExpression(SingleOperatorExpression expression, T data) {
+            data = expression.expression.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitSource(Source source, T data) {
+            for (SyntaxTree tree : source.statements) data = tree.visit(this, data);
+            return data;
+        }
+
+        @Override
+        default T visitTraitStatement(TraitStatement statement, T data) {
+            for (SyntaxTree tree : statement.bases) data = tree.visit(this, data);
+            for (SyntaxTree tree : statement.statements) data = tree.visit(this, data);
+            return data;
+        }
+    }
+
+    public interface IgnoreVisitor<T> extends Visitor<T> {
+        @Override
+        default T visitAssignStatement(AssignStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitBlockExpression(BlockExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitBranchStatement(BranchStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitClassStatement(ClassStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitDefineStatement(DefineStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitDiscardStatement(DiscardStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitDoubleOperatorExpression(DoubleOperatorExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitExportStatement(ExportStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitExpressionStatement(ExpressionStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitFunctionExpression(FunctionExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitFunctionStatement(FunctionStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitIdentifierExpression(IdentifierExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitImportStatement(ImportStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitIndexExpression(IndexExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitLiteralExpression(LiteralExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitReturnStatement(ReturnStatement statement, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitSingleOperatorExpression(SingleOperatorExpression expression, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitSource(Source source, T data) {
+            return data;
+        }
+
+        @Override
+        default T visitTraitStatement(TraitStatement statement, T data) {
+            return data;
+        }
     }
 }

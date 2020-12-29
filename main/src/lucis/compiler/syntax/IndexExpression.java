@@ -10,7 +10,7 @@ public class IndexExpression extends Expression {
     }
 
     @Override
-    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+    public <T> T visit(Visitor<T> visitor, T data) {
         return visitor.visitIndexExpression(this, data);
     }
 }

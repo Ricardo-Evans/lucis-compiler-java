@@ -8,7 +8,7 @@ public class ExportStatement extends Statement {
     }
 
     @Override
-    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+    public <T> T visit(Visitor<T> visitor, T data) {
         return visitor.visitExportStatement(this, data);
     }
 }

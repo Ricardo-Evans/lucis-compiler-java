@@ -12,7 +12,7 @@ public class ClassStatement extends Statement {
     }
 
     @Override
-    public <R, D> R visit(Visitor<R, D> visitor, D data) {
+    public <T> T visit(Visitor<T> visitor, T data) {
         return visitor.visitClassStatement(this, data);
     }
 }
