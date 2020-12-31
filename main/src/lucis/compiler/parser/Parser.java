@@ -1,6 +1,7 @@
 package lucis.compiler.parser;
 
 import lucis.compiler.entity.Handle;
+import lucis.compiler.entity.Position;
 import lucis.compiler.entity.Unit;
 
 import java.io.Serializable;
@@ -12,6 +13,11 @@ import java.util.stream.Stream;
 @FunctionalInterface
 public interface Parser extends Serializable {
     <T> T parse(Stream<? extends Unit> lexemes);
+
+    @FunctionalInterface
+    interface Hook<T> {
+        T hook(Object value, Position position);
+    }
 
     interface Builder {
         Builder define(Grammar grammar);
@@ -32,6 +38,10 @@ public interface Parser extends Serializable {
             return define(new Grammar(left, right, reduction));
         }
 
-        Parser build();
+        default Parser build() {
+            return build(null);
+        }
+
+        Parser build(Hook<?> hook);
     }
 }

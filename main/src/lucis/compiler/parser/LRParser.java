@@ -6,6 +6,7 @@ import lucis.compiler.entity.Unit;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -97,7 +98,7 @@ public class LRParser implements Parser {
                 handle[length - i - 1] = u.value();
                 states.pop();
             }
-            return new Unit(grammar.left, grammar.Reduction.apply(new Handle(handle, position)), position);
+            return new Unit(grammar.left, grammar.reduction.apply(new Handle(handle, position)), position);
         }
     }
 
@@ -125,7 +126,7 @@ public class LRParser implements Parser {
             return this;
         }
 
-        public Parser build() {
+        public Parser build(Hook<?> hook) {
             calculatePeekMap();
             Map<Set<Item>, State> cc = new HashMap<>();
             Set<Set<Item>> remaining = new HashSet<>();
@@ -144,9 +145,9 @@ public class LRParser implements Parser {
                         if (item.isComplete()) {
                             if (actionMap.containsKey(item.peek)) conflictGrammars(ccx);
                             if (Objects.equals(item.grammar.left, goal))
-                                actionMap.put(item.peek, Action.accept(item.grammar));
+                                actionMap.put(item.peek, Action.accept(applyHook(item.grammar, hook)));
                             else
-                                actionMap.put(item.peek, Action.reduce(item.grammar));
+                                actionMap.put(item.peek, Action.reduce(applyHook(item.grammar, hook)));
                         } else {
                             movement.putIfAbsent(item.current(), new HashSet<>());
                             movement.get(item.current()).add(item.next());
@@ -218,6 +219,12 @@ public class LRParser implements Parser {
                 ccx = closure;
             }
             return closure;
+        }
+
+        private Grammar applyHook(Grammar grammar, Hook<?> hook) {
+            if (hook == null) return grammar;
+            Function<Handle, ?> reduction = grammar.reduction;
+            return new Grammar(grammar.left, grammar.right, handle -> hook.hook(reduction.apply(handle), handle.position()));
         }
 
         private void conflictGrammars(Set<Item> ccx) {
