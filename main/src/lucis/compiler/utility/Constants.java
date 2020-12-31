@@ -1,6 +1,9 @@
 package lucis.compiler.utility;
 
+import lucis.compiler.ir.LucisType;
 import lucis.compiler.lexer.RegularExpression;
+
+import java.util.List;
 
 public final class Constants {
     private Constants() {
@@ -69,9 +72,13 @@ public final class Constants {
     public static final RegularExpression RETURN = RegularExpression.pure("return");
 
     public static final RegularExpression BLANK = RegularExpression.alternate(NEW_LINE, CARRIAGE_RETURN, WHITESPACE, TAB).multiple();
-    public static final RegularExpression IDENTIFIER = RegularExpression.concatenate(
+    public static final RegularExpression SYMBOL = RegularExpression.concatenate(
             RegularExpression.alternate(LETTERS, DISCARD),
             RegularExpression.alternate(LETTERS, DIGITS, DISCARD).closure()
+    );
+    public static final RegularExpression IDENTIFIER = RegularExpression.concatenate(
+            SYMBOL,
+            RegularExpression.concatenate(DOT, SYMBOL).closure()
     );
     public static final RegularExpression INTEGER_LITERAL = RegularExpression.alternate(
             ZERO,
@@ -105,4 +112,12 @@ public final class Constants {
             ).closure(),
             TILDE.repeat(2)
     );
+
+    public static final LucisType OBJECT_TYPE = new LucisType("lucis.core.Object", List.of());
+    public static final LucisType TYPE_TYPE = new LucisType("lucis.core.Type");
+    public static final LucisType INTEGER_TYPE = new LucisType("lucis.core.Integer");
+    public static final LucisType DECIMAL_TYPE = new LucisType("lucis.core.Decimal");
+    public static final LucisType STRING_TYPE = new LucisType("lucis.core.String");
+    public static final LucisType MODULE_TYPE = new LucisType("lucis.core.Module");
+    public static final LucisType FUNCTION_TYPE = new LucisType("lucis.core.Function");
 }

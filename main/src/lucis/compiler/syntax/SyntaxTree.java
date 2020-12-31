@@ -42,7 +42,7 @@ public abstract class SyntaxTree {
 
         T visitFunctionStatement(FunctionStatement statement, T data);
 
-        T visitIdentifierExpression(IdentifierExpression expression, T data);
+        T visitIdentifierExpression(ElementExpression expression, T data);
 
         T visitImportStatement(ImportStatement statement, T data);
 
@@ -88,7 +88,6 @@ public abstract class SyntaxTree {
 
         @Override
         default T visitDefineStatement(DefineStatement statement, T data) {
-            data = statement.type.visit(this, data);
             data = statement.value.visit(this, data);
             return data;
         }
@@ -108,7 +107,6 @@ public abstract class SyntaxTree {
 
         @Override
         default T visitExportStatement(ExportStatement statement, T data) {
-            data = statement.expression.visit(this, data);
             return data;
         }
 
@@ -127,20 +125,18 @@ public abstract class SyntaxTree {
 
         @Override
         default T visitFunctionStatement(FunctionStatement statement, T data) {
-            data = statement.type.visit(this, data);
             data = statement.body.visit(this, data);
             return data;
         }
 
         @Override
-        default T visitIdentifierExpression(IdentifierExpression expression, T data) {
+        default T visitIdentifierExpression(ElementExpression expression, T data) {
             data = expression.parent.visit(this, data);
             return data;
         }
 
         @Override
         default T visitImportStatement(ImportStatement statement, T data) {
-            data = statement.expression.visit(this, data);
             return data;
         }
 
@@ -239,7 +235,7 @@ public abstract class SyntaxTree {
         }
 
         @Override
-        default T visitIdentifierExpression(IdentifierExpression expression, T data) {
+        default T visitIdentifierExpression(ElementExpression expression, T data) {
             return data;
         }
 

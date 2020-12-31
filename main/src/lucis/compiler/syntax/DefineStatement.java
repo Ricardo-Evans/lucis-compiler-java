@@ -1,11 +1,11 @@
 package lucis.compiler.syntax;
 
 public class DefineStatement extends Statement {
-    public final Expression type;
+    public final String type;
     public final String identifier;
     public final Expression value;
 
-    public DefineStatement(Expression type, String identifier, Expression value) {
+    public DefineStatement(String type, String identifier, Expression value) {
         this.type = type;
         this.identifier = identifier;
         this.value = value;

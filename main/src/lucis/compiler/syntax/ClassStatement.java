@@ -4,9 +4,9 @@ import java.util.List;
 
 public class ClassStatement extends Statement {
     public final String name;
-    public final List<IdentifierExpression> bases;
+    public final List<ElementExpression> bases;
 
-    public ClassStatement(String name, List<IdentifierExpression> bases) {
+    public ClassStatement(String name, List<ElementExpression> bases) {
         this.name = name;
         this.bases = bases;
     }

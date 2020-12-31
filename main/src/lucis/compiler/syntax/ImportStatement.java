@@ -1,10 +1,10 @@
 package lucis.compiler.syntax;
 
 public class ImportStatement extends Statement {
-    public final IdentifierExpression expression;
+    public final String identifier;
 
-    public ImportStatement(IdentifierExpression expression) {
-        this.expression = expression;
+    public ImportStatement(String identifier) {
+        this.identifier = identifier;
     }
 
     @Override
