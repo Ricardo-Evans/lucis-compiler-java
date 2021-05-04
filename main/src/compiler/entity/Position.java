@@ -1,4 +1,4 @@
-package lucis.compiler.entity;
+package compiler.entity;
 
 import java.io.Serializable;
 

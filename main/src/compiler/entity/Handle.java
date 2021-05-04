@@ -1,4 +1,4 @@
-package lucis.compiler.entity;
+package compiler.entity;
 
 public final class Handle {
     private final Object[] content;

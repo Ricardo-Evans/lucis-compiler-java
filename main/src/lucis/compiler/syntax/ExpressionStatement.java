@@ -8,7 +8,7 @@ public class ExpressionStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitExpressionStatement(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitExpressionStatement(this);
     }
 }

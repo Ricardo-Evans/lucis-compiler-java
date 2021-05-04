@@ -1,8 +1,8 @@
-package lucis.compiler.lexer;
+package compiler.lexer;
 
-import lucis.compiler.entity.Position;
-import lucis.compiler.entity.Unit;
-import lucis.compiler.io.Reader;
+import compiler.entity.Position;
+import compiler.entity.Unit;
+import compiler.io.Reader;
 
 import java.io.Serializable;
 import java.util.*;
@@ -48,7 +48,7 @@ public class DFALexer implements Lexer {
                 }
                 reader.reset();
                 if (terminate == null)
-                    throw new LexicalException("cannot recognize " + builder.toString() + " at " + position + " as a lexical unit");
+                    throw new LexicalException("cannot recognize " + builder + " at " + position + " as a lexical unit");
                 return new Unit(terminate.name, content, position);
             } catch (Exception e) {
                 e.printStackTrace();

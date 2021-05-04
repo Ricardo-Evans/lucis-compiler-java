@@ -11,7 +11,7 @@ public class BranchStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitBranchStatement(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitBranchStatement(this);
     }
 }

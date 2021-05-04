@@ -1,9 +1,6 @@
 package lucis.compiler.utility;
 
-import lucis.compiler.ir.LucisType;
-import lucis.compiler.lexer.RegularExpression;
-
-import java.util.List;
+import compiler.lexer.RegularExpression;
 
 public final class Constants {
     private Constants() {
@@ -113,11 +110,11 @@ public final class Constants {
             TILDE.repeat(2)
     );
 
-    public static final LucisType OBJECT_TYPE = new LucisType("lucis.core.Object", List.of());
-    public static final LucisType TYPE_TYPE = new LucisType("lucis.core.Type");
-    public static final LucisType INTEGER_TYPE = new LucisType("lucis.core.Integer");
-    public static final LucisType DECIMAL_TYPE = new LucisType("lucis.core.Decimal");
-    public static final LucisType STRING_TYPE = new LucisType("lucis.core.String");
-    public static final LucisType MODULE_TYPE = new LucisType("lucis.core.Module");
-    public static final LucisType FUNCTION_TYPE = new LucisType("lucis.core.Function");
+    public static final String OBJECT_TYPE = "lucis.core.Object";
+    public static final String TYPE_TYPE = "lucis.core.Type";
+    public static final String INTEGER_TYPE = "lucis.core.Integer";
+    public static final String DECIMAL_TYPE = "lucis.core.Decimal";
+    public static final String STRING_TYPE = "lucis.core.String";
+    public static final String MODULE_TYPE = "lucis.core.Module";
+    public static final String FUNCTION_TYPE = "lucis.core.Function";
 }

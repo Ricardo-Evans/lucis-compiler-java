@@ -14,7 +14,7 @@ public class ElementExpression extends Expression {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitIdentifierExpression(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitIdentifierExpression(this);
     }
 }

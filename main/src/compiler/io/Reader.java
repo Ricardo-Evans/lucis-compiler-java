@@ -1,6 +1,6 @@
-package lucis.compiler.io;
+package compiler.io;
 
-import lucis.compiler.entity.Position;
+import compiler.entity.Position;
 
 import java.io.IOException;
 

@@ -1,9 +1,9 @@
 package com.lucis.compiler;
 
 import lucis.compiler.Compiler;
-import lucis.compiler.entity.Unit;
-import lucis.compiler.parser.LRParser;
-import lucis.compiler.parser.Parser;
+import compiler.entity.Unit;
+import compiler.parser.LRParser;
+import compiler.parser.Parser;
 
 import java.io.File;
 import java.io.IOException;

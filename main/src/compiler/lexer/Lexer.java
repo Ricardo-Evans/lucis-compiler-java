@@ -1,7 +1,7 @@
-package lucis.compiler.lexer;
+package compiler.lexer;
 
-import lucis.compiler.entity.Unit;
-import lucis.compiler.io.Reader;
+import compiler.entity.Unit;
+import compiler.io.Reader;
 
 import java.io.Serializable;
 import java.util.stream.Stream;

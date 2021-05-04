@@ -16,8 +16,8 @@ public class FunctionStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitFunctionStatement(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitFunctionStatement(this);
     }
 
     public static class Parameter {

@@ -1,8 +1,8 @@
-package lucis.compiler.parser;
+package compiler.parser;
 
-import lucis.compiler.entity.Handle;
-import lucis.compiler.entity.Position;
-import lucis.compiler.entity.Unit;
+import compiler.entity.Handle;
+import compiler.entity.Position;
+import compiler.entity.Unit;
 
 import java.io.Serializable;
 import java.util.*;

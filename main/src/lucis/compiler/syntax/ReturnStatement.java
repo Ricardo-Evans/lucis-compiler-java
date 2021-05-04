@@ -8,7 +8,7 @@ public class ReturnStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitReturnStatement(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitReturnStatement(this);
     }
 }

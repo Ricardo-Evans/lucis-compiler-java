@@ -16,7 +16,7 @@ public class LiteralExpression extends Expression {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitLiteralExpression(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitLiteralExpression(this);
     }
 }

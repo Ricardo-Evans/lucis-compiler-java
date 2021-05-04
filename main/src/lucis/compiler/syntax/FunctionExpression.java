@@ -12,7 +12,7 @@ public class FunctionExpression extends Expression {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitFunctionExpression(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitFunctionExpression(this);
     }
 }

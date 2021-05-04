@@ -10,7 +10,7 @@ public class DoubleOperatorExpression extends OperatorExpression {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitDoubleOperatorExpression(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitDoubleOperatorExpression(this);
     }
 }

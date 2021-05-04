@@ -1,15 +1,17 @@
 package lucis.compiler;
 
-import lucis.compiler.entity.*;
-import lucis.compiler.io.ChannelReader;
-import lucis.compiler.io.Reader;
-import lucis.compiler.lexer.DFALexer;
-import lucis.compiler.lexer.Lexer;
-import lucis.compiler.parser.Grammar;
-import lucis.compiler.parser.LRParser;
-import lucis.compiler.parser.Parser;
+import compiler.entity.*;
+import compiler.io.ChannelReader;
+import compiler.io.Reader;
+import compiler.lexer.DFALexer;
+import compiler.lexer.Lexer;
+import compiler.parser.Grammar;
+import compiler.parser.LRParser;
+import compiler.parser.Parser;
 import lucis.compiler.syntax.*;
+import lucis.compiler.syntax.SyntaxTree;
 import lucis.compiler.utility.Constants;
+import lucis.compiler.utility.Utility;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +29,9 @@ public class Compiler {
         priorities.put("block-expression", 0);
         priorities.put("index-expression", 0);
         priorities.put("bracket-expression", 0);
+        priorities.put("element-expression", 0);
         priorities.put("literal-expression", 0);
         priorities.put("function-expression", 0);
-        priorities.put("identifier-expression", 0);
         priorities.put("negation-expression", 1);
         priorities.put("negative-expression", 1);
         priorities.put("positive-expression", 1);
@@ -146,12 +148,14 @@ public class Compiler {
                     .define("assign-statement:identifier = expression", handle -> new AssignStatement(handle.at(0), handle.at(2)))
                     .define("branch-statement:if expression : statement", handle -> new BranchStatement(handle.at(1), handle.at(3), null))
                     .define("branch-statement:if expression : statement else statement", handle -> new BranchStatement(handle.at(1), handle.at(3), handle.at(5)))
-                    .define("define-statement:identifier-expression identifier = expression", handle -> new DefineStatement(handle.at(0), handle.at(1), handle.at(3)))
+                    .define("define-statement:identifier identifier = expression", handle -> new DefineStatement(handle.at(0), handle.at(1), handle.at(3)))
                     .define("define-statement:identifier : = expression", handle -> new DefineStatement(null, handle.at(0), handle.at(3)))
+                    .define("export-statement:export identifier", handle -> new ExportStatement(handle.at(1)))
+                    .define("import-statement:import identifier", handle -> new ImportStatement(handle.at(1)))
                     .define("return-statement:return expression", handle -> new ReturnStatement(handle.at(1)))
                     .define("discard-statement:_ = expression", handle -> new DiscardStatement(handle.at(2)))
-                    .define("function-statement:identifier-expression identifier ( parameter-list ) : expression", handle -> new FunctionStatement(handle.at(0), handle.at(1), handle.at(3), handle.at(6)))
-                    .define("parameter:identifier-expression identifier", handle -> new FunctionStatement.Parameter(handle.at(0), handle.at(1)))
+                    .define("function-statement:identifier identifier ( parameter-list ) : expression", handle -> new FunctionStatement(handle.at(0), handle.at(1), handle.at(3), handle.at(6)))
+                    .define("parameter:identifier identifier", handle -> new FunctionStatement.Parameter(handle.at(0), handle.at(1)))
                     .define("expression-statement:expression", handle -> new ExpressionStatement(handle.at(0)))
 
                     .define(prior("expression", priorities))
@@ -161,11 +165,11 @@ public class Compiler {
                     .define("bracket-expression:( expression )", handle -> handle.at(1))
                     .define("literal-expression:integer", handle -> new LiteralExpression(LiteralExpression.Type.INTEGER, handle.at(0)))
                     .define("literal-expression:decimal", handle -> new LiteralExpression(LiteralExpression.Type.DECIMAL, handle.at(0)))
-                    .define("literal-expression:normal-string", handle -> new LiteralExpression(LiteralExpression.Type.STRING, handle.at(0)))
+                    .define("literal-expression:normal-string", handle -> new LiteralExpression(LiteralExpression.Type.STRING, Utility.escape(handle.at(0))))
                     .define("literal-expression:raw-string", handle -> new LiteralExpression(LiteralExpression.Type.STRING, handle.at(0)))
                     .define("function-expression:expression-0 ( expression-list )", handle -> new FunctionExpression(handle.at(0), handle.at(2)))
-                    .define("identifier-expression:identifier", handle -> new IdentifierExpression(handle.at(0)))
-                    .define("identifier-expression:expression-0 . identifier", handle -> new IdentifierExpression(handle.at(0), handle.at(2)))
+                    .define("element-expression:identifier", handle -> new ElementExpression(handle.at(0)))
+                    .define("element-expression:expression-0 . identifier", handle -> new ElementExpression(handle.at(0), handle.at(2)))
 
                     .define("negation-expression:! expression-1", handle -> new SingleOperatorExpression(OperatorExpression.Operator.NOT, handle.at(1)))
                     .define("negation-expression:not expression-1", handle -> new SingleOperatorExpression(OperatorExpression.Operator.NOT, handle.at(1)))
@@ -192,7 +196,10 @@ public class Compiler {
 
                     .define("or-expression:expression-7 | expression-6", handle -> new DoubleOperatorExpression(OperatorExpression.Operator.OR, handle.at(0), handle.at(2)))
                     .define("or-expression:expression-7 or expression-6", handle -> new DoubleOperatorExpression(OperatorExpression.Operator.OR, handle.at(0), handle.at(2)))
-                    .build();
+                    .build((object, position) -> {
+                        if (object instanceof SyntaxTree) return ((SyntaxTree) object).position(position);
+                        else return object;
+                    });
         }
         return defaultParser;
     }

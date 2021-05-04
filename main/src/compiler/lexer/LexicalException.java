@@ -1,4 +1,4 @@
-package lucis.compiler.lexer;
+package compiler.lexer;
 
 public class LexicalException extends RuntimeException {
     LexicalException() {

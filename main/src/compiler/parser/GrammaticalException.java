@@ -1,4 +1,4 @@
-package lucis.compiler.parser;
+package compiler.parser;
 
 public class GrammaticalException extends RuntimeException {
     public GrammaticalException() {

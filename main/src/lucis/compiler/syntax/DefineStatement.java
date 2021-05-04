@@ -12,7 +12,7 @@ public class DefineStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitDefineStatement(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitDefineStatement(this);
     }
 }

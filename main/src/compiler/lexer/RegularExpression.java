@@ -1,4 +1,4 @@
-package lucis.compiler.lexer;
+package compiler.lexer;
 
 import java.util.*;
 

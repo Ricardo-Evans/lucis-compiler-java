@@ -14,7 +14,7 @@ public class TraitStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor, T data) {
-        return visitor.visitTraitStatement(this, data);
+    public void visit(Visitor visitor)  {
+        visitor.visitTraitStatement(this);
     }
 }
