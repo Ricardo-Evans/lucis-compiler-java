@@ -7,10 +7,10 @@ import compiler.lexer.DFALexer;
 import compiler.lexer.Lexer;
 import compiler.parser.LRParser;
 import compiler.parser.Parser;
-import lucis.compiler.grammar.Grammar;
+import lucis.compiler.utility.GrammarRules;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
-import lucis.compiler.utility.Constants;
+import lucis.compiler.utility.LexicalRules;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,62 +39,7 @@ public class Compiler {
         synchronized (Compiler.class) {
             if (defaultLexer != null) return defaultLexer;
             defaultLexer = new DFALexer.Builder()
-                    .define(Constants.INTEGER_LITERAL, "integer")
-                    .define(Constants.DECIMAL_LITERAL, "decimal")
-                    .define(Constants.NORMAL_STRING_LITERAL, "normal-string")
-                    .define(Constants.RAW_STRING_LITERAL, "raw-string")
-                    .define(Constants.IDENTIFIER, "identifier", -1)
-
-                    .define(Constants.DISCARD, "_")
-                    .define(Constants.DOT, ".")
-                    .define(Constants.COMMA, ",")
-                    .define(Constants.COLON, ":")
-                    .define(Constants.SEMICOLON, ";")
-                    .define(Constants.QUESTION, "?")
-                    .define(Constants.AT, "@")
-                    .define(Constants.ELLIPSIS, "...")
-                    .define(Constants.SINGLE_QUOTE, "'")
-                    .define(Constants.DOUBLE_QUOTE, "\"")
-                    .define(Constants.BACK_QUOTE, "`")
-                    .define(Constants.ASSIGN, "=")
-                    .define(Constants.POSITIVE, "+")
-                    .define(Constants.NEGATIVE, "-")
-                    .define(Constants.MULTIPLY, "*")
-                    .define(Constants.DIVISION, "/")
-                    .define(Constants.REMAINDER, "%")
-                    .define(Constants.AND, "&")
-                    .define(Constants.OR, "|")
-                    .define(Constants.NOT, "!")
-
-                    .define(Constants.L_ROUND_BRACKET, "(")
-                    .define(Constants.R_ROUND_BRACKET, ")")
-                    .define(Constants.L_SQUARE_BRACKET, "[")
-                    .define(Constants.R_SQUARE_BRACKET, "]")
-                    .define(Constants.L_CURLY_BRACKET, "{")
-                    .define(Constants.R_CURLY_BRACKET, "}")
-                    .define(Constants.L_ANGLE_BRACKET, "<")
-                    .define(Constants.R_ANGLE_BRACKET, ">")
-
-                    .define(Constants.AS, "as")
-                    .define(Constants.IF, "if")
-                    .define(Constants.IN, "in")
-                    .define(Constants.IS, "is")
-                    .define(Constants.ELSE, "else")
-                    .define(Constants.WHEN, "when")
-                    .define(Constants.WHILE, "while")
-                    .define(Constants.BREAK, "break")
-                    .define(Constants.CLASS, "class")
-                    .define(Constants.TRAIT, "trait")
-                    .define(Constants.IMPORT, "import")
-                    .define(Constants.EXPORT, "export")
-                    .define(Constants.LAMBDA, "lambda")
-                    .define(Constants.ASSERT, "assert")
-                    .define(Constants.NATIVE, "native")
-                    .define(Constants.RETURN, "return")
-
-                    .define(Constants.LINE_COMMENT, "line-comment", -1)
-                    .define(Constants.BLOCK_COMMENT, "block-comment")
-                    .define(Constants.BLANK, "blank")
+                    .define(LexicalRules.class)
                     .build();
         }
         return defaultLexer;
@@ -105,7 +50,7 @@ public class Compiler {
         synchronized (Compiler.class) {
             if (defaultParser != null) return defaultParser;
             defaultParser = new LRParser.Builder("source")
-                    .define(Grammar.class)
+                    .define(GrammarRules.class)
                     .build((object, position) -> {
                         if (object instanceof SyntaxTree) return ((SyntaxTree) object).position(position);
                         else return object;

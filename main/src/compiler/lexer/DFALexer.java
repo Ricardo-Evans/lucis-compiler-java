@@ -152,6 +152,7 @@ public class DFALexer implements Lexer {
         public Builder() {
         }
 
+        @Override
         public Builder define(RegularExpression expression, String name, int priority) {
             Objects.requireNonNull(expression);
             Objects.requireNonNull(name);
@@ -243,10 +244,7 @@ public class DFALexer implements Lexer {
             return this;
         }
 
-        public Builder define(RegularExpression expression, String name) {
-            return define(expression, name, 0);
-        }
-
+        @Override
         public Lexer build() {
             Map<Set<NFAState>, DFAState> stateMap = new HashMap<>();
             stateMap.put(Set.of(), null);
