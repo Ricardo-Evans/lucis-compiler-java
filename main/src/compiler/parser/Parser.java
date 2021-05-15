@@ -32,29 +32,29 @@ public interface Parser extends Serializable {
 
         default Builder define(Class<?> grammars) {
             Map<String, Map<String, Integer>> priorities = new HashMap<>();
-            if (grammars.isAnnotationPresent(DefinePriority.class)) {
-                DefinePriority definedPriority = grammars.getAnnotation(DefinePriority.class);
-                priorities.putIfAbsent(definedPriority.group(), new HashMap<>());
-                priorities.get(definedPriority.group()).put(definedPriority.name(), definedPriority.priority());
+            if (grammars.isAnnotationPresent(GrammarPriority.class)) {
+                GrammarPriority grammarPriority = grammars.getAnnotation(GrammarPriority.class);
+                priorities.putIfAbsent(grammarPriority.group(), new HashMap<>());
+                priorities.get(grammarPriority.group()).put(grammarPriority.name(), grammarPriority.priority());
             }
-            if (grammars.isAnnotationPresent(DefinePriorities.class)) {
-                DefinePriorities definedPriorities = grammars.getAnnotation(DefinePriorities.class);
-                for (DefinePriority definedPriority : definedPriorities.value()) {
-                    priorities.putIfAbsent(definedPriority.group(), new HashMap<>());
-                    priorities.get(definedPriority.group()).put(definedPriority.name(), definedPriority.priority());
+            if (grammars.isAnnotationPresent(GrammarPriorities.class)) {
+                GrammarPriorities grammarPriorities = grammars.getAnnotation(GrammarPriorities.class);
+                for (GrammarPriority grammarPriority : grammarPriorities.value()) {
+                    priorities.putIfAbsent(grammarPriority.group(), new HashMap<>());
+                    priorities.get(grammarPriority.group()).put(grammarPriority.name(), grammarPriority.priority());
                 }
             }
             priorities.forEach(this::definePriorities);
             for (Method method : grammars.getMethods()) {
                 if (!Modifier.isStatic(method.getModifiers()) || !method.canAccess(null)) continue;
-                if (method.isAnnotationPresent(DefineGrammar.class)) {
-                    DefineGrammar definedGrammar = method.getAnnotation(DefineGrammar.class);
-                    defineGrammarByAnnotation(definedGrammar, method);
+                if (method.isAnnotationPresent(GrammarRule.class)) {
+                    GrammarRule grammarRule = method.getAnnotation(GrammarRule.class);
+                    defineByAnnotation(grammarRule, method);
                 }
-                if (method.isAnnotationPresent(DefineGrammars.class)) {
-                    DefineGrammars definedGrammars = method.getAnnotation(DefineGrammars.class);
-                    for (DefineGrammar definedGrammar : definedGrammars.value())
-                        defineGrammarByAnnotation(definedGrammar, method);
+                if (method.isAnnotationPresent(GrammarRules.class)) {
+                    GrammarRules grammarRules = method.getAnnotation(GrammarRules.class);
+                    for (GrammarRule grammarRule : grammarRules.value())
+                        defineByAnnotation(grammarRule, method);
                 }
             }
             return this;
@@ -79,17 +79,17 @@ public interface Parser extends Serializable {
             define(grammars);
         }
 
-        private void defineGrammarByAnnotation(DefineGrammar definedGrammar, Method method) {
-            String grammarString = definedGrammar.value();
+        private void defineByAnnotation(GrammarRule grammarRule, Method method) {
+            String grammarString = grammarRule.value();
             int index = grammarString.indexOf(':');
             if (index < 0 || index >= grammarString.length())
                 throw new IllegalArgumentException("grammar in wrong format: " + grammarString);
             String leftString = grammarString.substring(0, index);
             String[] rightString = splitStringByBlank(grammarString.substring(index + 1));
-            Set<String> includeNames = Set.of(definedGrammar.includeNames());
-            Set<String> excludeNames = Set.of(definedGrammar.excludeNames());
-            Set<Integer> includeIndexes = Arrays.stream(definedGrammar.includeIndexes()).boxed().collect(Collectors.toSet());
-            Set<Integer> excludeIndexes = Arrays.stream(definedGrammar.excludeIndexes()).boxed().collect(Collectors.toSet());
+            Set<String> includeNames = Set.of(grammarRule.includeNames());
+            Set<String> excludeNames = Set.of(grammarRule.excludeNames());
+            Set<Integer> includeIndexes = Arrays.stream(grammarRule.includeIndexes()).boxed().collect(Collectors.toSet());
+            Set<Integer> excludeIndexes = Arrays.stream(grammarRule.excludeIndexes()).boxed().collect(Collectors.toSet());
             int length = rightString.length;
             Grammar.Part[] rightParts = new Grammar.Part[length];
             for (int i = 0; i < length; ++i) {

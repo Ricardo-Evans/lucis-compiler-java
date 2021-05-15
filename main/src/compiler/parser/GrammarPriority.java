@@ -4,8 +4,8 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE_USE)
-@Repeatable(DefinePriorities.class)
-public @interface DefinePriority {
+@Repeatable(GrammarPriorities.class)
+public @interface GrammarPriority {
     String group();
 
     String name();

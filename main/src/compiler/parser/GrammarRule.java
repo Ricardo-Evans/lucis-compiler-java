@@ -4,8 +4,8 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Repeatable(DefineGrammars.class)
-public @interface DefineGrammar {
+@Repeatable(GrammarRules.class)
+public @interface GrammarRule {
     String value();
 
     String[] includeNames() default {};

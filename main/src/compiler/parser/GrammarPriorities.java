@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE_USE)
-public @interface DefinePriorities {
-    DefinePriority[] value();
+public @interface GrammarPriorities {
+    GrammarPriority[] value();
 }
