@@ -53,4 +53,11 @@ public final class Utility {
         });
         return builder.toString();
     }
+
+    public static String signature(String returnType, Iterable<String> parameterTypes) {
+        StringBuilder builder = new StringBuilder();
+        parameterTypes.forEach(s -> builder.append(s).append("->"));
+        builder.append(returnType);
+        return builder.toString();
+    }
 }

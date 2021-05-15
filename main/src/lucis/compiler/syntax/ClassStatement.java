@@ -3,8 +3,8 @@ package lucis.compiler.syntax;
 import java.util.List;
 
 public class ClassStatement extends Statement {
-    public final String name;
-    public final List<ElementExpression> bases;
+    public String name;
+    public List<ElementExpression> bases;
 
     public ClassStatement(String name, List<ElementExpression> bases) {
         this.name = name;
@@ -12,7 +12,7 @@ public class ClassStatement extends Statement {
     }
 
     @Override
-    public void visit(Visitor visitor)  {
+    public void visit(Visitor visitor) {
         visitor.visitClassStatement(this);
     }
 }

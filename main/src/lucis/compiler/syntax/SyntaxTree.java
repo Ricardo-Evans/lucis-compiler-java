@@ -11,6 +11,10 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<Context, 
     protected SyntaxTree() {
     }
 
+    protected SyntaxTree(SyntaxTree... children) {
+        this.children = children;
+    }
+
     public SyntaxTree position(Position position) {
         this.position = position;
         return this;
@@ -37,7 +41,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<Context, 
     public interface Visitor {
         void visitAssignStatement(AssignStatement statement);
 
-        void visitBlockExpression(BlockExpression expression);
+        void visitBlockStatement(BlockStatement statement);
 
         void visitBranchStatement(BranchStatement statement);
 

@@ -6,9 +6,9 @@ public class FunctionStatement extends Statement {
     public final String type;
     public final String identifier;
     public final List<Parameter> parameters;
-    public final Expression body;
+    public final Statement body;
 
-    public FunctionStatement(String type, String identifier, List<Parameter> parameters, Expression body) {
+    public FunctionStatement(String type, String identifier, List<Parameter> parameters, Statement body) {
         this.type = type;
         this.identifier = identifier;
         this.parameters = parameters;
@@ -16,7 +16,7 @@ public class FunctionStatement extends Statement {
     }
 
     @Override
-    public void visit(Visitor visitor)  {
+    public void visit(Visitor visitor) {
         visitor.visitFunctionStatement(this);
     }
 
