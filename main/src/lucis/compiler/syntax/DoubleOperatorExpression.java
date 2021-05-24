@@ -4,13 +4,13 @@ public class DoubleOperatorExpression extends OperatorExpression {
     public final Expression expression1, expression2;
 
     public DoubleOperatorExpression(Operator operator, Expression expression1, Expression expression2) {
-        super(operator);
+        super(operator, expression1, expression2);
         this.expression1 = expression1;
         this.expression2 = expression2;
     }
 
     @Override
-    public void visit(Visitor visitor)  {
+    public void visit(Visitor visitor) {
         visitor.visitDoubleOperatorExpression(this);
     }
 }

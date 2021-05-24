@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Context {
     private String module;
-    private final Context parent;
+    private Context parent;
     private final Map<String, LucisType> typeMap = new HashMap<>();
     private final Map<String, LucisVariable> variableMap = new HashMap<>();
     private final Set<String> importedModules = new HashSet<>();
@@ -19,6 +19,14 @@ public class Context {
 
     public Context(Context parent) {
         this.parent = parent;
+    }
+
+    public Context root() {
+        return parent().map(Context::root).orElse(this);
+    }
+
+    public void parent(Context context) {
+        this.parent = context;
     }
 
     public Optional<Context> parent() {

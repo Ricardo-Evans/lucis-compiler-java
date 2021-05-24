@@ -6,13 +6,14 @@ public class DefineStatement extends Statement {
     public final Expression value;
 
     public DefineStatement(String type, String identifier, Expression value) {
+        super(value);
         this.type = type;
         this.identifier = identifier;
         this.value = value;
     }
 
     @Override
-    public void visit(Visitor visitor)  {
+    public void visit(Visitor visitor) {
         visitor.visitDefineStatement(this);
     }
 }

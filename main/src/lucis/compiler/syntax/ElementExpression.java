@@ -5,6 +5,7 @@ public class ElementExpression extends Expression {
     public final String identifier;
 
     public ElementExpression(Expression parent, String identifier) {
+        super(parent);
         this.parent = parent;
         this.identifier = identifier;
     }
@@ -14,7 +15,7 @@ public class ElementExpression extends Expression {
     }
 
     @Override
-    public void visit(Visitor visitor)  {
+    public void visit(Visitor visitor) {
         visitor.visitIdentifierExpression(this);
     }
 }

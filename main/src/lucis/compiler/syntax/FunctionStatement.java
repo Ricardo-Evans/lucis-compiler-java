@@ -9,6 +9,7 @@ public class FunctionStatement extends Statement {
     public final Statement body;
 
     public FunctionStatement(String type, String identifier, List<Parameter> parameters, Statement body) {
+        super(body);
         this.type = type;
         this.identifier = identifier;
         this.parameters = parameters;

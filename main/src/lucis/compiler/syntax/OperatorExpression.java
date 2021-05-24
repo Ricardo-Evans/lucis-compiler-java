@@ -22,7 +22,8 @@ public abstract class OperatorExpression extends Expression {
 
     public final Operator operator;
 
-    public OperatorExpression(Operator operator) {
+    public OperatorExpression(Operator operator, SyntaxTree... children) {
+        super(children);
         this.operator = operator;
     }
 }

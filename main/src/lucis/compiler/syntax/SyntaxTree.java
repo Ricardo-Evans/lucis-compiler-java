@@ -5,14 +5,12 @@ import lucis.compiler.semantic.Context;
 
 public abstract class SyntaxTree implements compiler.entity.SyntaxTree<Context, SyntaxTree.Visitor> {
     private Position position;
-    private Context context;
-    private SyntaxTree[] children;
-
-    protected SyntaxTree() {
-    }
+    protected Context context = new Context();
+    protected SyntaxTree[] children;
 
     protected SyntaxTree(SyntaxTree... children) {
         this.children = children;
+        for (SyntaxTree tree : children) tree.context.parent(context);
     }
 
     public SyntaxTree position(Position position) {
@@ -54,8 +52,6 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<Context, 
         void visitDoubleOperatorExpression(DoubleOperatorExpression expression);
 
         void visitExportStatement(ExportStatement statement);
-
-        void visitExpressionStatement(ExpressionStatement statement);
 
         void visitFunctionExpression(FunctionExpression expression);
 

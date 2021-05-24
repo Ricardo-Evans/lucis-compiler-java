@@ -4,12 +4,12 @@ public class SingleOperatorExpression extends OperatorExpression {
     public final Expression expression;
 
     public SingleOperatorExpression(Operator operator, Expression expression) {
-        super(operator);
+        super(operator, expression);
         this.expression = expression;
     }
 
     @Override
-    public void visit(Visitor visitor)  {
+    public void visit(Visitor visitor) {
         visitor.visitSingleOperatorExpression(this);
     }
 }

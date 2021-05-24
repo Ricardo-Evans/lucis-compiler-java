@@ -52,11 +52,6 @@ public class BasicAnalyze implements SyntaxTree.Visitor {
     }
 
     @Override
-    public void visitExpressionStatement(ExpressionStatement statement) {
-
-    }
-
-    @Override
     public void visitFunctionExpression(FunctionExpression expression) {
 
     }

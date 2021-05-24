@@ -5,12 +5,13 @@ public class AssignStatement extends Statement {
     public final Expression content;
 
     public AssignStatement(String identifier, Expression content) {
+        super(content);
         this.identifier = identifier;
         this.content = content;
     }
 
     @Override
-    public void visit(Visitor visitor)  {
+    public void visit(Visitor visitor) {
         visitor.visitAssignStatement(this);
     }
 }
