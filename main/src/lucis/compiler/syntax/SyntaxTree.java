@@ -3,13 +3,15 @@ package lucis.compiler.syntax;
 import compiler.entity.Position;
 import lucis.compiler.semantic.Context;
 
-public abstract class SyntaxTree implements compiler.entity.SyntaxTree<Context, SyntaxTree.Visitor> {
+import java.util.List;
+
+public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTree> {
     private Position position;
     protected Context context = new Context();
-    protected SyntaxTree[] children;
+    protected List<SyntaxTree> children;
 
     protected SyntaxTree(SyntaxTree... children) {
-        this.children = children;
+        this.children = List.of(children);
         for (SyntaxTree tree : children) tree.context.parent(context);
     }
 
@@ -23,17 +25,15 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<Context, 
         return position;
     }
 
-    @Override
     public Context context() {
         return context;
     }
 
     @Override
-    public SyntaxTree[] children() {
+    public List<SyntaxTree> children() {
         return children;
     }
 
-    @Override
     public abstract void visit(Visitor visitor);
 
     public interface Visitor {

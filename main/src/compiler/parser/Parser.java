@@ -46,7 +46,6 @@ public interface Parser extends Serializable {
             }
             priorities.forEach(this::definePriorities);
             for (Method method : grammars.getMethods()) {
-                if (!Modifier.isStatic(method.getModifiers()) || !method.canAccess(null)) continue;
                 if (method.isAnnotationPresent(GrammarRule.class)) {
                     GrammarRule grammarRule = method.getAnnotation(GrammarRule.class);
                     defineByAnnotation(grammarRule, method);
@@ -80,6 +79,8 @@ public interface Parser extends Serializable {
         }
 
         private void defineByAnnotation(GrammarRule grammarRule, Method method) {
+            if (!Modifier.isStatic(method.getModifiers()) || !method.canAccess(null))
+                throw new GrammaticalException(); // TODO more specific exception
             String grammarString = grammarRule.value();
             int index = grammarString.indexOf(':');
             if (index < 0 || index >= grammarString.length())

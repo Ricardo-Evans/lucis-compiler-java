@@ -1,11 +1,9 @@
 package compiler.entity;
 
-public interface SyntaxTree<C, V> {
-    C context();
+import java.util.List;
 
-    SyntaxTree<C, V>[] children();
-
-    void visit(V visitor);
+public interface SyntaxTree<T extends SyntaxTree<T>> {
+    List<T> children();
 
     Position position();
 }
