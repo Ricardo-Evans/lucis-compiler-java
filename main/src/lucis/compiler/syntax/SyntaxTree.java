@@ -7,12 +7,11 @@ import java.util.List;
 
 public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTree> {
     private Position position;
-    protected Context context = new Context();
+    private Context context;
     protected List<SyntaxTree> children;
 
     protected SyntaxTree(SyntaxTree... children) {
         this.children = List.of(children);
-        for (SyntaxTree tree : children) tree.context.parent(context);
     }
 
     public SyntaxTree position(Position position) {
@@ -27,6 +26,10 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
 
     public Context context() {
         return context;
+    }
+
+    public void context(Context context) {
+        this.context = context;
     }
 
     @Override
