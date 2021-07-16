@@ -11,7 +11,7 @@ public class IndexExpression extends Expression {
     }
 
     @Override
-    public void visit(Visitor visitor) {
-        visitor.visitIndexExpression(this);
+    public <T> T visit(Visitor<T> visitor) {
+        return visitor.visitIndexExpression(this);
     }
 }

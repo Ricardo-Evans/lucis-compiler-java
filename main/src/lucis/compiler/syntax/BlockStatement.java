@@ -11,7 +11,7 @@ public class BlockStatement extends Statement {
     }
 
     @Override
-    public void visit(Visitor visitor) {
-        visitor.visitBlockStatement(this);
+    public <T> T visit(Visitor<T> visitor) {
+        return visitor.visitBlockStatement(this);
     }
 }

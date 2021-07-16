@@ -9,7 +9,7 @@ public class SingleOperatorExpression extends OperatorExpression {
     }
 
     @Override
-    public void visit(Visitor visitor) {
-        visitor.visitSingleOperatorExpression(this);
+    public <T> T visit(Visitor<T> visitor) {
+        return visitor.visitSingleOperatorExpression(this);
     }
 }

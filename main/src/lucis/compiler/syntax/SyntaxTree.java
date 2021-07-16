@@ -34,43 +34,43 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
         return children;
     }
 
-    public abstract void visit(Visitor visitor);
+    public abstract <T> T visit(Visitor<T> visitor);
 
-    public interface Visitor {
-        void visitAssignStatement(AssignStatement statement);
+    public interface Visitor<T> {
+        T visitAssignStatement(AssignStatement statement);
 
-        void visitBlockStatement(BlockStatement statement);
+        T visitBlockStatement(BlockStatement statement);
 
-        void visitBranchStatement(BranchStatement statement);
+        T visitBranchStatement(BranchStatement statement);
 
-        void visitClassStatement(ClassStatement statement);
+        T visitClassStatement(ClassStatement statement);
 
-        void visitDefineStatement(DefineStatement statement);
+        T visitDefineStatement(DefineStatement statement);
 
-        void visitDiscardStatement(DiscardStatement statement);
+        T visitDiscardStatement(DiscardStatement statement);
 
-        void visitDoubleOperatorExpression(DoubleOperatorExpression expression);
+        T visitDoubleOperatorExpression(DoubleOperatorExpression expression);
 
-        void visitExportStatement(ExportStatement statement);
+        T visitExportStatement(ExportStatement statement);
 
-        void visitFunctionExpression(FunctionExpression expression);
+        T visitFunctionExpression(FunctionExpression expression);
 
-        void visitFunctionStatement(FunctionStatement statement);
+        T visitFunctionStatement(FunctionStatement statement);
 
-        void visitIdentifierExpression(ElementExpression expression);
+        T visitIdentifierExpression(ElementExpression expression);
 
-        void visitImportStatement(ImportStatement statement);
+        T visitImportStatement(ImportStatement statement);
 
-        void visitIndexExpression(IndexExpression expression);
+        T visitIndexExpression(IndexExpression expression);
 
-        void visitLiteralExpression(LiteralExpression expression);
+        T visitLiteralExpression(LiteralExpression expression);
 
-        void visitReturnStatement(ReturnStatement statement);
+        T visitReturnStatement(ReturnStatement statement);
 
-        void visitSingleOperatorExpression(SingleOperatorExpression expression);
+        T visitSingleOperatorExpression(SingleOperatorExpression expression);
 
-        void visitSource(Source source);
+        T visitSource(Source source);
 
-        void visitTraitStatement(TraitStatement statement);
+        T visitTraitStatement(TraitStatement statement);
     }
 }

@@ -14,7 +14,7 @@ public class FunctionExpression extends Expression {
     }
 
     @Override
-    public void visit(Visitor visitor) {
-        visitor.visitFunctionExpression(this);
+    public <T> T visit(Visitor<T> visitor) {
+        return visitor.visitFunctionExpression(this);
     }
 }

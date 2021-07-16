@@ -8,7 +8,7 @@ public class ExportStatement extends Statement {
     }
 
     @Override
-    public void visit(Visitor visitor)  {
-        visitor.visitExportStatement(this);
+    public <T> T visit(Visitor<T> visitor)  {
+        return visitor.visitExportStatement(this);
     }
 }

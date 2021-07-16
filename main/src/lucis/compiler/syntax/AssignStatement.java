@@ -11,7 +11,7 @@ public class AssignStatement extends Statement {
     }
 
     @Override
-    public void visit(Visitor visitor) {
-        visitor.visitAssignStatement(this);
+    public <T> T visit(Visitor<T> visitor) {
+        return visitor.visitAssignStatement(this);
     }
 }

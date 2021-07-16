@@ -12,7 +12,7 @@ public class BranchStatement extends Statement {
     }
 
     @Override
-    public void visit(Visitor visitor) {
-        visitor.visitBranchStatement(this);
+    public <T> T visit(Visitor<T> visitor) {
+        return visitor.visitBranchStatement(this);
     }
 }
