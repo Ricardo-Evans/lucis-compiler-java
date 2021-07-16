@@ -1,6 +1,5 @@
 package lucis.compiler;
 
-import compiler.entity.Position;
 import compiler.entity.Unit;
 import compiler.io.ChannelReader;
 import compiler.io.Reader;
@@ -8,9 +7,9 @@ import compiler.lexer.DFALexer;
 import compiler.lexer.Lexer;
 import compiler.parser.LRParser;
 import compiler.parser.Parser;
-import lucis.compiler.utility.GrammarRules;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
+import lucis.compiler.utility.GrammarRules;
 import lucis.compiler.utility.LexicalRules;
 
 import java.io.File;
