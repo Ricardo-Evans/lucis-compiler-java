@@ -23,16 +23,12 @@ public class LRParser implements Parser {
         Deque<Unit> units = new ArrayDeque<>();
         states.push(initialState);
         lexemes.forEach(unit -> {
-            try {
-                State state = states.peek();
-                assert state != null;
-                Action action = state.handle(unit);
-                if (action == null)
-                    throw new GrammaticalException("cannot handle '" + string(units) + "' as a grammatical structure");
-                action.act(unit, units, states);
-            } catch (Exception e) {
-                throw new GrammaticalException(e);
-            }
+            State state = states.peek();
+            assert state != null;
+            Action action = state.handle(unit);
+            if (action == null)
+                throw new GrammaticalException("cannot handle '" + string(units) + "' before " + unit.position() + " as a grammatical structure");
+            action.act(unit, units, states);
         });
         State state = states.peek();
         if (state == null)
