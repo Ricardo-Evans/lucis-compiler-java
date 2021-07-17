@@ -3,7 +3,10 @@ package lucis.compiler.syntax;
 import compiler.entity.Position;
 import lucis.compiler.semantic.Context;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTree> {
     private Position position;
@@ -11,7 +14,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
     protected List<SyntaxTree> children;
 
     protected SyntaxTree(SyntaxTree... children) {
-        this.children = List.of(children);
+        this.children = Arrays.stream(children).filter(Objects::nonNull).collect(Collectors.toUnmodifiableList());
     }
 
     public SyntaxTree position(Position position) {
