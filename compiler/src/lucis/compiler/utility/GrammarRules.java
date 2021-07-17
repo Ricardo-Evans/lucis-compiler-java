@@ -71,12 +71,25 @@ public final class GrammarRules {
         return new LinkedList<>();
     }
 
+    @GrammarRule("field-list:")
+    public static List<ClassStatement.Field> fieldList() {
+        return new LinkedList<>();
+    }
+
+    @GrammarRule("field-list:field-list field")
+    public static List<ClassStatement.Field> fieldList(List<ClassStatement.Field> fields, ClassStatement.Field field) {
+        fields.add(field);
+        return fields;
+    }
+
     @GrammarRule("source:statement-list")
     public static Source source(List<Statement> statements) {
         return new Source(statements);
     }
 
     @GrammarRule("statement:block-statement")
+    @GrammarRule("statement:class-statement")
+    @GrammarRule("statement:trait-statement")
     @GrammarRule("statement:assign-statement")
     @GrammarRule("statement:branch-statement")
     @GrammarRule("statement:define-statement")
@@ -93,6 +106,21 @@ public final class GrammarRules {
     @GrammarRule("block-statement:{ statement-list }")
     public static BlockStatement blockStatement(List<Statement> statements) {
         return new BlockStatement(statements);
+    }
+
+    @GrammarRule(value = "class-statement:class identifier { field-list }", includeNames = {"identifier"})
+    public static ClassStatement classStatement(String name, List<ClassStatement.Field> fields) {
+        return new ClassStatement(name, fields);
+    }
+
+    @GrammarRule(value = "field:identifier identifier", includeNames = {"identifier"})
+    public static ClassStatement.Field field(String type, String name) {
+        return new ClassStatement.Field(type, name);
+    }
+
+    @GrammarRule(value = "trait-statement:trait identifier { }", includeNames = {"identifier"})
+    public static TraitStatement traitStatement(String name) {
+        return new TraitStatement(name, null, null);
     }
 
     @GrammarRule(value = "assign-statement:identifier = expression", includeNames = {"identifier"})

@@ -4,12 +4,22 @@ import java.util.List;
 
 public class ClassStatement extends Statement {
     public String name;
-    public List<ElementExpression> bases;
+    public List<Field> fields;
 
-    public ClassStatement(String name, List<ElementExpression> bases) {
-        super(bases.toArray(ElementExpression[]::new));
+    public ClassStatement(String name, List<Field> fields) {
+        super();
         this.name = name;
-        this.bases = bases;
+        this.fields = fields;
+    }
+
+    public static class Field {
+        public final String type;
+        public final String name;
+
+        public Field(String type, String name) {
+            this.type = type;
+            this.name = name;
+        }
     }
 
     @Override
