@@ -3,7 +3,6 @@ package lucis.compiler.utility;
 import compiler.parser.GrammarRule;
 import compiler.parser.GrammarPriority;
 import lucis.compiler.syntax.*;
-import lucis.compiler.utility.Utility;
 
 import java.util.LinkedList;
 import java.util.List;

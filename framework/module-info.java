@@ -1,0 +1,3 @@
+module framework {
+    exports compiler;
+}
