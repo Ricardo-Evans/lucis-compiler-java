@@ -37,12 +37,13 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
 
     @Override
     public Boolean visitClassStatement(ClassStatement statement) {
-        return null;
+        return true;
     }
 
     @Override
     public Boolean visitDefineStatement(DefineStatement statement) {
-        return null;
+        statement.value.context(statement.context());
+        return true;
     }
 
     @Override
