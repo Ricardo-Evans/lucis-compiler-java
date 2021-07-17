@@ -1,5 +1,7 @@
 package lucis.compiler.syntax;
 
+import java.util.List;
+
 public abstract class OperatorExpression extends Expression {
     public enum Operator {
         AND,
@@ -22,7 +24,12 @@ public abstract class OperatorExpression extends Expression {
 
     public final Operator operator;
 
-    public OperatorExpression(Operator operator, SyntaxTree... children) {
+    protected OperatorExpression(Operator operator, SyntaxTree... children) {
+        super(children);
+        this.operator = operator;
+    }
+
+    protected OperatorExpression(Operator operator, List<SyntaxTree> children) {
         super(children);
         this.operator = operator;
     }
