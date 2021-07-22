@@ -14,7 +14,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
     protected List<SyntaxTree> children;
 
     protected SyntaxTree(SyntaxTree... children) {
-        this(Arrays.stream(children).filter(Objects::nonNull).collect(Collectors.toUnmodifiableList()));
+        this(Arrays.stream(children).filter(Objects::nonNull).toList());
     }
 
     protected SyntaxTree(List<SyntaxTree> children) {
