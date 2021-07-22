@@ -43,7 +43,7 @@ public class Context {
     }
 
     public Optional<String> findModule() {
-        return Optional.ofNullable(module).or(parent::findModule);
+        return Optional.ofNullable(module).or(() -> parent().flatMap(Context::findModule));
     }
 
     public void foundModule(String name) {
