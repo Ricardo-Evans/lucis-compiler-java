@@ -77,40 +77,40 @@ public final class LexicalRules {
 
     @LexicalRule("blank")
     public static final RegularExpression BLANK = RegularExpression.alternate(NEW_LINE, CARRIAGE_RETURN, WHITESPACE, TAB).multiple();
-    @LexicalRule("in")
-    public static final RegularExpression IN = RegularExpression.pure("in");
-    @LexicalRule("is")
-    public static final RegularExpression IS = RegularExpression.pure("is");
     @LexicalRule("as")
     public static final RegularExpression AS = RegularExpression.pure("as");
     @LexicalRule("if")
     public static final RegularExpression IF = RegularExpression.pure("if");
+    @LexicalRule("in")
+    public static final RegularExpression IN = RegularExpression.pure("in");
+    @LexicalRule("is")
+    public static final RegularExpression IS = RegularExpression.pure("is");
     @LexicalRule("else")
     public static final RegularExpression ELSE = RegularExpression.pure("else");
     @LexicalRule("when")
     public static final RegularExpression WHEN = RegularExpression.pure("when");
-    @LexicalRule("while")
-    public static final RegularExpression WHILE = RegularExpression.pure("while");
     @LexicalRule("break")
     public static final RegularExpression BREAK = RegularExpression.pure("break");
     @LexicalRule("class")
     public static final RegularExpression CLASS = RegularExpression.pure("class");
     @LexicalRule("trait")
     public static final RegularExpression TRAIT = RegularExpression.pure("trait");
-    @LexicalRule("import")
-    public static final RegularExpression IMPORT = RegularExpression.pure("import");
-    @LexicalRule("export")
-    public static final RegularExpression EXPORT = RegularExpression.pure("export");
-    @LexicalRule("lambda")
-    public static final RegularExpression LAMBDA = RegularExpression.pure("lambda");
+    @LexicalRule("while")
+    public static final RegularExpression WHILE = RegularExpression.pure("while");
     @LexicalRule("assert")
     public static final RegularExpression ASSERT = RegularExpression.pure("assert");
+    @LexicalRule("export")
+    public static final RegularExpression EXPORT = RegularExpression.pure("export");
+    @LexicalRule("import")
+    public static final RegularExpression IMPORT = RegularExpression.pure("import");
+    @LexicalRule("lambda")
+    public static final RegularExpression LAMBDA = RegularExpression.pure("lambda");
+    @LexicalRule("module")
+    public static final RegularExpression MODULE = RegularExpression.pure("module");
     @LexicalRule("native")
     public static final RegularExpression NATIVE = RegularExpression.pure("native");
     @LexicalRule("return")
     public static final RegularExpression RETURN = RegularExpression.pure("return");
-    @LexicalRule("module")
-    public static final RegularExpression MODULE = RegularExpression.pure("module");
 
     public static final RegularExpression SYMBOL = RegularExpression.concatenate(
             RegularExpression.alternate(LETTERS, DISCARD),
