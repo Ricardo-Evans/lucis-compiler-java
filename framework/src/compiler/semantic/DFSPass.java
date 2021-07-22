@@ -29,6 +29,7 @@ public class DFSPass<T extends SyntaxTree<T>> implements Pass<T> {
 
         @Override
         public DFSPass.Builder<T> step(Step<T> step) {
+            steps.add(step);
             return this;
         }
     }

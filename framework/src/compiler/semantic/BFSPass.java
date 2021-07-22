@@ -32,6 +32,7 @@ public class BFSPass<T extends SyntaxTree<T>> implements Pass<T> {
 
         @Override
         public Builder<T> step(Step<T> step) {
+            steps.add(step);
             return this;
         }
     }
