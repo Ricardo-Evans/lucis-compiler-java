@@ -75,6 +75,8 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
 
         T visitLiteralExpression(LiteralExpression expression);
 
+        T visitModuleStatement(ModuleStatement statement);
+
         T visitReturnStatement(ReturnStatement statement);
 
         T visitSingleOperatorExpression(SingleOperatorExpression expression);

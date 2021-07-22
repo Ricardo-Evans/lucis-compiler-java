@@ -109,6 +109,8 @@ public final class LexicalRules {
     public static final RegularExpression NATIVE = RegularExpression.pure("native");
     @LexicalRule("return")
     public static final RegularExpression RETURN = RegularExpression.pure("return");
+    @LexicalRule("module")
+    public static final RegularExpression MODULE = RegularExpression.pure("module");
 
     public static final RegularExpression SYMBOL = RegularExpression.concatenate(
             RegularExpression.alternate(LETTERS, DISCARD),

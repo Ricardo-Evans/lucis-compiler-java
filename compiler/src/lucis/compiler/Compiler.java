@@ -88,5 +88,6 @@ public class Compiler {
         System.out.println("parse successfully");
         analyzer.analyze(List.of(source));
         System.out.println("analyze successfully");
+        System.out.println("compile successfully");
     }
 }

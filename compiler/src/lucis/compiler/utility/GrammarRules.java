@@ -95,6 +95,7 @@ public final class GrammarRules {
     @GrammarRule("statement:define-statement")
     @GrammarRule("statement:export-statement")
     @GrammarRule("statement:import-statement")
+    @GrammarRule("statement:module-statement")
     @GrammarRule("statement:return-statement")
     @GrammarRule("statement:discard-statement")
     @GrammarRule("statement:function-statement")
@@ -156,6 +157,11 @@ public final class GrammarRules {
     @GrammarRule(value = "import-statement:import identifier", includeNames = {"identifier"})
     public static ImportStatement importStatement(String identifier) {
         return new ImportStatement(identifier);
+    }
+
+    @GrammarRule(value = "module-statement:module identifier", includeNames = {"identifier"})
+    public static ModuleStatement moduleStatement(String identifier) {
+        return new ModuleStatement(identifier);
     }
 
     @GrammarRule("return-statement:return expression")
