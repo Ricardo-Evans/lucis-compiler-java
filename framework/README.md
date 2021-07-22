@@ -24,7 +24,7 @@ may be added in the future with low priority.
 
 Lexers can be build by their builders. The traditional way is passing a RegularExpression, with its lexical name and
 priority to Builders. Another more convenient way, define by annotations, is also available. Following is an example(
-Lucis Language):
+Identifier in Lucis Language):
 
 ```Java
 import compiler.lexer.Lexer;
@@ -57,3 +57,13 @@ public final class LexicalRules {
     }
 }
 ```
+
+#### Parsers
+
+Grammatical rules can be defined by expressions like "A:B C D".
+
+LR(Left-to-right, Rightmost derivation in reverse) is the only parser implemented by the time, more parsers(like LL,
+SLR, LALR) may be added in the future.
+
+Parsers can be build by their builders. Terminal tokens and non-terminal tokens are automatically recognized during the
+definition.
