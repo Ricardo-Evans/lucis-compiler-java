@@ -37,7 +37,7 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
 
     @Override
     public Boolean visitClassStatement(ClassStatement statement) {
-        return true;
+        return false;
     }
 
     @Override
@@ -48,57 +48,72 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
 
     @Override
     public Boolean visitDiscardStatement(DiscardStatement statement) {
-        return null;
+        statement.expression.context(statement.context());
+        return true;
     }
 
     @Override
     public Boolean visitDoubleOperatorExpression(DoubleOperatorExpression expression) {
-        return null;
+        Context context = expression.context();
+        expression.expression1.context(context);
+        expression.expression2.context(context);
+        return true;
     }
 
     @Override
     public Boolean visitExportStatement(ExportStatement statement) {
-        return null;
+        return false;
     }
 
     @Override
     public Boolean visitFunctionExpression(FunctionExpression expression) {
-        return null;
+        Context context = expression.context();
+        expression.function.context(context);
+        expression.parameters.forEach(e -> e.context(context));
+        return true;
     }
 
     @Override
     public Boolean visitFunctionStatement(FunctionStatement statement) {
-        return null;
+        Context context = new Context(statement.context());
+        statement.body.context(context);
+        return true;
     }
 
     @Override
     public Boolean visitIdentifierExpression(ElementExpression expression) {
-        return null;
+        if (expression.parent != null) expression.parent.context(expression.context());
+        return true;
     }
 
     @Override
     public Boolean visitImportStatement(ImportStatement statement) {
-        return null;
+        return false;
     }
 
     @Override
     public Boolean visitIndexExpression(IndexExpression expression) {
-        return null;
+        Context context = expression.context();
+        expression.array.context(context);
+        expression.index.context(context);
+        return true;
     }
 
     @Override
     public Boolean visitLiteralExpression(LiteralExpression expression) {
-        return null;
+        return false;
     }
 
     @Override
     public Boolean visitReturnStatement(ReturnStatement statement) {
-        return null;
+        statement.value.context(statement.context());
+        return true;
     }
 
     @Override
     public Boolean visitSingleOperatorExpression(SingleOperatorExpression expression) {
-        return null;
+        expression.expression.context(expression.context());
+        return true;
     }
 
     @Override
@@ -111,6 +126,6 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
 
     @Override
     public Boolean visitTraitStatement(TraitStatement statement) {
-        return null;
+        return true;
     }
 }
