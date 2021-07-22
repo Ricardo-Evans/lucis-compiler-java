@@ -7,31 +7,39 @@ import compiler.lexer.DFALexer;
 import compiler.lexer.Lexer;
 import compiler.parser.LRParser;
 import compiler.parser.Parser;
+import compiler.semantic.Analyzer;
+import compiler.semantic.BasicAnalyzer;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
+import lucis.compiler.utility.AnalyzePasses;
 import lucis.compiler.utility.GrammarRules;
 import lucis.compiler.utility.LexicalRules;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class Compiler {
     private static Lexer defaultLexer = null;
     private static Parser defaultParser = null;
+    private static Analyzer<SyntaxTree> defaultAnalyzer = null;
 
     private final Lexer lexer;
     private final Parser parser;
+    private final Analyzer<SyntaxTree> analyzer;
 
     public Compiler() {
-        this(defaultLexer(), defaultParser());
+        this(defaultLexer(), defaultParser(), defaultAnalyzer());
     }
 
-    public Compiler(Lexer lexer, Parser parser) {
+    public Compiler(Lexer lexer, Parser parser, Analyzer<SyntaxTree> analyzer) {
         this.lexer = lexer;
         this.parser = parser;
+        this.analyzer = analyzer;
     }
 
     public static Lexer defaultLexer() {
@@ -59,6 +67,17 @@ public class Compiler {
         return defaultParser;
     }
 
+    public static Analyzer<SyntaxTree> defaultAnalyzer() {
+        if (defaultAnalyzer != null) return defaultAnalyzer;
+        synchronized (Compiler.class) {
+            if (defaultAnalyzer != null) return defaultAnalyzer;
+            Analyzer.Builder<SyntaxTree> builder = new BasicAnalyzer.Builder<>();
+            builder.definePass(AnalyzePasses.CollectPass);
+            defaultAnalyzer = builder.build();
+        }
+        return defaultAnalyzer;
+    }
+
     public void compile(File file) throws IOException {
         Reader reader = new ChannelReader(FileChannel.open(file.toPath(), StandardOpenOption.READ));
         Stream<Unit> lexemes = lexer.resolve(reader)
@@ -67,5 +86,7 @@ public class Compiler {
                 .filter(unit -> !"blank".equals(unit.name()));
         Source source = parser.parse(lexemes);
         System.out.println("parse successfully");
+        analyzer.analyze(List.of(source));
+        System.out.println("analyze successfully");
     }
 }
