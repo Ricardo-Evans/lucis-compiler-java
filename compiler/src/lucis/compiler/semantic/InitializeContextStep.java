@@ -14,7 +14,7 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
     @Override
     public Boolean visitAssignStatement(AssignStatement statement) {
         Context context = statement.context();
-        statement.content.context(context);
+        statement.right.context(context);
         return true;
     }
 
@@ -61,11 +61,6 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
     }
 
     @Override
-    public Boolean visitExportStatement(ExportStatement statement) {
-        return false;
-    }
-
-    @Override
     public Boolean visitFunctionExpression(FunctionExpression expression) {
         Context context = expression.context();
         expression.function.context(context);
@@ -87,11 +82,6 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
     }
 
     @Override
-    public Boolean visitImportStatement(ImportStatement statement) {
-        return false;
-    }
-
-    @Override
     public Boolean visitIndexExpression(IndexExpression expression) {
         Context context = expression.context();
         expression.array.context(context);
@@ -101,11 +91,6 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
 
     @Override
     public Boolean visitLiteralExpression(LiteralExpression expression) {
-        return false;
-    }
-
-    @Override
-    public Boolean visitModuleStatement(ModuleStatement statement) {
         return false;
     }
 

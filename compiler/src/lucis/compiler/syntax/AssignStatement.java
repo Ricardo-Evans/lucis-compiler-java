@@ -1,13 +1,13 @@
 package lucis.compiler.syntax;
 
 public class AssignStatement extends Statement {
-    public final String identifier;
-    public final Expression content;
+    public final Expression left;
+    public final Expression right;
 
-    public AssignStatement(String identifier, Expression content) {
-        super(content);
-        this.identifier = identifier;
-        this.content = content;
+    public AssignStatement(Expression left, Expression right) {
+        super(left, right);
+        this.left = left;
+        this.right = right;
     }
 
     @Override

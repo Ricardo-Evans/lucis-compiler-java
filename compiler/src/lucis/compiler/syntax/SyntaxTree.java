@@ -7,17 +7,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTree> {
     private Position position;
     private Context context;
-    protected List<SyntaxTree> children;
+    protected List<? extends SyntaxTree> children;
 
     protected SyntaxTree(SyntaxTree... children) {
         this(Arrays.stream(children).filter(Objects::nonNull).toList());
     }
 
-    protected SyntaxTree(List<SyntaxTree> children) {
+    protected SyntaxTree(Stream<? extends SyntaxTree> children) {
+        this(children.collect(Collectors.toList()));
+    }
+
+    protected SyntaxTree(List<? extends SyntaxTree> children) {
         this.children = children;
     }
 
@@ -40,7 +45,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
     }
 
     @Override
-    public List<SyntaxTree> children() {
+    public List<? extends SyntaxTree> children() {
         return children;
     }
 
@@ -61,21 +66,15 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
 
         T visitDoubleOperatorExpression(DoubleOperatorExpression expression);
 
-        T visitExportStatement(ExportStatement statement);
-
         T visitFunctionExpression(FunctionExpression expression);
 
         T visitFunctionStatement(FunctionStatement statement);
 
         T visitIdentifierExpression(ElementExpression expression);
 
-        T visitImportStatement(ImportStatement statement);
-
         T visitIndexExpression(IndexExpression expression);
 
         T visitLiteralExpression(LiteralExpression expression);
-
-        T visitModuleStatement(ModuleStatement statement);
 
         T visitReturnStatement(ReturnStatement statement);
 

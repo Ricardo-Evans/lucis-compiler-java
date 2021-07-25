@@ -13,10 +13,10 @@ public class ClassStatement extends Statement {
     }
 
     public static class Field {
-        public final String type;
+        public final UniqueIdentifier type;
         public final String name;
 
-        public Field(String type, String name) {
+        public Field(UniqueIdentifier type, String name) {
             this.type = type;
             this.name = name;
         }

@@ -4,7 +4,6 @@ import compiler.semantic.SemanticException;
 import compiler.semantic.Step;
 import lucis.compiler.ir.LucisType;
 import lucis.compiler.syntax.ClassStatement;
-import lucis.compiler.syntax.ModuleStatement;
 import lucis.compiler.syntax.SyntaxTree;
 import lucis.compiler.syntax.TraitStatement;
 
@@ -19,8 +18,6 @@ public class CollectSymbolStep implements Step<SyntaxTree> {
             context.foundType(name, type);
         } else if (tree instanceof TraitStatement) {
 
-        } else if (tree instanceof ModuleStatement) {
-            context.foundModule(((ModuleStatement) tree).name);
         }
         return false;
     }
