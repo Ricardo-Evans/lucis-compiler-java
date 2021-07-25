@@ -1,0 +1,30 @@
+module test
+
+class Test {
+    String s
+    Integer i
+}
+
+Unit main() : {
+    String s = "hello world"
+    _ = print(s)
+    Integer a = 1
+    b := 2
+    _ = print(a + b)
+    if 3 * a - 1 != b : _ = print("never happen")
+    else : _ = print("correct")
+}
+
+class TestClass {
+    String s1
+    String s2
+}
+
+~ Line Comment
+~~
+~ Block Comment line 1
+~ Block Comment line 2
+~ Block Comment line 3
+~ Block Comment with ~
+~~
+~~ Block Comment at a single line with ~ ~~

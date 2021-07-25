@@ -31,6 +31,3 @@ backup/
 
 # Compiled Files
 out/
-
-# Test Source Files
-*.lux
