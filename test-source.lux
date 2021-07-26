@@ -1,5 +1,8 @@
 module test
 
+import lucis.core
+export Test
+
 class Test {
     String s
     Integer i

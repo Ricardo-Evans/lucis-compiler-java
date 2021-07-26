@@ -83,12 +83,12 @@ public final class GrammarRules {
     }
 
     @GrammarRule(value = "symbol:identifier . symbol", includeNames = {"identifier"})
-    public static Symbol uniqueIdentifier(Symbol parent, String name) {
-        return new Symbol(name, parent);
+    public static Symbol symbol(String name, Symbol child) {
+        return new Symbol(name, child);
     }
 
     @GrammarRule(value = "symbol:identifier", includeNames = {"identifier"})
-    public static Symbol uniqueIdentifier(String name) {
+    public static Symbol symbol(String name) {
         return new Symbol(name);
     }
 
