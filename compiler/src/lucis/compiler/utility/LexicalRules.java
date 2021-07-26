@@ -112,14 +112,11 @@ public final class LexicalRules {
     @LexicalRule("return")
     public static final RegularExpression RETURN = RegularExpression.pure("return");
 
-    public static final RegularExpression SYMBOL = RegularExpression.concatenate(
-            RegularExpression.alternate(LETTERS, DISCARD),
-            RegularExpression.alternate(LETTERS, DIGITS, DISCARD).closure()
-    );
+
     @LexicalRule(value = "identifier", priority = -1)
     public static final RegularExpression IDENTIFIER = RegularExpression.concatenate(
-            SYMBOL,
-            RegularExpression.concatenate(DOT, SYMBOL).closure()
+            LETTERS,
+            RegularExpression.alternate(LETTERS, DIGITS, DISCARD).closure()
     );
 
     @LexicalRule("integer")
