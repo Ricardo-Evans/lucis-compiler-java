@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ModuleHeader {
-    public final UniqueIdentifier name;
-    public final List<UniqueIdentifier> imports = new LinkedList<>();
-    public final List<UniqueIdentifier> exports = new LinkedList<>();
+    public final Symbol name;
+    public final List<Symbol> imports = new LinkedList<>();
+    public final List<Symbol> exports = new LinkedList<>();
 
-    public ModuleHeader(UniqueIdentifier name) {
+    public ModuleHeader(Symbol name) {
         super();
         this.name = name;
     }

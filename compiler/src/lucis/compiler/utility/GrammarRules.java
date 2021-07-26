@@ -82,14 +82,14 @@ public final class GrammarRules {
         return fields;
     }
 
-    @GrammarRule(value = "unique-identifier:identifier . unique-identifier", includeNames = {"identifier"})
-    public static UniqueIdentifier uniqueIdentifier(UniqueIdentifier parent, String name) {
-        return new UniqueIdentifier(name, parent);
+    @GrammarRule(value = "symbol:identifier . symbol", includeNames = {"identifier"})
+    public static Symbol uniqueIdentifier(Symbol parent, String name) {
+        return new Symbol(name, parent);
     }
 
-    @GrammarRule(value = "unique-identifier:identifier", includeNames = {"identifier"})
-    public static UniqueIdentifier uniqueIdentifier(String name) {
-        return new UniqueIdentifier(name);
+    @GrammarRule(value = "symbol:identifier", includeNames = {"identifier"})
+    public static Symbol uniqueIdentifier(String name) {
+        return new Symbol(name);
     }
 
     @GrammarRule("source:module-header statement-list")
@@ -97,19 +97,19 @@ public final class GrammarRules {
         return new Source(header, statements);
     }
 
-    @GrammarRule("module-header:module unique-identifier")
-    public static ModuleHeader moduleHeader(UniqueIdentifier name) {
+    @GrammarRule("module-header:module symbol")
+    public static ModuleHeader moduleHeader(Symbol name) {
         return new ModuleHeader(name);
     }
 
-    @GrammarRule("module-header:module-header import unique-identifier")
-    public static ModuleHeader importModule(ModuleHeader header, UniqueIdentifier name) {
+    @GrammarRule("module-header:module-header import symbol")
+    public static ModuleHeader importModule(ModuleHeader header, Symbol name) {
         header.imports.add(name);
         return header;
     }
 
-    @GrammarRule("module-header:module-header export unique-identifier")
-    public static ModuleHeader exportModule(ModuleHeader header, UniqueIdentifier name) {
+    @GrammarRule("module-header:module-header export symbol")
+    public static ModuleHeader exportModule(ModuleHeader header, Symbol name) {
         header.exports.add(name);
         return header;
     }
@@ -138,8 +138,8 @@ public final class GrammarRules {
         return new ClassStatement(name, fields);
     }
 
-    @GrammarRule(value = "field:unique-identifier identifier", includeNames = {"identifier"})
-    public static ClassStatement.Field field(UniqueIdentifier type, String name) {
+    @GrammarRule(value = "field:symbol identifier", includeNames = {"identifier"})
+    public static ClassStatement.Field field(Symbol type, String name) {
         return new ClassStatement.Field(type, name);
     }
 
@@ -163,8 +163,8 @@ public final class GrammarRules {
         return new BranchStatement(condition, positive, negative);
     }
 
-    @GrammarRule(value = "define-statement:unique-identifier identifier = expression", includeNames = {"identifier"})
-    public static DefineStatement defineStatement(UniqueIdentifier type, String identifier, Expression value) {
+    @GrammarRule(value = "define-statement:symbol identifier = expression", includeNames = {"identifier"})
+    public static DefineStatement defineStatement(Symbol type, String identifier, Expression value) {
         return new DefineStatement(type, identifier, value);
     }
 
@@ -183,18 +183,18 @@ public final class GrammarRules {
         return new DiscardStatement(expression);
     }
 
-    @GrammarRule(value = "function-statement:unique-identifier identifier ( parameter-list ) : expression", includeNames = {"identifier"})
-    public static FunctionStatement functionStatement(UniqueIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Expression expression) {
+    @GrammarRule(value = "function-statement:symbol identifier ( parameter-list ) : expression", includeNames = {"identifier"})
+    public static FunctionStatement functionStatement(Symbol type, String identifier, List<FunctionStatement.Parameter> parameters, Expression expression) {
         return new FunctionStatement(type, identifier, parameters, new ReturnStatement(expression));
     }
 
-    @GrammarRule(value = "function-statement:unique-identifier identifier ( parameter-list ) : block-statement", includeNames = {"identifier"})
-    public static FunctionStatement functionStatement(UniqueIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Statement body) {
+    @GrammarRule(value = "function-statement:symbol identifier ( parameter-list ) : block-statement", includeNames = {"identifier"})
+    public static FunctionStatement functionStatement(Symbol type, String identifier, List<FunctionStatement.Parameter> parameters, Statement body) {
         return new FunctionStatement(type, identifier, parameters, body);
     }
 
-    @GrammarRule(value = "parameter:unique-identifier identifier", includeNames = {"identifier"})
-    public static FunctionStatement.Parameter parameter(UniqueIdentifier type, String identifier) {
+    @GrammarRule(value = "parameter:symbol identifier", includeNames = {"identifier"})
+    public static FunctionStatement.Parameter parameter(Symbol type, String identifier) {
         return new FunctionStatement.Parameter(type, identifier);
     }
 

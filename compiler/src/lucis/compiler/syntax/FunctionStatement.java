@@ -3,12 +3,12 @@ package lucis.compiler.syntax;
 import java.util.List;
 
 public class FunctionStatement extends Statement {
-    public final UniqueIdentifier type;
+    public final Symbol type;
     public final String identifier;
     public final List<Parameter> parameters;
     public final Statement body;
 
-    public FunctionStatement(UniqueIdentifier type, String identifier, List<Parameter> parameters, Statement body) {
+    public FunctionStatement(Symbol type, String identifier, List<Parameter> parameters, Statement body) {
         super(body);
         this.type = type;
         this.identifier = identifier;
@@ -22,10 +22,10 @@ public class FunctionStatement extends Statement {
     }
 
     public static class Parameter {
-        public final UniqueIdentifier type;
+        public final Symbol type;
         public final String identifier;
 
-        public Parameter(UniqueIdentifier type, String identifier) {
+        public Parameter(Symbol type, String identifier) {
             this.type = type;
             this.identifier = identifier;
         }
