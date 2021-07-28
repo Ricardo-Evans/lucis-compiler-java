@@ -3,11 +3,12 @@ package lucis.compiler.semantic;
 import compiler.semantic.SemanticException;
 import lucis.compiler.ir.LucisType;
 import lucis.compiler.ir.LucisVariable;
+import lucis.compiler.syntax.Symbol;
 
 import java.util.*;
 
 public class Context {
-    private String module;
+    private Symbol module;
     private Context parent;
     private final Map<String, LucisType> typeMap = new HashMap<>();
     private final Map<String, LucisVariable> variableMap = new HashMap<>();
@@ -42,11 +43,11 @@ public class Context {
         typeMap.put(name, type);
     }
 
-    public Optional<String> findModule() {
+    public Optional<Symbol> findModule() {
         return Optional.ofNullable(module).or(() -> parent().flatMap(Context::findModule));
     }
 
-    public void foundModule(String name) {
+    public void foundModule(Symbol name) {
         if (this.module != null)
             throw new SemanticException("cannot define module " + name + " in module " + this.module);
         this.module = name;
