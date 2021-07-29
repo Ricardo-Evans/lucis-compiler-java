@@ -108,7 +108,7 @@ public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visit
 
     @Override
     public Boolean visitSource(Source source) {
-        Context context = new Context();
+        Context context = new Context(new LucisModule(null));
         source.context(context);
         source.statements.forEach(s -> s.context(context));
         return true;

@@ -8,15 +8,18 @@ public class CollectSymbolStep implements Step<SyntaxTree> {
     @Override
     public boolean process(SyntaxTree tree) {
         Context context = tree.context();
-        if (tree instanceof Source) {
-            ModuleHeader header = ((Source) tree).header;
-            context.foundModule(header.name);
+        if (tree instanceof Source source) {
+            ModuleHeader header = source.header;
+            context.setCurrentModule(header.name);
         }
-        if (tree instanceof ClassStatement) {
-            Symbol module = context.findModule().orElseThrow(() -> new SemanticException("expect a module statement"));
-            String name = ((ClassStatement) tree).name;
-        } else if (tree instanceof TraitStatement) {
-
+        if (tree instanceof ClassStatement statement) {
+            LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("type " + statement.name + " is defined outside any module"));
+            LucisType type = new LucisType(statement.name, LucisType.Kind.CLASS, module);
+            module.foundType(statement.name, type);
+        } else if (tree instanceof TraitStatement statement) {
+            LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("type " + statement.name + " is defined outside any module"));
+            LucisType type = new LucisType(statement.name, LucisType.Kind.TRAIT, module);
+            module.foundType(statement.name, type);
         }
         return false;
     }

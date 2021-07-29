@@ -1,4 +1,6 @@
-package lucis.compiler.ir;
+package lucis.compiler.semantic;
+
+import lucis.compiler.semantic.LucisType;
 
 public class LucisVariable {
     public String typename;

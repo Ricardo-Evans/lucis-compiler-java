@@ -6,9 +6,12 @@ import lucis.compiler.semantic.CollectSymbolStep;
 import lucis.compiler.semantic.InitializeContextStep;
 import lucis.compiler.syntax.SyntaxTree;
 
-public class AnalyzePasses {
+public final class AnalyzePasses {
     public static final Pass<SyntaxTree> CollectPass = new BFSPass.Builder<SyntaxTree>()
             .step(new InitializeContextStep())
             .step(new CollectSymbolStep())
             .build();
+
+    private AnalyzePasses() {
+    }
 }

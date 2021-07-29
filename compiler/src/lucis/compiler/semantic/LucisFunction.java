@@ -1,4 +1,4 @@
-package lucis.compiler.ir;
+package lucis.compiler.semantic;
 
 public class LucisFunction extends LucisObject {
     public String name;

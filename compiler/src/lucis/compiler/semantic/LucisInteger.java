@@ -1,4 +1,4 @@
-package lucis.compiler.ir;
+package lucis.compiler.semantic;
 
 import lucis.compiler.utility.Constants;
 

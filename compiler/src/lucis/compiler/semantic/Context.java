@@ -1,25 +1,28 @@
 package lucis.compiler.semantic;
 
 import compiler.semantic.SemanticException;
-import lucis.compiler.ir.LucisType;
-import lucis.compiler.ir.LucisVariable;
 import lucis.compiler.syntax.Symbol;
 
 import java.util.*;
 
 public class Context {
-    private Symbol module;
+    private LucisModule rootModule;
+    private LucisModule currentModule;
     private Context parent;
     private final Map<String, LucisType> typeMap = new HashMap<>();
     private final Map<String, LucisVariable> variableMap = new HashMap<>();
-    private final Set<String> importedModules = new HashSet<>();
+    private final Set<LucisModule> importedModules = new HashSet<>();
 
-    public Context() {
-        this(null);
+    public Context(LucisModule rootModule) {
+        this((Context) null);
+        this.rootModule = rootModule;
     }
 
     public Context(Context parent) {
-        this.parent = parent;
+        if (parent != null) {
+            this.parent = parent;
+            this.rootModule = parent.rootModule;
+        }
     }
 
     public Context root() {
@@ -43,14 +46,14 @@ public class Context {
         typeMap.put(name, type);
     }
 
-    public Optional<Symbol> findModule() {
-        return Optional.ofNullable(module).or(() -> parent().flatMap(Context::findModule));
+    public Optional<LucisModule> getCurrentModule() {
+        return Optional.ofNullable(currentModule).or(() -> parent().flatMap(Context::getCurrentModule));
     }
 
-    public void foundModule(Symbol name) {
-        if (this.module != null)
-            throw new SemanticException("cannot define module " + name + " in module " + this.module);
-        this.module = name;
+    public void setCurrentModule(Symbol name) {
+        if (this.currentModule != null)
+            throw new SemanticException("cannot define module " + name + " in module " + this.currentModule.name);
+        this.currentModule = rootModule.foundModule(name);
     }
 
     public Optional<LucisVariable> findVariable(String name) {
@@ -62,11 +65,7 @@ public class Context {
         variableMap.put(name, variable);
     }
 
-    public Set<String> importedModules() {
+    public Set<LucisModule> importedModules() {
         return importedModules;
-    }
-
-    public void importModule(String name) {
-        importedModules.add(name);
     }
 }
