@@ -26,57 +26,37 @@ public interface RegularExpression {
         T visitClosure(Closure expression);
     }
 
-    class Empty implements RegularExpression {
-        public Empty() {
-        }
-
+    record Empty() implements RegularExpression {
         @Override
         public <T> T visit(Visitor<T> visitor) {
             return visitor.visitEmpty();
         }
     }
 
-    class Any implements RegularExpression {
+    record Any() implements RegularExpression {
         @Override
         public <T> T visit(Visitor<T> visitor) {
             return visitor.visitAny();
         }
     }
 
-    class Range implements RegularExpression {
-        public final int start;
-        public final int end;
-
-        public Range(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
-
+    record Range(int start, int end) implements RegularExpression {
         @Override
         public <T> T visit(Visitor<T> visitor) {
             return visitor.visitRange(this);
         }
     }
 
-    class Pure implements RegularExpression {
-        public final String content;
-
-        public Pure(String content) {
-            this.content = content;
-        }
-
+    record Pure(String content) implements RegularExpression {
         @Override
         public <T> T visit(Visitor<T> visitor) {
             return visitor.visitPure(this);
         }
     }
 
-    class Concatenation implements RegularExpression {
-        public final RegularExpression[] expressions;
-
-        public Concatenation(RegularExpression... expressions) {
+    record Concatenation(RegularExpression... expressions) implements RegularExpression {
+        public Concatenation {
             if (expressions.length <= 0) throw new IllegalArgumentException();
-            this.expressions = expressions;
         }
 
         @Override
@@ -85,12 +65,9 @@ public interface RegularExpression {
         }
     }
 
-    class Alternation implements RegularExpression {
-        public final RegularExpression[] expressions;
-
-        public Alternation(RegularExpression... expressions) {
+    record Alternation(RegularExpression... expressions) implements RegularExpression {
+        public Alternation {
             if (expressions.length <= 0) throw new IllegalArgumentException();
-            this.expressions = expressions;
         }
 
         @Override
@@ -99,13 +76,7 @@ public interface RegularExpression {
         }
     }
 
-    class Closure implements RegularExpression {
-        public final RegularExpression expression;
-
-        public Closure(RegularExpression expression) {
-            this.expression = expression;
-        }
-
+    record Closure(RegularExpression expression) implements RegularExpression {
         @Override
         public <T> T visit(Visitor<T> visitor) {
             return visitor.visitClosure(this);

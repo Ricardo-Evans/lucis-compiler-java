@@ -6,12 +6,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class Grammar implements Serializable {
+public record Grammar(String left, Part[] right, Function<Object[], ?> reduction) implements Serializable {
     @Serial
     private static final long serialVersionUID = -682497989112307167L;
-    public final String left;
-    public final Part[] right;
-    public final Function<Object[], ?> reduction;
 
     public enum Capture {
         INCLUDE,
@@ -50,31 +47,8 @@ public class Grammar implements Serializable {
         this(left, Arrays.stream(right).map(s -> new Part(s, Capture.DEFAULT)).toArray(Part[]::new), reduction);
     }
 
-    public Grammar(String left, Part[] right, Function<Object[], ?> reduction) {
-        this.left = left;
-        this.right = right;
-        this.reduction = reduction;
-    }
-
     public int length() {
         return right.length;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Grammar grammar = (Grammar) o;
-        return Objects.equals(left, grammar.left) &&
-                Arrays.equals(right, grammar.right) &&
-                Objects.equals(reduction, grammar.reduction);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(left, reduction);
-        result = 31 * result + Arrays.hashCode(right);
-        return result;
     }
 
     @Override

@@ -19,6 +19,7 @@ public class LRParser implements Parser {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T parse(Stream<? extends Unit> lexemes) {
         Objects.requireNonNull(lexemes);
         Deque<State> states = new ArrayDeque<>();
@@ -39,7 +40,7 @@ public class LRParser implements Parser {
         action.act(null, units, states);
         if (units.size() != 1 || states.size() != 1)
             throw new GrammaticalException("accident occur during parsing, remain " + string(units) + " not recognized");
-        return units.pop().value();
+        return (T) units.pop().value();
     }
 
     private static String string(Collection<? extends Unit> units) {
@@ -48,10 +49,13 @@ public class LRParser implements Parser {
         return names.stream().reduce("", (s1, s2) -> s1 + " " + s2);
     }
 
-    private static class State implements Serializable {
+    private record State(Map<String, Action> actionMap) implements Serializable {
         @Serial
         private static final long serialVersionUID = 7681443543917405304L;
-        private final Map<String, Action> actionMap = new HashMap<>();
+
+        public State() {
+            this(new HashMap<>());
+        }
 
         public Action handle(Unit node) {
             return actionMap.get(node == null ? null : node.name());
@@ -92,13 +96,13 @@ public class LRParser implements Parser {
             for (int i = 0; i < length; ++i) {
                 Unit u = units.pop();
                 position = u.position();
-                if (grammar.right[length - i - 1].capture == Grammar.Capture.INCLUDE)
+                if (grammar.right()[length - i - 1].capture == Grammar.Capture.INCLUDE)
                     objects.add(0, u.value());
                 states.pop();
             }
-            Object value = grammar.reduction.apply(objects.toArray());
+            Object value = grammar.reduction().apply(objects.toArray());
             if (hook != null) value = hook.hook(value, position);
-            return new Unit(grammar.left, value, position);
+            return new Unit(grammar.left(), value, position);
         }
     }
 
@@ -117,9 +121,9 @@ public class LRParser implements Parser {
         public Builder define(Grammar grammar) {
             Objects.requireNonNull(grammar, "the grammar cannot be null");
             grammarSet.add(grammar);
-            vt.remove(grammar.left);
-            vn.add(grammar.left);
-            for (Grammar.Part p : grammar.right)
+            vt.remove(grammar.left());
+            vn.add(grammar.left());
+            for (Grammar.Part p : grammar.right())
                 if (!vn.contains(p.name)) vt.add(p.name);
             return this;
         }
@@ -143,7 +147,7 @@ public class LRParser implements Parser {
                     for (Item item : ccx) {
                         if (item.isComplete()) {
                             if (actionMap.containsKey(item.peek)) conflictGrammars(ccx);
-                            if (Objects.equals(item.grammar.left, goal))
+                            if (Objects.equals(item.grammar.left(), goal))
                                 actionMap.put(item.peek, Action.accept(item.grammar, hook));
                             else
                                 actionMap.put(item.peek, Action.reduce(item.grammar, hook));
@@ -172,7 +176,7 @@ public class LRParser implements Parser {
         private Map<String, Set<Grammar>> optimizeGrammar() {
             Map<String, Set<Grammar>> optimizedGrammars = new HashMap<>();
             grammarSet.forEach(grammar -> {
-                Grammar.Part[] rightPart = Arrays.stream(grammar.right).map(part -> {
+                Grammar.Part[] rightPart = Arrays.stream(grammar.right()).map(part -> {
                     Grammar.Capture capture = part.capture;
                     if (capture == Grammar.Capture.DEFAULT) {
                         if (vn.contains(part.name)) capture = Grammar.Capture.INCLUDE;
@@ -180,9 +184,9 @@ public class LRParser implements Parser {
                     }
                     return new Grammar.Part(part.name, capture);
                 }).toArray(Grammar.Part[]::new);
-                Grammar optimizedGrammar = new Grammar(grammar.left, rightPart, grammar.reduction);
-                optimizedGrammars.putIfAbsent(optimizedGrammar.left, new HashSet<>());
-                optimizedGrammars.get(optimizedGrammar.left).add(optimizedGrammar);
+                Grammar optimizedGrammar = new Grammar(grammar.left(), rightPart, grammar.reduction());
+                optimizedGrammars.putIfAbsent(optimizedGrammar.left(), new HashSet<>());
+                optimizedGrammars.get(optimizedGrammar.left()).add(optimizedGrammar);
             });
             return optimizedGrammars;
         }
@@ -198,7 +202,7 @@ public class LRParser implements Parser {
                     for (Grammar g : grammars.get(s)) {
                         Set<String> peekSet = new HashSet<>();
                         peekSet.add(null);
-                        for (Grammar.Part p : g.right) {
+                        for (Grammar.Part p : g.right()) {
                             if (!peekSet.remove(null)) break;
                             peekSet.addAll(peekMap.get(p.name));
                         }
@@ -214,7 +218,7 @@ public class LRParser implements Parser {
             peekSet.add(null);
             for (int i = item.index + 1; i < item.grammar.length(); ++i) {
                 if (!peekSet.remove(null)) break;
-                peekSet.addAll(peekMap.get(item.grammar.right[i].name));
+                peekSet.addAll(peekMap.get(item.grammar.right()[i].name));
             }
             if (peekSet.remove(null)) peekSet.add(item.peek);
             return peekSet;
@@ -246,23 +250,13 @@ public class LRParser implements Parser {
                     .reduce("", (s1, s2) -> s1 + "\n" + s2));
         }
 
-        private static class Item {
-            private final Grammar grammar;
-            private final String peek;
-            private final int index;
-
+        private record Item(Grammar grammar, String peek, int index) {
             public Item(Grammar grammar, String peek) {
                 this(grammar, peek, 0);
             }
 
-            private Item(Grammar grammar, String peek, int index) {
-                this.grammar = grammar;
-                this.peek = peek;
-                this.index = index;
-            }
-
             private String current() {
-                return grammar.right[index].name;
+                return grammar.right()[index].name;
             }
 
             private Item next() {
@@ -270,7 +264,7 @@ public class LRParser implements Parser {
             }
 
             private boolean isComplete() {
-                return index >= grammar.right.length;
+                return index >= grammar.right().length;
             }
 
             private boolean isPotential() {
@@ -279,30 +273,6 @@ public class LRParser implements Parser {
 
             private boolean isPartial() {
                 return !isComplete() && !isPotential();
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
-                Item item = (Item) o;
-                return index == item.index &&
-                        Objects.equals(grammar, item.grammar) &&
-                        Objects.equals(peek, item.peek);
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(grammar, peek, index);
-            }
-
-            @Override
-            public String toString() {
-                return "Item{" +
-                        "grammar=" + grammar +
-                        ", peek='" + peek + '\'' +
-                        ", index=" + index +
-                        '}';
             }
         }
     }

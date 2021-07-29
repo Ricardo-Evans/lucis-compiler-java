@@ -59,17 +59,13 @@ public class DFALexer implements Lexer {
         }).takeWhile(Objects::nonNull);
     }
 
-    private static class Range implements Serializable, Comparable<Range> {
+    private record Range(int start, int end) implements Serializable, Comparable<Range> {
         @Serial
         private static final long serialVersionUID = -1515000752677691088L;
-        private final int start;
-        private final int end;
 
-        public Range(int start, int end) {
+        private Range {
             if (end < start)
                 throw new IllegalArgumentException("range from " + start + " to " + end + " does not exist");
-            this.start = start;
-            this.end = end;
         }
 
         public boolean hasSubset(Range range) {
@@ -83,20 +79,6 @@ public class DFALexer implements Lexer {
 
         public static Range of(int value) {
             return new Range(value, value + 1);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Range range = (Range) o;
-            return start == range.start &&
-                    end == range.end;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(start, end);
         }
 
         @Override
@@ -181,7 +163,7 @@ public class DFALexer implements Lexer {
 
                 @Override
                 public NFAState visitPure(RegularExpression.Pure expression) {
-                    Iterator<Integer> iterator = expression.content.codePoints().iterator();
+                    Iterator<Integer> iterator = expression.content().codePoints().iterator();
                     NFAState state = current;
                     while (iterator.hasNext()) {
                         Range range = Range.of(iterator.next());
@@ -195,7 +177,7 @@ public class DFALexer implements Lexer {
                 @Override
                 public NFAState visitRange(RegularExpression.Range expression) {
                     NFAState result = new NFAState();
-                    Range range = new Range(expression.start, expression.end);
+                    Range range = new Range(expression.start(), expression.end());
                     current.get(range).add(result);
                     return result;
                 }
@@ -205,7 +187,7 @@ public class DFALexer implements Lexer {
                     NFAState state = current;
                     current = new NFAState();
                     state.get(null).add(current);
-                    for (RegularExpression e : expression.expressions) {
+                    for (RegularExpression e : expression.expressions()) {
                         current = e.visit(this);
                         NFAState empty = new NFAState();
                         current.get(null).add(empty);
@@ -220,7 +202,7 @@ public class DFALexer implements Lexer {
                 public NFAState visitAlternation(RegularExpression.Alternation expression) {
                     NFAState storage = current;
                     NFAState result = new NFAState();
-                    for (RegularExpression e : expression.expressions) {
+                    for (RegularExpression e : expression.expressions()) {
                         current = new NFAState();
                         storage.get(null).add(current);
                         NFAState state = e.visit(this);
@@ -237,7 +219,7 @@ public class DFALexer implements Lexer {
                     current = new NFAState();
                     storage.get(null).add(current);
                     storage.get(null).add(result);
-                    NFAState state = expression.expression.visit(this);
+                    NFAState state = expression.expression().visit(this);
                     state.get(null).add(result);
                     state.get(null).add(current);
                     current = storage;
