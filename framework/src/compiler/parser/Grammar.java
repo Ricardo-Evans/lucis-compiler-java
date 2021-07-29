@@ -1,11 +1,13 @@
 package compiler.parser;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 
 public class Grammar implements Serializable {
+    @Serial
     private static final long serialVersionUID = -682497989112307167L;
     public final String left;
     public final Part[] right;
@@ -29,8 +31,7 @@ public class Grammar implements Serializable {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Part)) return false;
-            Part part = (Part) o;
+            if (!(o instanceof Part part)) return false;
             return Objects.equals(name, part.name) && capture == part.capture;
         }
 

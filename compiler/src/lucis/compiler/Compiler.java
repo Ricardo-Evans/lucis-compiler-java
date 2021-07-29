@@ -15,7 +15,6 @@ import lucis.compiler.utility.AnalyzePasses;
 import lucis.compiler.utility.GrammarRules;
 import lucis.compiler.utility.LexicalRules;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;

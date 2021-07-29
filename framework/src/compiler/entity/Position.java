@@ -1,5 +1,6 @@
 package compiler.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -9,6 +10,7 @@ import java.io.Serializable;
  * @version 1.0
  */
 public final class Position implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8729840806537371432L;
 
     public static final Position ROOT = new Position(1, 1);

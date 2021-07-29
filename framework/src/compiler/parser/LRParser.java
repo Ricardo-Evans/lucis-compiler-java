@@ -3,12 +3,14 @@ package compiler.parser;
 import compiler.entity.Position;
 import compiler.entity.Unit;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LRParser implements Parser {
+    @Serial
     private static final long serialVersionUID = 7616064053119080359L;
     private final State initialState;
 
@@ -47,6 +49,7 @@ public class LRParser implements Parser {
     }
 
     private static class State implements Serializable {
+        @Serial
         private static final long serialVersionUID = 7681443543917405304L;
         private final Map<String, Action> actionMap = new HashMap<>();
 

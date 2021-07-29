@@ -15,34 +15,13 @@ public final class Utility {
             public void accept(int codepoint) {
                 if (escape) {
                     switch (codepoint) {
-                        case 'b': {
-                            builder.appendCodePoint('\b');
-                            break;
-                        }
-                        case 'f': {
-                            builder.appendCodePoint('\f');
-                            break;
-                        }
-                        case 'n': {
-                            builder.appendCodePoint('\n');
-                            break;
-                        }
-                        case 'r': {
-                            builder.appendCodePoint('\r');
-                            break;
-                        }
-                        case 't': {
-                            builder.appendCodePoint('\t');
-                            break;
-                        }
-                        case '\\': {
-                            builder.appendCodePoint('\\');
-                            break;
-                        }
-                        case '"': {
-                            builder.appendCodePoint('"');
-                            break;
-                        }
+                        case 'b' -> builder.appendCodePoint('\b');
+                        case 'f' -> builder.appendCodePoint('\f');
+                        case 'n' -> builder.appendCodePoint('\n');
+                        case 'r' -> builder.appendCodePoint('\r');
+                        case 't' -> builder.appendCodePoint('\t');
+                        case '\\' -> builder.appendCodePoint('\\');
+                        case '"' -> builder.appendCodePoint('"');
                     }
                     escape = false;
                 } else {
