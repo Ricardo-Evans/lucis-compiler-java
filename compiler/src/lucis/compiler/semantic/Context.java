@@ -9,6 +9,7 @@ public class Context {
     private LucisModule rootModule;
     private LucisModule currentModule;
     private Context parent;
+    private final Map<String, LucisSymbol> symbolMap = new HashMap<>();
     private final Map<String, LucisType> typeMap = new HashMap<>();
     private final Map<String, LucisVariable> variableMap = new HashMap<>();
     private final Set<LucisModule> importedModules = new HashSet<>();

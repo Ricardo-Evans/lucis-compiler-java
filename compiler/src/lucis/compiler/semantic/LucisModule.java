@@ -15,6 +15,7 @@ public class LucisModule implements Serializable {
     private static final long serialVersionUID = 8968825529218018034L;
     public final String name;
     public final LucisModule parent;
+    private final Map<String, LucisSymbol> symbols = new HashMap<>();
     private final Map<String, LucisModule> modules = new HashMap<>();
     private final Map<String, LucisType> types = new HashMap<>();
     private final Map<String, LucisFunction> functions = new HashMap<>();
@@ -28,6 +29,13 @@ public class LucisModule implements Serializable {
     public LucisModule(String name, LucisModule parent) {
         this.name = name;
         this.parent = parent;
+    }
+
+    public void foundSymbol(String name, LucisSymbol symbol) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(symbol);
+        if (symbols.containsKey(name)) throw new SemanticException("symbol " + name + " is already defined");
+        symbols.put(name, symbol);
     }
 
     public Optional<LucisModule> findModule(Symbol symbol) {
