@@ -13,10 +13,10 @@ public class ClassStatement extends Statement {
     }
 
     public static class Field {
-        public final Symbol type;
+        public final NestedIdentifier type;
         public final String name;
 
-        public Field(Symbol type, String name) {
+        public Field(NestedIdentifier type, String name) {
             this.type = type;
             this.name = name;
         }

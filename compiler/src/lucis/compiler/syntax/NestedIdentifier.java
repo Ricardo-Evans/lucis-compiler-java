@@ -1,7 +1,7 @@
 package lucis.compiler.syntax;
 
-public record Symbol(String name, Symbol child) {
-    public Symbol(String name) {
+public record NestedIdentifier(String name, NestedIdentifier child) {
+    public NestedIdentifier(String name) {
         this(name, null);
     }
 

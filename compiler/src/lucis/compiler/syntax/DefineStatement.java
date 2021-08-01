@@ -1,11 +1,11 @@
 package lucis.compiler.syntax;
 
 public class DefineStatement extends Statement {
-    public final Symbol type;
+    public final NestedIdentifier type;
     public final String identifier;
     public final Expression value;
 
-    public DefineStatement(Symbol type, String identifier, Expression value) {
+    public DefineStatement(NestedIdentifier type, String identifier, Expression value) {
         super(value);
         this.type = type;
         this.identifier = identifier;

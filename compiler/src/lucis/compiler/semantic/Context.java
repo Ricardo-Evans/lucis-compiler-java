@@ -1,7 +1,7 @@
 package lucis.compiler.semantic;
 
 import compiler.semantic.SemanticException;
-import lucis.compiler.syntax.Symbol;
+import lucis.compiler.syntax.NestedIdentifier;
 
 import java.util.*;
 
@@ -9,7 +9,7 @@ public class Context {
     private LucisModule rootModule;
     private LucisModule currentModule;
     private Context parent;
-    private final Map<String, LucisSymbol> symbolMap = new HashMap<>();
+    private final Map<String, Set<LucisSymbol>> symbols = new HashMap<>();
     private final Map<String, LucisType> typeMap = new HashMap<>();
     private final Map<String, LucisVariable> variableMap = new HashMap<>();
     private final Set<LucisModule> importedModules = new HashSet<>();
@@ -51,10 +51,12 @@ public class Context {
         return Optional.ofNullable(currentModule).or(() -> parent().flatMap(Context::getCurrentModule));
     }
 
-    public void setCurrentModule(Symbol name) {
+    public void setCurrentModule(NestedIdentifier name) {
         if (this.currentModule != null)
             throw new SemanticException("cannot define module " + name + " in module " + this.currentModule.name);
-        this.currentModule = rootModule.foundModule(name);
+        LucisModule module = rootModule;
+        // TODO put current module if absent
+        // this.currentModule = rootModule.foundModule(name);
     }
 
     public Optional<LucisVariable> findVariable(String name) {
