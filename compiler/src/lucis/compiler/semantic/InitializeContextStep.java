@@ -108,7 +108,8 @@ public class InitializeContextStep implements Step<SyntaxTree, Environment>, Syn
 
     @Override
     public Boolean visitSource(Source source) {
-        Context context = source.context();
+        Context context = new Context(null);
+        source.context(context);
         source.statements.forEach(s -> s.context(context));
         return true;
     }
