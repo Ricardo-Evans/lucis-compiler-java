@@ -105,8 +105,8 @@ public final class LexicalRules {
     public static final RegularExpression IMPORT = RegularExpression.pure("import");
     @LexicalRule("lambda")
     public static final RegularExpression LAMBDA = RegularExpression.pure("lambda");
-    @LexicalRule("fullName")
-    public static final RegularExpression MODULE = RegularExpression.pure("fullName");
+    @LexicalRule("module")
+    public static final RegularExpression MODULE = RegularExpression.pure("module");
     @LexicalRule("native")
     public static final RegularExpression NATIVE = RegularExpression.pure("native");
     @LexicalRule("return")

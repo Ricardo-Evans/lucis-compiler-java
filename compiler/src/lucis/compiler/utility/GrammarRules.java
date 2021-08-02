@@ -82,34 +82,45 @@ public final class GrammarRules {
         return fields;
     }
 
-    @GrammarRule(value = "nested-identifier:identifier . nested-identifier", includeNames = {"identifier"})
-    public static NestedIdentifier nestedIdentifier(String name, NestedIdentifier child) {
-        return new NestedIdentifier(name, child);
+    @GrammarRule(value = "module-name:identifier . module-name", includeNames = {"identifier"})
+    public static String moduleName(String name, String child) {
+        return name + '.' + child;
     }
 
-    @GrammarRule(value = "nested-identifier:identifier", includeNames = {"identifier"})
-    public static NestedIdentifier nestedIdentifier(String name) {
-        return new NestedIdentifier(name);
+    @GrammarRule(value = "module-name:identifier", includeNames = {"identifier"})
+    public static String moduleName(String name) {
+        return name;
     }
 
-    @GrammarRule("source:fullName-header statement-list")
+    @GrammarRule(value = "unique-identifier:module-name : : _", includeNames = {"_"})
+    @GrammarRule(value = "unique-identifier:module-name : : identifier", includeNames = {"identifier"})
+    public static UniqueIdentifier uniqueIdentifier(String module, String name) {
+        return new UniqueIdentifier(module, name);
+    }
+
+    @GrammarRule(value = "unique-identifier:identifier", includeNames = {"identifier"})
+    public static UniqueIdentifier uniqueIdentifier(String name) {
+        return new UniqueIdentifier(name);
+    }
+
+    @GrammarRule("source:module-header statement-list")
     public static Source source(ModuleHeader header, List<Statement> statements) {
         return new Source(header, statements);
     }
 
-    @GrammarRule("fullName-header:fullName nested-identifier")
-    public static ModuleHeader moduleHeader(NestedIdentifier name) {
+    @GrammarRule("module-header:module module-name")
+    public static ModuleHeader moduleHeader(String name) {
         return new ModuleHeader(name);
     }
 
-    @GrammarRule("fullName-header:fullName-header import nested-identifier")
-    public static ModuleHeader importModule(ModuleHeader header, NestedIdentifier name) {
+    @GrammarRule("module-header:module-header import unique-identifier")
+    public static ModuleHeader importModule(ModuleHeader header, UniqueIdentifier name) {
         header.imports.add(name);
         return header;
     }
 
-    @GrammarRule("fullName-header:fullName-header export nested-identifier")
-    public static ModuleHeader exportModule(ModuleHeader header, NestedIdentifier name) {
+    @GrammarRule("module-header:module-header export unique-identifier")
+    public static ModuleHeader exportModule(ModuleHeader header, UniqueIdentifier name) {
         header.exports.add(name);
         return header;
     }
@@ -138,8 +149,8 @@ public final class GrammarRules {
         return new ClassStatement(name, fields);
     }
 
-    @GrammarRule(value = "field:nested-identifier identifier", includeNames = {"identifier"})
-    public static ClassStatement.Field field(NestedIdentifier type, String name) {
+    @GrammarRule(value = "field:unique-identifier identifier", includeNames = {"identifier"})
+    public static ClassStatement.Field field(UniqueIdentifier type, String name) {
         return new ClassStatement.Field(type, name);
     }
 
@@ -163,8 +174,8 @@ public final class GrammarRules {
         return new BranchStatement(condition, positive, negative);
     }
 
-    @GrammarRule(value = "define-statement:nested-identifier identifier = expression", includeNames = {"identifier"})
-    public static DefineStatement defineStatement(NestedIdentifier type, String identifier, Expression value) {
+    @GrammarRule(value = "define-statement:unique-identifier identifier = expression", includeNames = {"identifier"})
+    public static DefineStatement defineStatement(UniqueIdentifier type, String identifier, Expression value) {
         return new DefineStatement(type, identifier, value);
     }
 
@@ -183,18 +194,18 @@ public final class GrammarRules {
         return new DiscardStatement(expression);
     }
 
-    @GrammarRule(value = "function-statement:nested-identifier identifier ( parameter-list ) : expression", includeNames = {"identifier"})
-    public static FunctionStatement functionStatement(NestedIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Expression expression) {
+    @GrammarRule(value = "function-statement:unique-identifier identifier ( parameter-list ) : expression", includeNames = {"identifier"})
+    public static FunctionStatement functionStatement(UniqueIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Expression expression) {
         return new FunctionStatement(type, identifier, parameters, new ReturnStatement(expression));
     }
 
-    @GrammarRule(value = "function-statement:nested-identifier identifier ( parameter-list ) : block-statement", includeNames = {"identifier"})
-    public static FunctionStatement functionStatement(NestedIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Statement body) {
+    @GrammarRule(value = "function-statement:unique-identifier identifier ( parameter-list ) : block-statement", includeNames = {"identifier"})
+    public static FunctionStatement functionStatement(UniqueIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Statement body) {
         return new FunctionStatement(type, identifier, parameters, body);
     }
 
-    @GrammarRule(value = "parameter:nested-identifier identifier", includeNames = {"identifier"})
-    public static FunctionStatement.Parameter parameter(NestedIdentifier type, String identifier) {
+    @GrammarRule(value = "parameter:unique-identifier identifier", includeNames = {"identifier"})
+    public static FunctionStatement.Parameter parameter(UniqueIdentifier type, String identifier) {
         return new FunctionStatement.Parameter(type, identifier);
     }
 

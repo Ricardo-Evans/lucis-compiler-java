@@ -4,12 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ModuleHeader {
-    public final NestedIdentifier name;
-    public final List<NestedIdentifier> imports = new LinkedList<>();
-    public final List<NestedIdentifier> exports = new LinkedList<>();
+    public final String name;
+    public final List<UniqueIdentifier> imports = new LinkedList<>();
+    public final List<UniqueIdentifier> exports = new LinkedList<>();
 
-    public ModuleHeader(NestedIdentifier name) {
-        super();
+    public ModuleHeader(String name) {
         this.name = name;
     }
 }

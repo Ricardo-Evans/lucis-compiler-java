@@ -18,7 +18,12 @@ public class LucisModule implements Serializable {
     private final Map<LucisSymbol, LucisVariable> variables = new HashMap<>();
 
     public LucisModule(String name) {
+        Objects.requireNonNull(name);
         this.name = name;
+    }
+
+    public Set<LucisSymbol> findSymbol(String name) {
+        return symbols.getOrDefault(name, Set.of());
     }
 
     public void foundSymbol(String name, LucisSymbol symbol) {

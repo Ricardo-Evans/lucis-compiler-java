@@ -10,7 +10,7 @@ public class CollectSymbolStep implements Step<SyntaxTree> {
         Context context = tree.context();
         if (tree instanceof Source source) {
             ModuleHeader header = source.header;
-            context.setCurrentModule(header.name);
+            //context.setCurrentModule(header.name);
         } else if (tree instanceof ClassStatement statement) {
             LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("type " + statement.name + " is defined outside any fullName"));
             LucisSymbol symbol = new LucisSymbol(statement.name, module.name, LucisSymbol.Kind.TYPE);

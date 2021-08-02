@@ -1,6 +1,6 @@
 module test
 
-import lucis.core
+import lucis.core::_
 export Test
 
 class Test {

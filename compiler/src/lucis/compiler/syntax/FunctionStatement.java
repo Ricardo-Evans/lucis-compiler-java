@@ -3,12 +3,12 @@ package lucis.compiler.syntax;
 import java.util.List;
 
 public class FunctionStatement extends Statement {
-    public final NestedIdentifier type;
+    public final UniqueIdentifier type;
     public final String identifier;
     public final List<Parameter> parameters;
     public final Statement body;
 
-    public FunctionStatement(NestedIdentifier type, String identifier, List<Parameter> parameters, Statement body) {
+    public FunctionStatement(UniqueIdentifier type, String identifier, List<Parameter> parameters, Statement body) {
         super(body);
         this.type = type;
         this.identifier = identifier;
@@ -21,6 +21,6 @@ public class FunctionStatement extends Statement {
         return visitor.visitFunctionStatement(this);
     }
 
-    public record Parameter(NestedIdentifier type, String identifier) {
+    public record Parameter(UniqueIdentifier type, String identifier) {
     }
 }

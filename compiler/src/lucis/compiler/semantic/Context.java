@@ -1,7 +1,7 @@
 package lucis.compiler.semantic;
 
 import compiler.semantic.SemanticException;
-import lucis.compiler.syntax.NestedIdentifier;
+import lucis.compiler.syntax.UniqueIdentifier;
 
 import java.util.*;
 
@@ -51,10 +51,11 @@ public class Context {
         return Optional.ofNullable(currentModule).or(() -> parent().flatMap(Context::getCurrentModule));
     }
 
-    public void setCurrentModule(NestedIdentifier name) {
+    public void setCurrentModule(UniqueIdentifier identifier) {
         if (this.currentModule != null)
-            throw new SemanticException("cannot define module " + name + " in module " + this.currentModule.name);
+            throw new SemanticException("cannot define module " + identifier + " in module " + this.currentModule.name);
         LucisModule module = rootModule;
+        Set<LucisSymbol> symbols;
         // TODO put current module if absent
         // this.currentModule = rootModule.foundModule(name);
     }

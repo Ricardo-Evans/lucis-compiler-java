@@ -87,7 +87,7 @@ public class Compiler {
                 .filter(unit -> !"blank".equals(unit.name()));
         Source source = parser.parse(lexemes);
         System.out.println("parse successfully");
-        source.context(new Context(new LucisModule(null)));
+        source.context(new Context(new LucisModule("")));
         analyzer.analyze(List.of(source));
         System.out.println("analyze successfully");
         System.out.println("compile successfully");
