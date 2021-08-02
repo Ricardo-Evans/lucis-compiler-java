@@ -7,7 +7,6 @@ public record LucisSymbol(String name, String fullName, String signature, Kind k
 
     public enum Kind {
         TYPE,
-        MODULE,
         FUNCTION,
         VARIABLE,
     }
