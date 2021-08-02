@@ -1,6 +1,8 @@
-package lucis.compiler.semantic;
+package lucis.compiler.semantic.steps;
 
 import compiler.semantic.Step;
+import lucis.compiler.semantic.Context;
+import lucis.compiler.semantic.Environment;
 import lucis.compiler.syntax.*;
 
 public class InitializeContextStep implements Step<SyntaxTree, Environment>, SyntaxTree.Visitor<Boolean> {
