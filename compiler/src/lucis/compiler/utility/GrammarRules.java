@@ -92,8 +92,8 @@ public final class GrammarRules {
         return name;
     }
 
-    @GrammarRule(value = "unique-identifier:module-name : : _", includeNames = {"_"})
-    @GrammarRule(value = "unique-identifier:module-name : : identifier", includeNames = {"identifier"})
+    @GrammarRule(value = "unique-identifier:module-name : _", includeNames = {"_"})
+    @GrammarRule(value = "unique-identifier:module-name : identifier", includeNames = {"identifier"})
     public static UniqueIdentifier uniqueIdentifier(String module, String name) {
         return new UniqueIdentifier(module, name);
     }

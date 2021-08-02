@@ -9,9 +9,7 @@ import compiler.parser.LRParser;
 import compiler.parser.Parser;
 import compiler.semantic.Analyzer;
 import compiler.semantic.BasicAnalyzer;
-import lucis.compiler.semantic.Context;
 import lucis.compiler.semantic.Environment;
-import lucis.compiler.semantic.LucisModule;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
 import lucis.compiler.utility.AnalyzePasses;
@@ -88,7 +86,8 @@ public class Compiler {
                 .filter(unit -> !"blank".equals(unit.name()));
         Source source = parser.parse(lexemes);
         System.out.println("parse successfully");
-        analyzer.analyze(List.of(source), new Environment());
+        Environment environment = new Environment();
+        analyzer.analyze(List.of(source), environment);
         System.out.println("analyze successfully");
         System.out.println("compile successfully");
     }
