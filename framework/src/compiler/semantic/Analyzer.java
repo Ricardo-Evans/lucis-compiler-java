@@ -4,12 +4,12 @@ import compiler.entity.SyntaxTree;
 
 import java.util.Collection;
 
-public interface Analyzer<T extends SyntaxTree<T>> {
-    void analyze(Collection<T> trees);
+public interface Analyzer<T extends SyntaxTree<T>, E> {
+    void analyze(Collection<T> trees, E environment);
 
-    interface Builder<T extends SyntaxTree<T>> {
-        Analyzer<T> build();
+    interface Builder<T extends SyntaxTree<T>, E> {
+        Analyzer<T, E> build();
 
-        Builder<T> definePass(Pass<T> pass);
+        Builder<T, E> definePass(Pass<T, E> pass);
     }
 }

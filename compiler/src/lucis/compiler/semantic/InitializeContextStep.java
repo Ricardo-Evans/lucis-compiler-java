@@ -3,9 +3,9 @@ package lucis.compiler.semantic;
 import compiler.semantic.Step;
 import lucis.compiler.syntax.*;
 
-public class InitializeContextStep implements Step<SyntaxTree>, SyntaxTree.Visitor<Boolean> {
+public class InitializeContextStep implements Step<SyntaxTree, Environment>, SyntaxTree.Visitor<Boolean> {
     @Override
-    public boolean process(SyntaxTree tree) {
+    public boolean process(SyntaxTree tree, Environment environment) {
         Boolean result = tree.visit(this);
         if (result != null) return result;
         return true;

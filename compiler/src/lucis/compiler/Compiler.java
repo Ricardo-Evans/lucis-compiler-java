@@ -10,6 +10,7 @@ import compiler.parser.Parser;
 import compiler.semantic.Analyzer;
 import compiler.semantic.BasicAnalyzer;
 import lucis.compiler.semantic.Context;
+import lucis.compiler.semantic.Environment;
 import lucis.compiler.semantic.LucisModule;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
@@ -27,17 +28,17 @@ import java.util.stream.Stream;
 public class Compiler {
     private static Lexer defaultLexer = null;
     private static Parser defaultParser = null;
-    private static Analyzer<SyntaxTree> defaultAnalyzer = null;
+    private static Analyzer<SyntaxTree, Environment> defaultAnalyzer = null;
 
     private final Lexer lexer;
     private final Parser parser;
-    private final Analyzer<SyntaxTree> analyzer;
+    private final Analyzer<SyntaxTree, Environment> analyzer;
 
     public Compiler() {
         this(defaultLexer(), defaultParser(), defaultAnalyzer());
     }
 
-    public Compiler(Lexer lexer, Parser parser, Analyzer<SyntaxTree> analyzer) {
+    public Compiler(Lexer lexer, Parser parser, Analyzer<SyntaxTree, Environment> analyzer) {
         this.lexer = lexer;
         this.parser = parser;
         this.analyzer = analyzer;
@@ -68,11 +69,11 @@ public class Compiler {
         return defaultParser;
     }
 
-    public static Analyzer<SyntaxTree> defaultAnalyzer() {
+    public static Analyzer<SyntaxTree, Environment> defaultAnalyzer() {
         if (defaultAnalyzer != null) return defaultAnalyzer;
         synchronized (Compiler.class) {
             if (defaultAnalyzer != null) return defaultAnalyzer;
-            Analyzer.Builder<SyntaxTree> builder = new BasicAnalyzer.Builder<>();
+            Analyzer.Builder<SyntaxTree, Environment> builder = new BasicAnalyzer.Builder<>();
             builder.definePass(AnalyzePasses.CollectPass);
             defaultAnalyzer = builder.build();
         }
@@ -88,7 +89,7 @@ public class Compiler {
         Source source = parser.parse(lexemes);
         System.out.println("parse successfully");
         source.context(new Context(new LucisModule("")));
-        analyzer.analyze(List.of(source));
+        analyzer.analyze(List.of(source), null);
         System.out.println("analyze successfully");
         System.out.println("compile successfully");
     }

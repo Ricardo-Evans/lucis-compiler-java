@@ -4,9 +4,9 @@ import compiler.semantic.SemanticException;
 import compiler.semantic.Step;
 import lucis.compiler.syntax.*;
 
-public class CollectSymbolStep implements Step<SyntaxTree> {
+public class CollectSymbolStep implements Step<SyntaxTree, Environment> {
     @Override
-    public boolean process(SyntaxTree tree) {
+    public boolean process(SyntaxTree tree, Environment environment) {
         Context context = tree.context();
         if (tree instanceof Source source) {
             ModuleHeader header = source.header;
