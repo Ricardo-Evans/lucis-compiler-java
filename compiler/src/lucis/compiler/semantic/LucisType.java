@@ -12,6 +12,10 @@ public record LucisType(String name, Kind kind, LucisModule module, Map<String, 
     public record Field() {
     }
 
+    public String fullName() {
+        return module.name + '.' + name;
+    }
+
     public enum Kind {
         CLASS,
         TRAIT,

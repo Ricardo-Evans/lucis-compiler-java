@@ -10,7 +10,6 @@ public class Context {
     private final Map<String, Set<LucisSymbol>> symbols = new HashMap<>();
     private final Map<String, LucisType> typeMap = new HashMap<>();
     private final Map<String, LucisVariable> variableMap = new HashMap<>();
-    private final Set<LucisModule> importedModules = new HashSet<>();
 
     public Context(Context parent) {
         this.parent = parent;
@@ -26,6 +25,22 @@ public class Context {
 
     public Optional<Context> parent() {
         return Optional.ofNullable(parent);
+    }
+
+    public Set<LucisSymbol> findSymbol(String name) {
+        Objects.requireNonNull(name);
+        return symbols.getOrDefault(name, Set.of());
+    }
+
+    public void foundSymbol(LucisSymbol symbol) {
+        foundSymbol(symbol.name(), symbol);
+    }
+
+    public void foundSymbol(String name, LucisSymbol symbol) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(symbol);
+        symbols.putIfAbsent(name, new HashSet<>());
+        if (!symbols.get(name).add(symbol)) throw new SemanticException("symbol " + symbol + " is already defined");
     }
 
     public Optional<LucisType> findType(String name) {
@@ -57,7 +72,10 @@ public class Context {
         variableMap.put(name, variable);
     }
 
-    public Set<LucisModule> importedModules() {
-        return importedModules;
+    public void importSymbols(String name, Set<LucisSymbol> symbols) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(symbols);
+        this.symbols.putIfAbsent(name, new HashSet<>());
+        this.symbols.get(name).addAll(symbols);
     }
 }

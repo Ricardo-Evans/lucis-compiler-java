@@ -8,13 +8,13 @@ import java.util.Optional;
 public class Environment {
     private final Map<String, LucisModule> modules = new HashMap<>();
 
-    public void load(String name) {
-
+    public Optional<LucisModule> loadModule(String name) {
+        return Optional.empty();
     }
 
     public Optional<LucisModule> findModule(String name) {
         Objects.requireNonNull(name);
-        return Optional.ofNullable(modules.get(name));
+        return Optional.ofNullable(modules.get(name)).or(() -> loadModule(name));
     }
 
     public LucisModule foundModule(String name) {

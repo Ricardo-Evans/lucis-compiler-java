@@ -25,16 +25,19 @@ public class LucisModule implements Serializable {
         return symbols.getOrDefault(name, Set.of());
     }
 
-    public void foundSymbol(String name, LucisSymbol symbol) {
+    public boolean foundSymbol(LucisSymbol symbol) {
+        return foundSymbol(symbol.name(), symbol);
+    }
+
+    public boolean foundSymbol(String name, LucisSymbol symbol) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(symbol);
         symbols.putIfAbsent(name, new HashSet<>());
-        if (!symbols.get(name).add(symbol)) throw new SemanticException("symbol " + symbol + " is already defined");
+        return symbols.get(name).add(symbol);
     }
 
-    public Optional<LucisType> findType(LucisSymbol symbol, LucisType type) {
+    public Optional<LucisType> findType(LucisSymbol symbol) {
         Objects.requireNonNull(symbol);
-        Objects.requireNonNull(type);
         return Optional.ofNullable(types.get(symbol));
     }
 
@@ -43,5 +46,19 @@ public class LucisModule implements Serializable {
         Objects.requireNonNull(type);
         if (types.containsKey(symbol)) throw new SemanticException("type: " + symbol + " already defined");
         types.put(symbol, type);
+        foundSymbol(symbol);
+    }
+
+    public Optional<LucisFunction> findFunction(LucisSymbol symbol) {
+        Objects.requireNonNull(symbol);
+        return Optional.ofNullable(functions.get(symbol));
+    }
+
+    public void foundFunction(LucisSymbol symbol, LucisFunction function) {
+        Objects.requireNonNull(symbol);
+        Objects.requireNonNull(function);
+        if (functions.containsKey(symbol)) throw new SemanticException("function: " + function + " already defined");
+        functions.put(symbol, function);
+        foundSymbol(symbol);
     }
 }
