@@ -11,7 +11,7 @@ import lucis.compiler.syntax.SyntaxTree;
 import java.util.Objects;
 import java.util.Set;
 
-public class ResolveStep implements Step<SyntaxTree, Environment> {
+public class ResolveFunctionStep implements Step<SyntaxTree, Environment> {
     @Override
     public boolean process(SyntaxTree tree, Environment environment) {
         Context context = tree.context();
