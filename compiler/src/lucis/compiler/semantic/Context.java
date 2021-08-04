@@ -29,7 +29,7 @@ public class Context {
 
     public Set<LucisSymbol> findSymbol(String name) {
         Objects.requireNonNull(name);
-        return symbols.getOrDefault(name, Set.of());
+        return Optional.ofNullable(symbols.get(name)).or(() -> parent().map(context -> context.findSymbol(name))).orElseGet(Set::of);
     }
 
     public void foundSymbol(LucisSymbol symbol) {
@@ -77,5 +77,10 @@ public class Context {
         Objects.requireNonNull(symbols);
         this.symbols.putIfAbsent(name, new HashSet<>());
         this.symbols.get(name).addAll(symbols);
+    }
+
+    public void importCurrentModule() {
+        if (currentModule == null) throw new SemanticException("no module statement found");
+        currentModule.symbols().forEach(this::importSymbols);
     }
 }

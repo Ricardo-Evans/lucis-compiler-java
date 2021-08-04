@@ -1,0 +1,5 @@
+module lucis.core
+
+class Unit {}
+
+class String {}

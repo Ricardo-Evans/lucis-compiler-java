@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -79,16 +80,19 @@ public class Compiler {
         return defaultAnalyzer;
     }
 
-    public void compile(File file) throws IOException {
-        Reader reader = new ChannelReader(FileChannel.open(file.toPath(), StandardOpenOption.READ));
-        Stream<Unit> lexemes = lexer.resolve(reader)
-                .filter(unit -> !"line-comment".equals(unit.name()))
-                .filter(unit -> !"block-comment".equals(unit.name()))
-                .filter(unit -> !"blank".equals(unit.name()));
-        Source source = parser.parse(lexemes);
-        System.out.println("parse successfully");
+    public void compile(File... files) throws IOException {
+        List<SyntaxTree> trees = new LinkedList<>();
+        for (File file : files) {
+            Reader reader = new ChannelReader(FileChannel.open(file.toPath(), StandardOpenOption.READ));
+            Stream<Unit> lexemes = lexer.resolve(reader)
+                    .filter(unit -> !"line-comment".equals(unit.name()))
+                    .filter(unit -> !"block-comment".equals(unit.name()))
+                    .filter(unit -> !"blank".equals(unit.name()));
+            Source source = parser.parse(lexemes);
+            trees.add(source);
+        }
         Environment environment = new Environment();
-        analyzer.analyze(List.of(source), environment);
+        analyzer.analyze(trees, environment);
         System.out.println("analyze successfully");
         System.out.println("compile successfully");
     }

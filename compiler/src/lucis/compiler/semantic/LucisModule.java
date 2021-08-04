@@ -21,19 +21,23 @@ public class LucisModule implements Serializable {
         this.name = name;
     }
 
+    public Map<String, Set<LucisSymbol>> symbols() {
+        return symbols;
+    }
+
     public Set<LucisSymbol> findSymbol(String name) {
         return symbols.getOrDefault(name, Set.of());
     }
 
-    public boolean foundSymbol(LucisSymbol symbol) {
-        return foundSymbol(symbol.name(), symbol);
+    public void foundSymbol(LucisSymbol symbol) {
+        foundSymbol(symbol.name(), symbol);
     }
 
-    public boolean foundSymbol(String name, LucisSymbol symbol) {
+    public void foundSymbol(String name, LucisSymbol symbol) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(symbol);
         symbols.putIfAbsent(name, new HashSet<>());
-        return symbols.get(name).add(symbol);
+        if (!symbols.get(name).add(symbol)) throw new SemanticException(symbol + " is already defined");
     }
 
     public Optional<LucisType> findType(LucisSymbol symbol) {
@@ -41,10 +45,9 @@ public class LucisModule implements Serializable {
         return Optional.ofNullable(types.get(symbol));
     }
 
-    public LucisSymbol foundType(LucisType type) {
+    public void foundType(LucisType type) {
         LucisSymbol symbol = new LucisSymbol(type.name(), name, LucisSymbol.Kind.TYPE);
         foundType(symbol, type);
-        return symbol;
     }
 
     public void foundType(LucisSymbol symbol, LucisType type) {
@@ -60,10 +63,9 @@ public class LucisModule implements Serializable {
         return Optional.ofNullable(functions.get(symbol));
     }
 
-    public LucisSymbol foundFunction(LucisFunction function) {
+    public void foundFunction(LucisFunction function) {
         LucisSymbol symbol = new LucisSymbol(function.name, name, function.signature, LucisSymbol.Kind.FUNCTION);
         foundFunction(symbol, function);
-        return symbol;
     }
 
     public void foundFunction(LucisSymbol symbol, LucisFunction function) {

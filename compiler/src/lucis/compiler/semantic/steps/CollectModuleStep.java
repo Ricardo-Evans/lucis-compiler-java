@@ -16,6 +16,7 @@ public class CollectModuleStep implements Step<SyntaxTree, Environment> {
             ModuleHeader header = source.header;
             LucisModule module = environment.foundModule(header.name);
             context.setCurrentModule(module);
+            context.importCurrentModule();
         }
         return false;
     }
