@@ -2,10 +2,7 @@ package lucis.compiler.semantic.steps;
 
 import compiler.semantic.SemanticException;
 import compiler.semantic.Step;
-import lucis.compiler.semantic.Context;
-import lucis.compiler.semantic.Environment;
-import lucis.compiler.semantic.LucisModule;
-import lucis.compiler.semantic.LucisSymbol;
+import lucis.compiler.semantic.*;
 import lucis.compiler.syntax.FunctionStatement;
 import lucis.compiler.syntax.ModuleHeader;
 import lucis.compiler.syntax.Source;
@@ -20,15 +17,21 @@ public class ResolveStep implements Step<SyntaxTree, Environment> {
         if (tree instanceof Source source) {
             ModuleHeader header = source.header;
             header.imports.forEach(i -> {
-                LucisModule module = environment.findModule(i.module()).orElseThrow(() -> new SemanticException(""));
+                LucisModule module = environment.findModule(i.module()).orElseThrow(() -> new SemanticException("import module " + i.module()+" not found"));
                 Set<LucisSymbol> symbols = module.findSymbol(i.name());
                 if (symbols.isEmpty()) throw new SemanticException("cannot find " + i);
                 context.importSymbols(i.name(), symbols);
             });
         } else if (tree instanceof FunctionStatement statement) {
             LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("cannot define function " + statement.identifier + " outside modules"));
-            
-            LucisSymbol symbol = new LucisSymbol(statement.identifier, module.name, LucisSymbol.Kind.FUNCTION);
+            LucisType result = Utility.uniqueType(statement.type, context, environment);
+            LucisType[] parameters = statement.parameters.stream()
+                    .map(FunctionStatement.Parameter::type)
+                    .map(t -> Utility.uniqueType(t, context, environment))
+                    .toArray(LucisType[]::new);
+            LucisFunction function = new LucisFunction(statement.identifier, Utility.calculateSignature(result, parameters));
+            LucisSymbol symbol = module.foundFunction(function);
+            context.foundSymbol(symbol);
         }
         return true;
     }

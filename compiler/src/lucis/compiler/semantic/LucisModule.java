@@ -41,6 +41,12 @@ public class LucisModule implements Serializable {
         return Optional.ofNullable(types.get(symbol));
     }
 
+    public LucisSymbol foundType(LucisType type) {
+        LucisSymbol symbol = new LucisSymbol(type.name(), name, LucisSymbol.Kind.TYPE);
+        foundType(symbol, type);
+        return symbol;
+    }
+
     public void foundType(LucisSymbol symbol, LucisType type) {
         Objects.requireNonNull(symbol);
         Objects.requireNonNull(type);
@@ -52,6 +58,12 @@ public class LucisModule implements Serializable {
     public Optional<LucisFunction> findFunction(LucisSymbol symbol) {
         Objects.requireNonNull(symbol);
         return Optional.ofNullable(functions.get(symbol));
+    }
+
+    public LucisSymbol foundFunction(LucisFunction function) {
+        LucisSymbol symbol = new LucisSymbol(function.name, name, function.signature, LucisSymbol.Kind.FUNCTION);
+        foundFunction(symbol, function);
+        return symbol;
     }
 
     public void foundFunction(LucisSymbol symbol, LucisFunction function) {
