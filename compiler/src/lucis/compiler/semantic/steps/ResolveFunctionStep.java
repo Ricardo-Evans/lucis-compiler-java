@@ -3,31 +3,16 @@ package lucis.compiler.semantic.steps;
 import compiler.semantic.SemanticException;
 import compiler.semantic.Step;
 import lucis.compiler.semantic.*;
+import lucis.compiler.syntax.Expression;
 import lucis.compiler.syntax.FunctionStatement;
-import lucis.compiler.syntax.ModuleHeader;
-import lucis.compiler.syntax.Source;
+import lucis.compiler.syntax.Statement;
 import lucis.compiler.syntax.SyntaxTree;
-
-import java.util.Objects;
-import java.util.Set;
 
 public class ResolveFunctionStep implements Step<SyntaxTree, Environment> {
     @Override
     public boolean process(SyntaxTree tree, Environment environment) {
         Context context = tree.context();
-        if (tree instanceof Source source) {
-            ModuleHeader header = source.header;
-            header.imports.forEach(i -> {
-                LucisModule module = environment.findModule(i.module()).orElseThrow(() -> new SemanticException("import module " + i.module() + " not found"));
-                if (Objects.equals("_", i.name())) module.symbols().forEach(context::importSymbols);
-                else {
-                    Set<LucisSymbol> symbols = module.findSymbol(i.name());
-                    if (symbols.isEmpty()) throw new SemanticException("cannot find " + i);
-                    context.importSymbols(i.name(), symbols);
-                }
-                context.importCurrentModule();
-            });
-        } else if (tree instanceof FunctionStatement statement) {
+        if (tree instanceof FunctionStatement statement) {
             LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("cannot define function " + statement.identifier + " outside modules"));
             LucisType result = Utility.uniqueType(statement.type, context, environment);
             LucisType[] parameters = statement.parameters.stream()
@@ -37,6 +22,6 @@ public class ResolveFunctionStep implements Step<SyntaxTree, Environment> {
             LucisFunction function = new LucisFunction(statement.identifier, Utility.calculateSignature(result, parameters));
             module.foundFunction(function);
         }
-        return true;
+        return !(tree instanceof Statement || tree instanceof Expression);
     }
 }
