@@ -55,7 +55,7 @@ public class InitializeContextStep implements Step<SyntaxTree, Environment>, Syn
     }
 
     @Override
-    public Boolean visitDoubleOperatorExpression(DoubleOperatorExpression expression) {
+    public Boolean visitBinaryOperatorExpression(BinaryOperatorExpression expression) {
         Context context = expression.context();
         expression.expression1.context(context);
         expression.expression2.context(context);
@@ -103,7 +103,7 @@ public class InitializeContextStep implements Step<SyntaxTree, Environment>, Syn
     }
 
     @Override
-    public Boolean visitSingleOperatorExpression(SingleOperatorExpression expression) {
+    public Boolean visitUnaryOperatorExpression(UnaryOperatorExpression expression) {
         expression.expression.context(expression.context());
         return true;
     }

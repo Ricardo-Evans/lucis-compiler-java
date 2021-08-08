@@ -54,6 +54,8 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
     public interface Visitor<T> {
         T visitAssignStatement(AssignStatement statement);
 
+        T visitBinaryOperatorExpression(BinaryOperatorExpression expression);
+
         T visitBlockStatement(BlockStatement statement);
 
         T visitBranchStatement(BranchStatement statement);
@@ -63,8 +65,6 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
         T visitDefineStatement(DefineStatement statement);
 
         T visitDiscardStatement(DiscardStatement statement);
-
-        T visitDoubleOperatorExpression(DoubleOperatorExpression expression);
 
         T visitFunctionExpression(FunctionExpression expression);
 
@@ -78,10 +78,10 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
 
         T visitReturnStatement(ReturnStatement statement);
 
-        T visitSingleOperatorExpression(SingleOperatorExpression expression);
-
         T visitSource(Source source);
 
         T visitTraitStatement(TraitStatement statement);
+
+        T visitUnaryOperatorExpression(UnaryOperatorExpression expression);
     }
 }

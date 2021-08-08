@@ -256,84 +256,84 @@ public final class GrammarRules {
 
     @GrammarRule("negation-expression:! expression-1")
     @GrammarRule("negation-expression:not expression-1")
-    public static SingleOperatorExpression negationExpression(Expression expression) {
-        return new SingleOperatorExpression(OperatorExpression.Operator.NOT, expression);
+    public static UnaryOperatorExpression negationExpression(Expression expression) {
+        return new UnaryOperatorExpression(OperatorExpression.Operator.NOT, expression);
     }
 
     @GrammarRule("negative-expression:- expression-1")
-    public static SingleOperatorExpression negativeExpression(Expression expression) {
-        return new SingleOperatorExpression(OperatorExpression.Operator.NEGATIVE, expression);
+    public static UnaryOperatorExpression negativeExpression(Expression expression) {
+        return new UnaryOperatorExpression(OperatorExpression.Operator.NEGATIVE, expression);
     }
 
     @GrammarRule("positive-expression:+ expression-1")
-    public static SingleOperatorExpression positiveExpression(Expression expression) {
-        return new SingleOperatorExpression(OperatorExpression.Operator.POSITIVE, expression);
+    public static UnaryOperatorExpression positiveExpression(Expression expression) {
+        return new UnaryOperatorExpression(OperatorExpression.Operator.POSITIVE, expression);
     }
 
     @GrammarRule("division-expression:expression-2 / expression-1")
-    public static DoubleOperatorExpression divisionExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.DIVISION, expression1, expression2);
+    public static BinaryOperatorExpression divisionExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.DIVISION, expression1, expression2);
     }
 
     @GrammarRule("multiply-expression:expression-2 * expression-1")
-    public static DoubleOperatorExpression multiplyExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.MULTIPLY, expression1, expression2);
+    public static BinaryOperatorExpression multiplyExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.MULTIPLY, expression1, expression2);
     }
 
     @GrammarRule("remainder-expression:expression-2 % expression-1")
-    public static DoubleOperatorExpression remainderExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.REMAINDER, expression1, expression2);
+    public static BinaryOperatorExpression remainderExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.REMAINDER, expression1, expression2);
     }
 
     @GrammarRule("plus-expression:expression-3 + expression-2")
-    public static DoubleOperatorExpression plusExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.PLUS, expression1, expression2);
+    public static BinaryOperatorExpression plusExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.PLUS, expression1, expression2);
     }
 
     @GrammarRule("minus-expression:expression-3 - expression-2")
-    public static DoubleOperatorExpression minusExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.MINUS, expression1, expression2);
+    public static BinaryOperatorExpression minusExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.MINUS, expression1, expression2);
     }
 
     @GrammarRule("compare-expression:expression-4 < expression-3")
-    public static DoubleOperatorExpression lessExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.LESS, expression1, expression2);
+    public static BinaryOperatorExpression lessExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.LESS, expression1, expression2);
     }
 
     @GrammarRule("compare-expression:expression-4 > expression-3")
-    public static DoubleOperatorExpression greaterExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.GREATER, expression1, expression2);
+    public static BinaryOperatorExpression greaterExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.GREATER, expression1, expression2);
     }
 
     @GrammarRule("compare-expression:expression-4 < = expression-3")
-    public static DoubleOperatorExpression lessEqualExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.LESS_EQUAL, expression1, expression2);
+    public static BinaryOperatorExpression lessEqualExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.LESS_EQUAL, expression1, expression2);
     }
 
     @GrammarRule("compare-expression:expression-4 > = expression-3")
-    public static DoubleOperatorExpression greaterEqualExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.GREATER, expression1, expression2);
+    public static BinaryOperatorExpression greaterEqualExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.GREATER, expression1, expression2);
     }
 
     @GrammarRule("equality-expression:expression-5 = = expression-4")
-    public static DoubleOperatorExpression equalExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.EQUAL, expression1, expression2);
+    public static BinaryOperatorExpression equalExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.EQUAL, expression1, expression2);
     }
 
     @GrammarRule("equality-expression:expression-5 ! = expression-4")
-    public static DoubleOperatorExpression notEqualExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.NOT_EQUAL, expression1, expression2);
+    public static BinaryOperatorExpression notEqualExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.NOT_EQUAL, expression1, expression2);
     }
 
     @GrammarRule("and-expression:expression-6 & expression-5")
     @GrammarRule("and-expression:expression-6 and expression-5")
-    public static DoubleOperatorExpression andExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.AND, expression1, expression2);
+    public static BinaryOperatorExpression andExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.AND, expression1, expression2);
     }
 
     @GrammarRule("or-expression:expression-7 | expression-6")
     @GrammarRule("or-expression:expression-7 or expression-6")
-    public static DoubleOperatorExpression orExpression(Expression expression1, Expression expression2) {
-        return new DoubleOperatorExpression(OperatorExpression.Operator.OR, expression1, expression2);
+    public static BinaryOperatorExpression orExpression(Expression expression1, Expression expression2) {
+        return new BinaryOperatorExpression(OperatorExpression.Operator.OR, expression1, expression2);
     }
 }

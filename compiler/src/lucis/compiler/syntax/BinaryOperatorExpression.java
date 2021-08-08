@@ -1,9 +1,9 @@
 package lucis.compiler.syntax;
 
-public class DoubleOperatorExpression extends OperatorExpression {
+public class BinaryOperatorExpression extends OperatorExpression {
     public final Expression expression1, expression2;
 
-    public DoubleOperatorExpression(Operator operator, Expression expression1, Expression expression2) {
+    public BinaryOperatorExpression(Operator operator, Expression expression1, Expression expression2) {
         super(operator, expression1, expression2);
         this.expression1 = expression1;
         this.expression2 = expression2;
@@ -11,6 +11,6 @@ public class DoubleOperatorExpression extends OperatorExpression {
 
     @Override
     public <T> T visit(Visitor<T> visitor) {
-        return visitor.visitDoubleOperatorExpression(this);
+        return visitor.visitBinaryOperatorExpression(this);
     }
 }
