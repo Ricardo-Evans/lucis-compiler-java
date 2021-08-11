@@ -1,0 +1,11 @@
+com.lucis.compiler
+compiler.entity
+compiler.io
+compiler.lexer
+compiler.parser
+compiler.semantic
+lucis.compiler
+lucis.compiler.semantic
+lucis.compiler.semantic.steps
+lucis.compiler.syntax
+lucis.compiler.utility
