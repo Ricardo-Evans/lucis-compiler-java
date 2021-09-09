@@ -11,8 +11,7 @@ public class LucisModule implements Serializable {
     private static final long serialVersionUID = 8968825529218018034L;
     public final String name;
     private final Map<String, Set<LucisSymbol>> symbols = new HashMap<>();
-    private final Map<LucisSymbol, LucisType> types = new HashMap<>();
-    private final Map<LucisSymbol, LucisFunction> functions = new HashMap<>();
+    private final Map<String, LucisType> types = new HashMap<>();
     private final Map<LucisObject, Integer> constants = new HashMap<>();
     private final Map<LucisSymbol, LucisVariable> variables = new HashMap<>();
 
@@ -23,6 +22,10 @@ public class LucisModule implements Serializable {
 
     public Map<String, Set<LucisSymbol>> symbols() {
         return symbols;
+    }
+
+    public Map<String, LucisType> types() {
+        return types;
     }
 
     public Set<LucisSymbol> findSymbol(String name) {
@@ -40,39 +43,15 @@ public class LucisModule implements Serializable {
         if (!symbols.get(name).add(symbol)) throw new SemanticException(symbol + " is already defined");
     }
 
-    public Optional<LucisType> findType(LucisSymbol symbol) {
-        Objects.requireNonNull(symbol);
-        return Optional.ofNullable(types.get(symbol));
+    public Optional<LucisType> findType(String name) {
+        Objects.requireNonNull(name);
+        return Optional.ofNullable(types.get(name));
     }
 
     public void foundType(LucisType type) {
-        LucisSymbol symbol = new LucisSymbol(type.name(), name, LucisSymbol.Kind.TYPE);
-        foundType(symbol, type);
-    }
-
-    public void foundType(LucisSymbol symbol, LucisType type) {
-        Objects.requireNonNull(symbol);
         Objects.requireNonNull(type);
-        if (types.containsKey(symbol)) throw new SemanticException("type: " + symbol + " already defined");
-        types.put(symbol, type);
-        foundSymbol(symbol);
-    }
-
-    public Optional<LucisFunction> findFunction(LucisSymbol symbol) {
-        Objects.requireNonNull(symbol);
-        return Optional.ofNullable(functions.get(symbol));
-    }
-
-    public void foundFunction(LucisFunction function) {
-        LucisSymbol symbol = new LucisSymbol(function.name, name, function.signature, LucisSymbol.Kind.FUNCTION);
-        foundFunction(symbol, function);
-    }
-
-    public void foundFunction(LucisSymbol symbol, LucisFunction function) {
-        Objects.requireNonNull(symbol);
-        Objects.requireNonNull(function);
-        if (functions.containsKey(symbol)) throw new SemanticException("function: " + function + " already defined");
-        functions.put(symbol, function);
-        foundSymbol(symbol);
+        String name = type.name();
+        if (types.containsKey(name)) throw new SemanticException(""); // TODO
+        types.put(name, type);
     }
 }

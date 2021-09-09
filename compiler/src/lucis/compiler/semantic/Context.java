@@ -6,21 +6,26 @@ import java.util.*;
 
 public class Context {
     private LucisModule currentModule;
-    private Context parent;
+    private final Context root;
+    private final Context parent;
     private final Map<String, Set<LucisSymbol>> symbols = new HashMap<>();
-    private final Map<String, LucisType> typeMap = new HashMap<>();
-    private final Map<String, LucisVariable> variableMap = new HashMap<>();
+    private final Map<String, LucisType> typeMap;
+
+    public Context() {
+        this.root = null;
+        this.parent = null;
+        this.typeMap = new HashMap<>();
+    }
 
     public Context(Context parent) {
+        Objects.requireNonNull(parent);
+        this.root = parent.root();
         this.parent = parent;
+        this.typeMap = root.typeMap;
     }
 
     public Context root() {
-        return parent().map(Context::root).orElse(this);
-    }
-
-    public void parent(Context context) {
-        this.parent = context;
+        return root == null ? this : root;
     }
 
     public Optional<Context> parent() {
@@ -63,15 +68,6 @@ public class Context {
         this.currentModule = module;
     }
 
-    public Optional<LucisVariable> findVariable(String name) {
-        return Optional.ofNullable(variableMap.get(name)).or(() -> parent().flatMap(c -> c.findVariable(name)));
-    }
-
-    public void foundVariable(String name, LucisVariable variable) {
-        if (variableMap.containsKey(name)) throw new SemanticException("variable " + name + " is already defined");
-        variableMap.put(name, variable);
-    }
-
     public void importSymbols(String name, Set<LucisSymbol> symbols) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(symbols);
@@ -79,8 +75,13 @@ public class Context {
         this.symbols.get(name).addAll(symbols);
     }
 
+    public void importType(String name, LucisType type) {
+
+    }
+
     public void importCurrentModule() {
         if (currentModule == null) throw new SemanticException("no module statement found");
         currentModule.symbols().forEach(this::importSymbols);
+        currentModule.types().forEach(this::importType);
     }
 }
