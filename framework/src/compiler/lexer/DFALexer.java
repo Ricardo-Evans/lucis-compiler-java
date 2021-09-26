@@ -59,14 +59,10 @@ public class DFALexer implements Lexer {
         }).takeWhile(Objects::nonNull);
     }
 
-    private record Range(int start, int end) implements Serializable, Comparable<Range> {
+    private record Range(int start, int end) implements Serializable {
         @Serial
         private static final long serialVersionUID = -1515000752677691088L;
-
-        private Range {
-            if (end < start)
-                throw new IllegalArgumentException("range from " + start + " to " + end + " does not exist");
-        }
+        public static final Range EMPTY = new Range(0, 0);
 
         public boolean hasSubset(Range range) {
             return this.start <= range.start && this.end >= range.end;
@@ -77,6 +73,10 @@ public class DFALexer implements Lexer {
             return start <= value && value < end;
         }
 
+        public boolean isEmpty() {
+            return end <= start;
+        }
+
         public static Range of(int value) {
             return new Range(value, value + 1);
         }
@@ -84,11 +84,6 @@ public class DFALexer implements Lexer {
         @Override
         public String toString() {
             return "[" + start + "," + end + ")";
-        }
-
-        @Override
-        public int compareTo(Range o) {
-            return Double.compare((start + end) / 2.0, (o.start + o.end) / 2.0);
         }
     }
 
@@ -135,6 +130,10 @@ public class DFALexer implements Lexer {
     public static class Builder implements Lexer.Builder {
         private final NFAState initialState = new NFAState();
         private final Map<String, Integer> priorities = new HashMap<>();
+
+        private record Transfer(Range range, Set<NFAState> target) {
+            public static final Transfer EMPTY = new Transfer(Range.EMPTY, Set.of());
+        }
 
         public Builder() {
         }
@@ -265,6 +264,9 @@ public class DFALexer implements Lexer {
             return new DFALexer(state);
         }
 
+        /*
+         * calculate the closure of nfa states
+         */
         private static Set<NFAState> closure(Set<NFAState> states) {
             Set<NFAState> closure = null;
             boolean flag = true;
@@ -278,6 +280,9 @@ public class DFALexer implements Lexer {
             return closure;
         }
 
+        /*
+         * calculate the movement of the closure
+         */
         private static Map<Range, Set<NFAState>> move(Set<NFAState> states) {
             Map<Range, Set<NFAState>> movement = new HashMap<>();
             for (NFAState state : states) {
@@ -290,47 +295,44 @@ public class DFALexer implements Lexer {
             return optimize(movement);
         }
 
+        /*
+         * called when calculating movement, optimize the given movement map to match following requirements:
+         * 1. all keys in the movement has no intersections
+         * 2. for any two movement in the movement map, either the keys are not continuous or the values are not same
+         * 3. all values in the movement are the closure of themselves
+         */
         private static Map<Range, Set<NFAState>> optimize(Map<Range, Set<NFAState>> movement) {
-            Set<Integer> boundaries = new TreeSet<>();
-            movement.keySet().forEach(r -> {
-                boundaries.add(r.start);
-                boundaries.add(r.end);
-            });
-            Map<Range, Set<NFAState>> result = new TreeMap<>();
-            movement.forEach((r, s) -> {
-                int last = -1;
-                for (int boundary : boundaries) {
-                    Range range = new Range(last, boundary);
-                    if (r.hasSubset(range)) {
-                        result.putIfAbsent(range, new HashSet<>());
-                        result.get(range).addAll(s);
-                    }
-                    last = boundary;
-                }
-            });
-            result.replaceAll((r, s) -> closure(s));
-            if (result.isEmpty()) return result;
-            return merge(result);
-        }
-
-        private static Map<Range, Set<NFAState>> merge(Map<Range, Set<NFAState>> optimized) {
-            optimized = new TreeMap<>(optimized);
-            Iterator<Map.Entry<Range, Set<NFAState>>> iterator = optimized.entrySet().iterator();
+            PriorityQueue<Transfer> queue = new PriorityQueue<>(Comparator.comparing(Transfer::range, Comparator.comparingInt(Range::start)));
+            movement.forEach((r, s) -> queue.offer(new Transfer(r, closure(s))));
+            Transfer currentTransfer = Transfer.EMPTY;
             Map<Range, Set<NFAState>> result = new HashMap<>();
-            Map.Entry<Range, Set<NFAState>> entry = iterator.next();
-            Range range = entry.getKey();
-            Set<NFAState> states = entry.getValue();
-            while (iterator.hasNext()) {
-                entry = iterator.next();
-                if (entry.getKey().start == range.end && states.equals(entry.getValue()))
-                    range = new Range(range.start, entry.getKey().end);
-                else {
-                    result.put(range, states);
-                    range = entry.getKey();
-                    states = entry.getValue();
+            while (!queue.isEmpty()) {
+                Transfer transfer = queue.poll();
+                Range currentRange = currentTransfer.range;
+                Range range = transfer.range;
+                Range intersection = new Range(Math.max(currentRange.start, range.start), Math.min(currentRange.end, range.end));
+                if (intersection.isEmpty()) {
+                    if (!currentRange.isEmpty()) {
+                        if (currentRange.end == range.start && Objects.equals(currentTransfer.target, transfer.target))
+                            currentTransfer = new Transfer(new Range(currentRange.start, range.end), transfer.target);
+                        else {
+                            result.put(currentRange, currentTransfer.target);
+                            currentTransfer = transfer;
+                        }
+                    } else currentTransfer = transfer;
+                } else {
+                    Range left = new Range(currentRange.start, Math.min(currentRange.end, range.start));
+                    if (!left.isEmpty()) result.put(left, currentTransfer.target);
+                    Range right = new Range(Math.min(currentRange.end, range.end), Math.max(currentRange.end, range.end));
+                    if (!right.isEmpty())
+                        queue.offer(new Transfer(right, range.hasSubset(right) ? transfer.target : currentTransfer.target));
+                    Set<NFAState> union = new HashSet<>();
+                    union.addAll(currentTransfer.target);
+                    union.addAll(transfer.target);
+                    currentTransfer = new Transfer(intersection, union);
                 }
             }
-            result.put(range, states);
+            if (!currentTransfer.range.isEmpty()) result.put(currentTransfer.range, currentTransfer.target);
             return result;
         }
     }
