@@ -15,8 +15,8 @@ public class BFSPass<T extends SyntaxTree<T>, E> implements Pass<T, E> {
 
     @Override
     public void process(T tree, Deque<T> deque, E environment) {
-        boolean flag = steps.stream().map(step -> step.process(tree, environment)).reduce(false, (b1, b2) -> b1 | b2);
-        if (flag) tree.children().forEach(deque::offerLast);
+        steps.forEach(step -> step.process(tree, environment));
+        tree.children().forEach(deque::offerLast);
     }
 
     public static class Builder<T extends SyntaxTree<T>, E> implements Pass.Builder<T, E> {

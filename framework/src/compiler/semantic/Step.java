@@ -4,5 +4,5 @@ import compiler.entity.SyntaxTree;
 
 @FunctionalInterface
 public interface Step<T extends SyntaxTree<T>, E> {
-    boolean process(T tree, E environment);
+    void process(T tree, E environment);
 }
