@@ -13,7 +13,7 @@ public class Source extends SyntaxTree {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor) {
-        return visitor.visitSource(this);
+    public void visit(Visitor visitor) {
+        visitor.visitSource(this);
     }
 }

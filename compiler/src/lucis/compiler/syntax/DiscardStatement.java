@@ -9,7 +9,7 @@ public class DiscardStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor) {
-        return visitor.visitDiscardStatement(this);
+    public void visit(Visitor visitor) {
+        visitor.visitDiscardStatement(this);
     }
 }

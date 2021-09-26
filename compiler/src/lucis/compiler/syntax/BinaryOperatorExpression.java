@@ -10,7 +10,7 @@ public class BinaryOperatorExpression extends OperatorExpression {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor) {
-        return visitor.visitBinaryOperatorExpression(this);
+    public void visit(Visitor visitor) {
+        visitor.visitBinaryOperatorExpression(this);
     }
 }

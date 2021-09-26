@@ -23,7 +23,7 @@ public class ClassStatement extends Statement {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor) {
-        return visitor.visitClassStatement(this);
+    public void visit(Visitor visitor) {
+        visitor.visitClassStatement(this);
     }
 }

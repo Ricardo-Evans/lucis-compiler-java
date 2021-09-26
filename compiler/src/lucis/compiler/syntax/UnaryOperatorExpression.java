@@ -9,7 +9,7 @@ public class UnaryOperatorExpression extends OperatorExpression {
     }
 
     @Override
-    public <T> T visit(Visitor<T> visitor) {
-        return visitor.visitUnaryOperatorExpression(this);
+    public void visit(Visitor visitor) {
+        visitor.visitUnaryOperatorExpression(this);
     }
 }
