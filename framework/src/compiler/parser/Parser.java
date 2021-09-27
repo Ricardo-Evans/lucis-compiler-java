@@ -80,7 +80,7 @@ public interface Parser extends Serializable {
 
         private void defineByAnnotation(GrammarRule grammarRule, Method method) {
             if (!Modifier.isStatic(method.getModifiers()) || !method.canAccess(null))
-                throw new GrammaticalException(); // TODO more specific exception
+                throw new GrammaticalException("method used to reduce should be static and public");
             String grammarString = grammarRule.value();
             int index = grammarString.indexOf(':');
             if (index < 0 || index >= grammarString.length())
