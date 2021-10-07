@@ -2,13 +2,13 @@ package lucis.compiler.syntax;
 
 import java.util.List;
 
-public class FunctionStatement extends Statement {
+public class FunctionDeclaration extends Declaration {
     public final UniqueIdentifier type;
     public final String identifier;
     public final List<Parameter> parameters;
     public final Statement body;
 
-    public FunctionStatement(UniqueIdentifier type, String identifier, List<Parameter> parameters, Statement body) {
+    public FunctionDeclaration(UniqueIdentifier type, String identifier, List<Parameter> parameters, Statement body) {
         super(body);
         this.type = type;
         this.identifier = identifier;

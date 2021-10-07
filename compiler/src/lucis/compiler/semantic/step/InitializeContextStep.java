@@ -23,14 +23,14 @@ public class InitializeContextStep implements Step<SyntaxTree, Environment> {
                 statement.positive.context(positiveContext);
                 statement.negative.context(negativeContext);
             }
-            case ClassStatement statement -> statement.context(new Context(currentContext));
-            case FunctionStatement statement -> statement.body.context(new Context(currentContext));
+            case ClassDeclaration statement -> statement.context(new Context(currentContext));
+            case FunctionDeclaration statement -> statement.body.context(new Context(currentContext));
             case Source source -> {
                 source.context(new Context());
                 Context context = new Context(source.context());
                 source.statements.forEach(s -> s.context(context));
             }
-            case TraitStatement statement -> {
+            case TraitDeclaration statement -> {
                 Context context = new Context(currentContext);
                 statement.context(context);
                 statement.statements.forEach(s -> s.context(context));

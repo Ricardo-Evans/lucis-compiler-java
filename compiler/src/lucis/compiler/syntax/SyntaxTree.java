@@ -60,7 +60,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
 
         void visitBranchStatement(BranchStatement statement);
 
-        void visitClassStatement(ClassStatement statement);
+        void visitClassStatement(ClassDeclaration statement);
 
         void visitDefineStatement(DefineStatement statement);
 
@@ -68,7 +68,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
 
         void visitFunctionExpression(FunctionExpression expression);
 
-        void visitFunctionStatement(FunctionStatement statement);
+        void visitFunctionStatement(FunctionDeclaration statement);
 
         void visitIdentifierExpression(ElementExpression expression);
 
@@ -80,7 +80,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
 
         void visitSource(Source source);
 
-        void visitTraitStatement(TraitStatement statement);
+        void visitTraitStatement(TraitDeclaration statement);
 
         void visitUnaryOperatorExpression(UnaryOperatorExpression expression);
     }

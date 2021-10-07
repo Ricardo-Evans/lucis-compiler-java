@@ -28,84 +28,9 @@ public final class GrammarRules {
     private GrammarRules() {
     }
 
-    @GrammarRule("statement-list:statement-list statement")
-    public static List<Statement> statementList(List<Statement> statements, Statement statement) {
-        statements.add(statement);
-        return statements;
-    }
-
-    @GrammarRule("statement-list:")
-    public static List<Statement> statementList() {
-        return new LinkedList<>();
-    }
-
-    @GrammarRule("parameter-list:parameter-list , parameter")
-    public static List<FunctionStatement.Parameter> parameterList(List<FunctionStatement.Parameter> parameters, FunctionStatement.Parameter parameter) {
-        parameters.add(parameter);
-        return parameters;
-    }
-
-    @GrammarRule("parameter-list:parameter")
-    public static List<FunctionStatement.Parameter> parameterList(FunctionStatement.Parameter parameter) {
-        return new LinkedList<>(List.of(parameter));
-    }
-
-    @GrammarRule("parameter-list:")
-    public static List<FunctionStatement.Parameter> parameterList() {
-        return new LinkedList<>();
-    }
-
-    @GrammarRule("expression-list:expression-list , expression")
-    public static List<Expression> expressionList(List<Expression> expressions, Expression expression) {
-        expressions.add(expression);
-        return expressions;
-    }
-
-    @GrammarRule("expression-list:expression")
-    public static List<Expression> expressionList(Expression expression) {
-        return new LinkedList<>(List.of(expression));
-    }
-
-    @GrammarRule("expression-list:")
-    public static List<Expression> expressionList() {
-        return new LinkedList<>();
-    }
-
-    @GrammarRule("field-list:")
-    public static List<ClassStatement.Field> fieldList() {
-        return new LinkedList<>();
-    }
-
-    @GrammarRule("field-list:field-list field")
-    public static List<ClassStatement.Field> fieldList(List<ClassStatement.Field> fields, ClassStatement.Field field) {
-        fields.add(field);
-        return fields;
-    }
-
-    @GrammarRule(value = "module-name:identifier . module-name", includeNames = {"identifier"})
-    public static String moduleName(String name, String child) {
-        return name + '.' + child;
-    }
-
-    @GrammarRule(value = "module-name:identifier", includeNames = {"identifier"})
-    public static String moduleName(String name) {
-        return name;
-    }
-
-    @GrammarRule(value = "unique-identifier:module-name : _", includeNames = {"_"})
-    @GrammarRule(value = "unique-identifier:module-name : identifier", includeNames = {"identifier"})
-    public static UniqueIdentifier uniqueIdentifier(String module, String name) {
-        return new UniqueIdentifier(module, name);
-    }
-
-    @GrammarRule(value = "unique-identifier:identifier", includeNames = {"identifier"})
-    public static UniqueIdentifier uniqueIdentifier(String name) {
-        return new UniqueIdentifier(name);
-    }
-
-    @GrammarRule("source:module-header statement-list")
-    public static Source source(ModuleHeader header, List<Statement> statements) {
-        return new Source(header, statements);
+    @GrammarRule("source:module-header declaration-list")
+    public static Source source(ModuleHeader header, List<Declaration> declarations) {
+        return new Source(header, declarations);
     }
 
     @GrammarRule("module-header:module module-name")
@@ -125,15 +50,20 @@ public final class GrammarRules {
         return header;
     }
 
+    @GrammarRule("declaration:class-declaration")
+    @GrammarRule("declaration:trait-declaration")
+    @GrammarRule("declaration:constant-declaration")
+    @GrammarRule("declaration:function-declaration")
+    public static Declaration declaration(Declaration declaration) {
+        return declaration;
+    }
+
     @GrammarRule("statement:block-statement")
-    @GrammarRule("statement:class-statement")
-    @GrammarRule("statement:trait-statement")
     @GrammarRule("statement:assign-statement")
     @GrammarRule("statement:branch-statement")
     @GrammarRule("statement:define-statement")
     @GrammarRule("statement:return-statement")
     @GrammarRule("statement:discard-statement")
-    @GrammarRule("statement:function-statement")
     @GrammarRule("statement:expression-statement")
     public static Statement statement(Statement statement) {
         return statement;
@@ -144,20 +74,36 @@ public final class GrammarRules {
         return new BlockStatement(statements);
     }
 
-    @GrammarRule(value = "class-statement:class identifier { field-list }", includeNames = {"identifier"})
-    public static ClassStatement classStatement(String name, List<ClassStatement.Field> fields) {
-        return new ClassStatement(name, fields);
+    @GrammarRule(value = "class-declaration:class identifier { field-list }", includeNames = {"identifier"})
+    public static ClassDeclaration classDeclaration(String name, List<ClassDeclaration.Field> fields) {
+        return new ClassDeclaration(name, fields);
     }
 
     @GrammarRule(value = "field:unique-identifier identifier", includeNames = {"identifier"})
-    public static ClassStatement.Field field(UniqueIdentifier type, String name) {
-        return new ClassStatement.Field(type, name);
+    public static ClassDeclaration.Field field(UniqueIdentifier type, String name) {
+        return new ClassDeclaration.Field(type, name);
     }
 
-    @GrammarRule(value = "trait-statement:trait identifier { }", includeNames = {"identifier"})
-    public static TraitStatement traitStatement(String name) {
-        return new TraitStatement(name, null, null);
+    @GrammarRule(value = "trait-declaration:trait identifier { }", includeNames = {"identifier"})
+    public static TraitDeclaration traitDeclaration(String name) {
+        return new TraitDeclaration(name, null, null); // TODO resolve more info
     }
+
+    @GrammarRule(value = "function-declaration:unique-identifier identifier ( parameter-list ) : expression", includeNames = {"identifier"})
+    public static FunctionDeclaration functionDeclaration(UniqueIdentifier type, String identifier, List<FunctionDeclaration.Parameter> parameters, Expression expression) {
+        return new FunctionDeclaration(type, identifier, parameters, new ReturnStatement(expression));
+    }
+
+    @GrammarRule(value = "function-declaration:unique-identifier identifier ( parameter-list ) : block-statement", includeNames = {"identifier"})
+    public static FunctionDeclaration functionDeclaration(UniqueIdentifier type, String identifier, List<FunctionDeclaration.Parameter> parameters, Statement body) {
+        return new FunctionDeclaration(type, identifier, parameters, body);
+    }
+
+    @GrammarRule(value = "parameter:unique-identifier identifier", includeNames = {"identifier"})
+    public static FunctionDeclaration.Parameter parameter(UniqueIdentifier type, String identifier) {
+        return new FunctionDeclaration.Parameter(type, identifier);
+    }
+
 
     @GrammarRule(value = "assign-statement:expression = expression")
     public static AssignStatement assignStatement(Expression left, Expression right) {
@@ -192,21 +138,6 @@ public final class GrammarRules {
     @GrammarRule("discard-statement:_ = expression")
     public static DiscardStatement discardStatement(Expression expression) {
         return new DiscardStatement(expression);
-    }
-
-    @GrammarRule(value = "function-statement:unique-identifier identifier ( parameter-list ) : expression", includeNames = {"identifier"})
-    public static FunctionStatement functionStatement(UniqueIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Expression expression) {
-        return new FunctionStatement(type, identifier, parameters, new ReturnStatement(expression));
-    }
-
-    @GrammarRule(value = "function-statement:unique-identifier identifier ( parameter-list ) : block-statement", includeNames = {"identifier"})
-    public static FunctionStatement functionStatement(UniqueIdentifier type, String identifier, List<FunctionStatement.Parameter> parameters, Statement body) {
-        return new FunctionStatement(type, identifier, parameters, body);
-    }
-
-    @GrammarRule(value = "parameter:unique-identifier identifier", includeNames = {"identifier"})
-    public static FunctionStatement.Parameter parameter(UniqueIdentifier type, String identifier) {
-        return new FunctionStatement.Parameter(type, identifier);
     }
 
     @GrammarRule("index-expression:expression-0 [ expression ]")
@@ -335,5 +266,92 @@ public final class GrammarRules {
     @GrammarRule("or-expression:expression-7 or expression-6")
     public static BinaryOperatorExpression orExpression(Expression expression1, Expression expression2) {
         return new BinaryOperatorExpression(OperatorExpression.Operator.OR, expression1, expression2);
+    }
+
+
+    @GrammarRule("statement-list:statement-list statement")
+    public static List<Statement> statementList(List<Statement> statements, Statement statement) {
+        statements.add(statement);
+        return statements;
+    }
+
+    @GrammarRule("statement-list:")
+    public static List<Statement> statementList() {
+        return new LinkedList<>();
+    }
+
+    @GrammarRule("declaration-list:declaration-list declaration")
+    public static List<Declaration> declarationList(List<Declaration> declarations, Declaration declaration) {
+        declarations.add(declaration);
+        return declarations;
+    }
+
+    @GrammarRule("declaration-list:")
+    public static List<Declaration> declarationList() {
+        return new LinkedList<>();
+    }
+
+    @GrammarRule("parameter-list:parameter-list , parameter")
+    public static List<FunctionDeclaration.Parameter> parameterList(List<FunctionDeclaration.Parameter> parameters, FunctionDeclaration.Parameter parameter) {
+        parameters.add(parameter);
+        return parameters;
+    }
+
+    @GrammarRule("parameter-list:parameter")
+    public static List<FunctionDeclaration.Parameter> parameterList(FunctionDeclaration.Parameter parameter) {
+        return new LinkedList<>(List.of(parameter));
+    }
+
+    @GrammarRule("parameter-list:")
+    public static List<FunctionDeclaration.Parameter> parameterList() {
+        return new LinkedList<>();
+    }
+
+    @GrammarRule("expression-list:expression-list , expression")
+    public static List<Expression> expressionList(List<Expression> expressions, Expression expression) {
+        expressions.add(expression);
+        return expressions;
+    }
+
+    @GrammarRule("expression-list:expression")
+    public static List<Expression> expressionList(Expression expression) {
+        return new LinkedList<>(List.of(expression));
+    }
+
+    @GrammarRule("expression-list:")
+    public static List<Expression> expressionList() {
+        return new LinkedList<>();
+    }
+
+    @GrammarRule("field-list:")
+    public static List<ClassDeclaration.Field> fieldList() {
+        return new LinkedList<>();
+    }
+
+    @GrammarRule("field-list:field-list field")
+    public static List<ClassDeclaration.Field> fieldList(List<ClassDeclaration.Field> fields, ClassDeclaration.Field field) {
+        fields.add(field);
+        return fields;
+    }
+
+    @GrammarRule(value = "module-name:identifier . module-name", includeNames = {"identifier"})
+    public static String moduleName(String name, String child) {
+        return name + '.' + child;
+    }
+
+    @GrammarRule(value = "module-name:identifier", includeNames = {"identifier"})
+    public static String moduleName(String name) {
+        return name;
+    }
+
+    @GrammarRule(value = "unique-identifier:module-name : _", includeNames = {"_"})
+    @GrammarRule(value = "unique-identifier:module-name : identifier", includeNames = {"identifier"})
+    public static UniqueIdentifier uniqueIdentifier(String module, String name) {
+        return new UniqueIdentifier(module, name);
+    }
+
+    @GrammarRule(value = "unique-identifier:identifier", includeNames = {"identifier"})
+    public static UniqueIdentifier uniqueIdentifier(String name) {
+        return new UniqueIdentifier(name);
     }
 }

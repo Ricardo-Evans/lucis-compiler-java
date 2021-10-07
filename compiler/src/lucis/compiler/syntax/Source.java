@@ -4,12 +4,12 @@ import java.util.List;
 
 public class Source extends SyntaxTree {
     public final ModuleHeader header;
-    public final List<Statement> statements;
+    public final List<Declaration> statements;
 
-    public Source(ModuleHeader header, List<Statement> statements) {
-        super(statements);
+    public Source(ModuleHeader header, List<Declaration> declarations) {
+        super(declarations);
         this.header = header;
-        this.statements = statements;
+        this.statements = declarations;
     }
 
     @Override

@@ -13,15 +13,15 @@ public class CollectTypeStep implements Step<SyntaxTree, Environment> {
     public void process(SyntaxTree tree, Environment environment) {
         Context context = tree.context();
         switch (tree) {
-            case ClassStatement statement -> {
-                LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("type " + statement.name + " is defined outside any module"));
-                LucisType type = new ClassType(module.name(), statement.name);
-                module.findSymbol(statement.name).foundElement(new LucisConstant(type, statement.name, type));
+            case ClassDeclaration declaration -> {
+                LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("type " + declaration.name + " is defined outside any module"));
+                LucisType type = new ClassType(module.name(), declaration.name);
+                module.findSymbol(declaration.name).foundElement(new LucisConstant(type, declaration.name, type));
             }
-            case TraitStatement statement -> {
-                LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("type " + statement.name + " is defined outside any module"));
-                LucisType type = new TraitType(module.name(), statement.name);
-                module.findSymbol(statement.name).foundElement(new LucisConstant(type, statement.name, type));
+            case TraitDeclaration declaration -> {
+                LucisModule module = context.getCurrentModule().orElseThrow(() -> new SemanticException("type " + declaration.name + " is defined outside any module"));
+                LucisType type = new TraitType(module.name(), declaration.name);
+                module.findSymbol(declaration.name).foundElement(new LucisConstant(type, declaration.name, type));
             }
             default -> {
             }

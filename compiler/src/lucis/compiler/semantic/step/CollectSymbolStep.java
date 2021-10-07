@@ -10,9 +10,9 @@ public class CollectSymbolStep implements Step<SyntaxTree, Environment> {
     public void process(SyntaxTree tree, Environment environment) {
         Context context = tree.context();
         switch (tree) {
-            case ClassStatement statement -> context.requireCurrentModule().foundSymbol(statement.name);
-            case FunctionStatement statement -> context.requireCurrentModule().foundSymbol(statement.identifier);
-            case TraitStatement statement -> context.requireCurrentModule().foundSymbol(statement.name);
+            case ClassDeclaration declaration -> context.requireCurrentModule().foundSymbol(declaration.name);
+            case TraitDeclaration declaration -> context.requireCurrentModule().foundSymbol(declaration.name);
+            case FunctionDeclaration declaration -> context.requireCurrentModule().foundSymbol(declaration.identifier);
             default -> {
             }
         }

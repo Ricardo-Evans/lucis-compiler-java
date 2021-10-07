@@ -18,7 +18,11 @@ public class BasicAnalyzer<T extends SyntaxTree<T>, E> implements Analyzer<T, E>
             Deque<T> queue = new LinkedList<>(trees);
             while (!queue.isEmpty()) {
                 T t = queue.poll();
-                pass.process(t, queue, environment);
+                try {
+                    pass.process(t, queue, environment);
+                } catch (Exception e) {
+                    throw new SemanticException("semantic analyze fail at " + t.position(), e);
+                }
             }
             pass.clear();
         });
