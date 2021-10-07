@@ -1,7 +1,9 @@
 package lucis.compiler.semantic;
 
-public interface LucisType {
+public interface LucisType extends LucisObject {
     String name();
+
+    String module();
 
     String signature();
 

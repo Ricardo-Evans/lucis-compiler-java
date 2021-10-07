@@ -1,14 +1,13 @@
-package lucis.compiler.semantic;
+package lucis.compiler.semantic.object;
 
-import lucis.compiler.utility.Constants;
+import lucis.compiler.semantic.LucisObject;
 
 import java.util.Arrays;
 
-public class LucisString extends LucisObject {
+public class LucisString implements LucisObject {
     public final byte[] bytes;
 
     public LucisString(byte[] bytes) {
-        super(Constants.STRING_TYPE);
         this.bytes = bytes;
     }
 

@@ -3,58 +3,46 @@ package lucis.compiler.semantic;
 import compiler.semantic.SemanticException;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Context {
     private LucisModule currentModule;
-    private final Context root;
     private final Context parent;
-    private final Map<String, Set<LucisSymbol>> symbols = new HashMap<>();
-    private final Map<String, LucisType> typeMap;
+    private final Map<String, LucisSymbol> symbols = new HashMap<>();
+    private final Map<String, Set<LucisSymbol>> ambitious = new HashMap<>();
 
     public Context() {
-        this.root = null;
         this.parent = null;
-        this.typeMap = new HashMap<>();
     }
 
     public Context(Context parent) {
         Objects.requireNonNull(parent);
-        this.root = parent.root();
         this.parent = parent;
-        this.typeMap = root.typeMap;
     }
 
     public Context root() {
-        return root == null ? this : root;
+        return parent == null ? this : parent.root();
     }
 
     public Optional<Context> parent() {
         return Optional.ofNullable(parent);
     }
 
-    public Set<LucisSymbol> findSymbol(String name) {
+    public LucisElement findElement(String name, Function<Stream<LucisElement>, Stream<LucisElement>> filter) {
+        return Optional.ofNullable(symbols.get(name)).stream()
+                .flatMap(s -> s.findElement(filter))
+                .reduce(Utility.throwOnInvoke(() -> new SemanticException("multiple candidate found for " + name)))
+                .or(() -> parent().map(c -> c.findElement(name, filter)))
+                .orElseThrow(() -> new SemanticException("no candidate found for " + name));
+    }
+
+    public void foundElement(String name, LucisElement element) {
         Objects.requireNonNull(name);
-        return Optional.ofNullable(symbols.get(name)).or(() -> parent().map(context -> context.findSymbol(name))).orElseGet(Set::of);
-    }
-
-    public void foundSymbol(LucisSymbol symbol) {
-        foundSymbol(symbol.name(), symbol);
-    }
-
-    public void foundSymbol(String name, LucisSymbol symbol) {
-        Objects.requireNonNull(name);
-        Objects.requireNonNull(symbol);
-        symbols.putIfAbsent(name, new HashSet<>());
-        if (!symbols.get(name).add(symbol)) throw new SemanticException("symbol " + symbol + " is already defined");
-    }
-
-    public Optional<LucisType> findType(String name) {
-        return Optional.ofNullable(typeMap.get(name)).or(() -> parent().flatMap(c -> c.findType(name)));
-    }
-
-    public void foundType(String name, LucisType type) {
-        if (typeMap.containsKey(name)) throw new SemanticException("type " + name + " is already defined");
-        typeMap.put(name, type);
+        Objects.requireNonNull(element);
+        symbols.get(name).foundElement(element);
     }
 
     public Optional<LucisModule> getCurrentModule() {
@@ -64,24 +52,33 @@ public class Context {
     public void setCurrentModule(LucisModule module) {
         Objects.requireNonNull(module);
         if (this.currentModule != null)
-            throw new SemanticException("cannot define module " + module + " in module " + this.currentModule.name);
+            throw new SemanticException("cannot define module " + module + " in module " + this.currentModule.name());
         this.currentModule = module;
     }
 
-    public void importSymbols(String name, Set<LucisSymbol> symbols) {
-        Objects.requireNonNull(name);
-        Objects.requireNonNull(symbols);
-        this.symbols.putIfAbsent(name, new HashSet<>());
-        this.symbols.get(name).addAll(symbols);
+    public LucisModule requireCurrentModule() {
+        return getCurrentModule().orElseThrow(() -> new SemanticException("no module defined"));
     }
 
-    public void importType(String name, LucisType type) {
+    public void importSymbol(LucisSymbol symbol) {
+        String signature = symbol.signature();
+        if (symbols.put(signature, symbol) != null)
+            throw new SemanticException(signature + " is imported but already exist");
+        String name = symbol.name();
+        if (ambitious.containsKey(name)) ambitious.get(name).add(symbol);
+        if (symbols.containsKey(name)) {
+            ambitious.putIfAbsent(name, new HashSet<>());
+            ambitious.get(name).add(symbols.remove(name));
+            ambitious.get(name).add(symbol);
+        } else symbols.put(name, symbol);
+    }
 
+    public void importModule(LucisModule module) {
+        Objects.requireNonNull(module);
+        module.symbols().forEach((name, symbol) -> importSymbol(symbol));
     }
 
     public void importCurrentModule() {
-        if (currentModule == null) throw new SemanticException("no module statement found");
-        currentModule.symbols().forEach(this::importSymbols);
-        currentModule.types().forEach(this::importType);
+        importModule(requireCurrentModule());
     }
 }

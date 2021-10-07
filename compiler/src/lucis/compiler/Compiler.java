@@ -73,7 +73,7 @@ public class Compiler {
         synchronized (Compiler.class) {
             if (defaultAnalyzer != null) return defaultAnalyzer;
             defaultAnalyzer = new BasicAnalyzer.Builder<SyntaxTree, Environment>()
-                    .definePass(AnalyzePasses.CollectPass)
+                    .definePass(AnalyzePasses.PreparePass)
                     .definePass(AnalyzePasses.ResolvePass)
                     .build();
         }

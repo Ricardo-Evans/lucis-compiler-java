@@ -1,6 +1,9 @@
 package lucis.compiler.utility;
 
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.IntConsumer;
+import java.util.function.Supplier;
 
 public final class Utility {
     private Utility() {
@@ -39,4 +42,5 @@ public final class Utility {
         builder.append(returnType);
         return builder.toString();
     }
+
 }
