@@ -34,8 +34,7 @@ public interface Lexer extends Serializable {
         }
 
         default Builder define(Class<?> c) {
-            for (Field field : c.getFields()) {
-                if (!Modifier.isStatic(field.getModifiers()) || !field.canAccess(null)) continue;
+            for (Field field : c.getDeclaredFields()) {
                 if (field.isAnnotationPresent(LexicalRule.class)) {
                     LexicalRule lexicalRule = field.getAnnotation(LexicalRule.class);
                     defineByAnnotation(field, lexicalRule);
@@ -50,6 +49,8 @@ public interface Lexer extends Serializable {
         }
 
         private void defineByAnnotation(Field field, LexicalRule lexicalRule) {
+            if (!Modifier.isStatic(field.getModifiers())) throw new LexicalException("fields used to define lexical rules should be static");
+            if (!field.canAccess(null)) field.setAccessible(true);
             try {
                 if (RegularExpression.class.isAssignableFrom(field.getType()))
                     define((RegularExpression) field.get(null), lexicalRule.value(), lexicalRule.priority());
