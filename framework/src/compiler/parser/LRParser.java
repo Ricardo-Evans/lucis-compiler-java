@@ -36,7 +36,7 @@ public class LRParser implements Parser {
         State state = states.peek();
         if (state == null)
             throw new GrammaticalException("remain " + string(units) + " cannot be recognized after parsing");
-        Action action = states.peek().handle(null);
+        Action action = state.handle(null);
         action.act(null, units, states);
         if (units.size() != 1 || states.size() != 1)
             throw new GrammaticalException("accident occur during parsing, remain " + string(units) + " not recognized");
