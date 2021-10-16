@@ -13,30 +13,10 @@ public record Grammar(String left, Part[] right, Function<Object[], ?> reduction
     public enum Capture {
         INCLUDE,
         EXCLUDE,
-        DEFAULT,
+        DEFAULT, // terminal include, non-terminal exclude
     }
 
-    public static class Part {
-        public final String name;
-        public final Capture capture;
-
-        public Part(String name, Capture capture) {
-            this.name = name;
-            this.capture = capture;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Part part)) return false;
-            return Objects.equals(name, part.name) && capture == part.capture;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, capture);
-        }
-
+    public record Part(String name, Capture capture) {
         @Override
         public String toString() {
             return name;
