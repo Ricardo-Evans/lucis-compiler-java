@@ -1,7 +1,7 @@
 package lucis.compiler.syntax;
 
 import compiler.entity.Position;
-import lucis.compiler.semantic.Context;
+import lucis.compiler.semantic.analyze.Context;
 
 import java.util.Arrays;
 import java.util.List;

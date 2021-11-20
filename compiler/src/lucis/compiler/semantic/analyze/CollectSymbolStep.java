@@ -1,9 +1,10 @@
-package lucis.compiler.semantic.step;
+package lucis.compiler.semantic.analyze;
 
 import compiler.semantic.Step;
-import lucis.compiler.semantic.Context;
-import lucis.compiler.semantic.Environment;
-import lucis.compiler.syntax.*;
+import lucis.compiler.syntax.ClassDeclaration;
+import lucis.compiler.syntax.FunctionDeclaration;
+import lucis.compiler.syntax.SyntaxTree;
+import lucis.compiler.syntax.TraitDeclaration;
 
 public class CollectSymbolStep implements Step<SyntaxTree, Environment> {
     @Override

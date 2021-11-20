@@ -1,8 +1,6 @@
-package lucis.compiler.semantic.type;
+package lucis.compiler.semantic.concept;
 
-import lucis.compiler.semantic.LucisType;
-
-public class ClassType extends BasicType {
+public class ClassType extends LucisType {
     public ClassType(String module, String name) {
         super(module, name);
     }

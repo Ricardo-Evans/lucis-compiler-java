@@ -12,7 +12,7 @@ public interface Pass<T extends SyntaxTree<T>, E> {
     default void clear() {
     }
 
-    void process(T tree, Deque<T> deque, E environment);
+    void process(T tree, E environment);
 
     interface Builder<T extends SyntaxTree<T>, E> {
         Pass<T, E> build();

@@ -9,7 +9,7 @@ import compiler.parser.LRParser;
 import compiler.parser.Parser;
 import compiler.semantic.Analyzer;
 import compiler.semantic.BasicAnalyzer;
-import lucis.compiler.semantic.Environment;
+import lucis.compiler.semantic.analyze.Environment;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
 import lucis.compiler.utility.AnalyzePasses;

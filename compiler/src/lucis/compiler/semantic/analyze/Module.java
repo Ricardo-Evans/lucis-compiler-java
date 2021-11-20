@@ -1,19 +1,22 @@
-package lucis.compiler.semantic;
+package lucis.compiler.semantic.analyze;
 
 import compiler.semantic.SemanticException;
+import lucis.compiler.semantic.concept.LucisObject;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-public class LucisModule implements Serializable {
+public class Module implements Serializable {
     @Serial
     private static final long serialVersionUID = 8968825529218018034L;
     private final String name;
-    private final Map<String, LucisSymbol> symbols = new HashMap<>();
+    private final Map<String, Symbol> symbols = new HashMap<>();
     private final Map<LucisObject, Integer> constants = new HashMap<>();
 
-    public LucisModule(String name) {
+    public Module(String name) {
         Objects.requireNonNull(name);
         this.name = name;
     }
@@ -22,11 +25,11 @@ public class LucisModule implements Serializable {
         return name;
     }
 
-    public Map<String, LucisSymbol> symbols() {
+    public Map<String, Symbol> symbols() {
         return symbols;
     }
 
-    public LucisSymbol findSymbol(String name) {
+    public Symbol findSymbol(String name) {
         if (!symbols.containsKey(name))
             throw new SemanticException("symbol of name " + name + " does not exist in " + this);
         return symbols.get(name);
@@ -34,6 +37,6 @@ public class LucisModule implements Serializable {
 
     public void foundSymbol(String name) {
         Objects.requireNonNull(name);
-        symbols.putIfAbsent(name, new LucisSymbol(name,this.name));
+        symbols.putIfAbsent(name, new Symbol(name,this.name));
     }
 }

@@ -1,6 +1,4 @@
-package lucis.compiler.semantic.object;
-
-import lucis.compiler.semantic.LucisObject;
+package lucis.compiler.semantic.concept;
 
 import java.util.Arrays;
 
@@ -12,7 +10,7 @@ public class LucisString implements LucisObject {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(java.lang.Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LucisString string = (LucisString) o;

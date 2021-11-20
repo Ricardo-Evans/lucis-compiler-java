@@ -1,5 +1,11 @@
 package lucis.compiler.semantic;
 
+import lucis.compiler.semantic.concept.Element;
+import lucis.compiler.semantic.concept.KindType;
+import lucis.compiler.semantic.concept.LucisKind;
+import lucis.compiler.semantic.concept.LucisType;
+
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -26,7 +32,12 @@ public final class Utility {
         };
     }
 
-    public static Function<Stream<LucisElement>, Stream<LucisElement>> noFilter() {
-        return s -> s;
+    public static boolean fromKind(LucisType type, LucisKind kind) {
+        if (!(type instanceof KindType kindType)) return false;
+        return Objects.equals(kindType.kind(), kind);
     }
+
+    public static final Function<Stream<Element>, Stream<Element>> NoFilter = s -> s;
+
+    // public static final Function<Stream<Element>, Stream<Element>> TypeFilter = s -> s.filter(e -> e.type().is());
 }

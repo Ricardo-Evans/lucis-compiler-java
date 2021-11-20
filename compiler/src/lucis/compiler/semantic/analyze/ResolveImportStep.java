@@ -1,9 +1,7 @@
-package lucis.compiler.semantic.step;
+package lucis.compiler.semantic.analyze;
 
 import compiler.semantic.SemanticException;
 import compiler.semantic.Step;
-import lucis.compiler.semantic.Context;
-import lucis.compiler.semantic.Environment;
 import lucis.compiler.semantic.Utility;
 import lucis.compiler.syntax.ModuleHeader;
 import lucis.compiler.syntax.Source;

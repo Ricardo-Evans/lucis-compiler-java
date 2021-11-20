@@ -3,8 +3,8 @@ package lucis.compiler.utility;
 import compiler.semantic.BFSPass;
 import compiler.semantic.DFSPass;
 import compiler.semantic.Pass;
-import lucis.compiler.semantic.step.*;
-import lucis.compiler.semantic.Environment;
+import lucis.compiler.semantic.analyze.*;
+import lucis.compiler.semantic.analyze.Environment;
 import lucis.compiler.syntax.SyntaxTree;
 
 public final class AnalyzePasses {

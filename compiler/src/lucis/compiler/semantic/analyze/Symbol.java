@@ -1,6 +1,7 @@
-package lucis.compiler.semantic;
+package lucis.compiler.semantic.analyze;
 
 import compiler.semantic.SemanticException;
+import lucis.compiler.semantic.concept.Element;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -8,12 +9,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public record LucisSymbol(String name, String module, Set<LucisElement> candidates) {
-    public LucisSymbol(String name) {
+public record Symbol(String name, String module, Set<Element> candidates) {
+    public Symbol(String name) {
         this(name, null);
     }
 
-    public LucisSymbol(String name, String module) {
+    public Symbol(String name, String module) {
         this(name, module, new HashSet<>());
     }
 
@@ -22,18 +23,18 @@ public record LucisSymbol(String name, String module, Set<LucisElement> candidat
         return module + ":" + name;
     }
 
-    public Stream<LucisElement> findElement(Function<Stream<LucisElement>, Stream<LucisElement>> filter) {
+    public Stream<Element> findElement(Function<Stream<Element>, Stream<Element>> filter) {
         return filter.apply(candidates.stream());
     }
 
-    public void foundElement(LucisElement element) {
+    public void foundElement(Element element) {
         if (!candidates.add(element)) throw new SemanticException("element: " + element + " already defined");
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LucisSymbol symbol)) return false;
+        if (!(o instanceof Symbol symbol)) return false;
         return Objects.equals(name, symbol.name) && Objects.equals(module, symbol.module);
     }
 

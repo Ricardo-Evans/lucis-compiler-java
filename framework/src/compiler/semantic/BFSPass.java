@@ -14,9 +14,18 @@ public class BFSPass<T extends SyntaxTree<T>, E> implements Pass<T, E> {
     }
 
     @Override
-    public void process(T tree, Deque<T> deque, E environment) {
-        steps.forEach(step -> step.process(tree, environment));
-        tree.children().forEach(deque::offerLast);
+    public void process(T tree, E environment) {
+        Deque<T> deque = new LinkedList<>();
+        deque.offer(tree);
+        while (!deque.isEmpty()) {
+            T t = deque.poll();
+            try {
+                steps.forEach(step -> step.process(t, environment));
+            } catch (Exception e) {
+                throw new SemanticException("semantic analyze fail at " + t.position(), e);
+            }
+            t.children().forEach(deque::offerLast);
+        }
     }
 
     public static class Builder<T extends SyntaxTree<T>, E> implements Pass.Builder<T, E> {

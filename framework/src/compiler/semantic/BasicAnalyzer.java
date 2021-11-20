@@ -13,19 +13,11 @@ public class BasicAnalyzer<T extends SyntaxTree<T>, E> implements Analyzer<T, E>
 
     @Override
     public void analyze(Collection<T> trees, E environment) {
-        passes.forEach(pass -> {
+        trees.forEach(tree -> passes.forEach(pass -> {
             pass.setup();
-            Deque<T> queue = new LinkedList<>(trees);
-            while (!queue.isEmpty()) {
-                T t = queue.poll();
-                try {
-                    pass.process(t, queue, environment);
-                } catch (Exception e) {
-                    throw new SemanticException("semantic analyze fail at " + t.position(), e);
-                }
-            }
+            pass.process(tree, environment);
             pass.clear();
-        });
+        }));
     }
 
     public static class Builder<T extends SyntaxTree<T>, E> implements Analyzer.Builder<T, E> {

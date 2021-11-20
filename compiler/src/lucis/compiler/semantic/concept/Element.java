@@ -1,6 +1,6 @@
-package lucis.compiler.semantic;
+package lucis.compiler.semantic.concept;
 
-public interface LucisElement {
+public interface Element {
     String name();
 
     String signature();

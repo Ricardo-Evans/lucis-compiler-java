@@ -1,8 +1,6 @@
-package lucis.compiler.semantic.step;
+package lucis.compiler.semantic.analyze;
 
 import compiler.semantic.Step;
-import lucis.compiler.semantic.Context;
-import lucis.compiler.semantic.Environment;
 import lucis.compiler.syntax.*;
 
 import java.util.Objects;
