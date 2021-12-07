@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTree> {
+public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTree, Context> {
     private Position position;
     private Context context;
     protected List<? extends SyntaxTree> children;
@@ -36,6 +36,7 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
         return position;
     }
 
+    @Override
     public Context context() {
         return context;
     }

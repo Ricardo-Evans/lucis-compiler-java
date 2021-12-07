@@ -18,8 +18,8 @@ public record LucisKind(String module, String name, List<Parameter> parameters,
         for (Parameter parameter : parameters) {
             Variant variant = parameter.variant();
             LucisType type = types[i];
-            Constraint constraint = parameter.constraint();
-            if (!constraint.satisfy(type)) throw new SemanticException(""); // TODO
+            for (Constraint constraint : parameter.constraints())
+                if (!constraint.satisfy(type)) throw new SemanticException(""); // TODO
             parametersMap.put(parameter.name, type);
             appliedParameters.add(new KindType.Parameter(variant, type));
             ++i;
@@ -50,7 +50,7 @@ public record LucisKind(String module, String name, List<Parameter> parameters,
         }
     }
 
-    public record Parameter(String name, Variant variant, Constraint constraint) {
+    public record Parameter(String name, Variant variant, Constraint... constraints) {
     }
 
     @Override
