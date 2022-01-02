@@ -37,6 +37,6 @@ public class Module implements Serializable {
 
     public void foundSymbol(String name) {
         Objects.requireNonNull(name);
-        symbols.putIfAbsent(name, new Symbol(name,this.name));
+        symbols.putIfAbsent(name, new Symbol(name));
     }
 }

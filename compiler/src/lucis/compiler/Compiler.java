@@ -9,6 +9,7 @@ import compiler.parser.LRParser;
 import compiler.parser.Parser;
 import compiler.semantic.Analyzer;
 import compiler.semantic.BasicAnalyzer;
+import lucis.compiler.semantic.analyze.Context;
 import lucis.compiler.semantic.analyze.Environment;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
@@ -27,17 +28,17 @@ import java.util.stream.Stream;
 public class Compiler {
     private static Lexer defaultLexer = null;
     private static Parser defaultParser = null;
-    private static Analyzer<SyntaxTree, Environment> defaultAnalyzer = null;
+    private static Analyzer<SyntaxTree, Context, Environment> defaultAnalyzer = null;
 
     private final Lexer lexer;
     private final Parser parser;
-    private final Analyzer<SyntaxTree, Environment> analyzer;
+    private final Analyzer<SyntaxTree, Context, Environment> analyzer;
 
     public Compiler() {
         this(defaultLexer(), defaultParser(), defaultAnalyzer());
     }
 
-    public Compiler(Lexer lexer, Parser parser, Analyzer<SyntaxTree, Environment> analyzer) {
+    public Compiler(Lexer lexer, Parser parser, Analyzer<SyntaxTree, Context, Environment> analyzer) {
         this.lexer = lexer;
         this.parser = parser;
         this.analyzer = analyzer;
@@ -68,16 +69,8 @@ public class Compiler {
         return defaultParser;
     }
 
-    public static Analyzer<SyntaxTree, Environment> defaultAnalyzer() {
-        if (defaultAnalyzer != null) return defaultAnalyzer;
-        synchronized (Compiler.class) {
-            if (defaultAnalyzer != null) return defaultAnalyzer;
-            defaultAnalyzer = new BasicAnalyzer.Builder<SyntaxTree, Environment>()
-                    .definePass(AnalyzePasses.PreparePass)
-                    .definePass(AnalyzePasses.ResolvePass)
-                    .build();
-        }
-        return defaultAnalyzer;
+    private static Analyzer<SyntaxTree, Context, Environment> defaultAnalyzer() {
+        return null;
     }
 
     public void compile(File... files) throws IOException {

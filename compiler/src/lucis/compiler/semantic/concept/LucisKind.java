@@ -4,8 +4,7 @@ import compiler.semantic.SemanticException;
 
 import java.util.*;
 
-public record LucisKind(String module, String name, List<Parameter> parameters,
-                        StubType... bases) implements LucisObject {
+public record LucisKind(String module, String name, List<Parameter> parameters, StubType... bases) implements LucisObject {
 
     public LucisType apply(LucisType... types) {
         Objects.requireNonNull(types);

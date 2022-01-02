@@ -9,22 +9,22 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public record Symbol(String name, String module, Set<Element> candidates) {
+public record Symbol(String name, Set<Element> candidates) {
     public Symbol(String name) {
-        this(name, null);
+        this(name, new HashSet<>());
     }
 
-    public Symbol(String name, String module) {
-        this(name, module, new HashSet<>());
-    }
-
-    public String signature() {
-        if (module == null) return name;
-        return module + ":" + name;
+    public Element unique() {
+        if (candidates.size() != 1) throw new AssertionError("candidates not unique");
+        return candidates.iterator().next();
     }
 
     public Stream<Element> findElement(Function<Stream<Element>, Stream<Element>> filter) {
         return filter.apply(candidates.stream());
+    }
+
+    public void foundElement(Iterable<Element> elements) {
+        elements.forEach(this::foundElement);
     }
 
     public void foundElement(Element element) {
@@ -35,11 +35,11 @@ public record Symbol(String name, String module, Set<Element> candidates) {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Symbol symbol)) return false;
-        return Objects.equals(name, symbol.name) && Objects.equals(module, symbol.module);
+        return Objects.equals(name, symbol.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, module);
+        return Objects.hash(name);
     }
 }
