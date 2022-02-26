@@ -1,16 +1,30 @@
 package lucis.compiler.semantic.analyze;
 
-import lucis.compiler.semantic.AnalyzeStep;
 import lucis.compiler.syntax.*;
 
 import java.util.Objects;
 
-public class InitializeSymbolTable implements AnalyzeStep {
-    @Override
-    public void process(SyntaxTree tree, Context context, Environment environment) {
+public final class InitializePasses {
+    private InitializePasses() {
+    }
+
+    /**
+     * Simply initialize context for each syntax tree recursively, necessary for other analysis
+     */
+    public static void initializeContext(SyntaxTree tree, Environment environment) {
+        if (tree == null) return;
+        Context context = new Context();
+        tree.context(context);
+        tree.children().forEach(t -> initializeContext(t, environment));
+    }
+
+    /**
+     * Detect module information and create symbol table according to grammar structures
+     */
+    public static void initializeScopes(SyntaxTree tree, Environment environment) {
+        if (tree == null) return;
+        Context context = tree.context();
         switch (tree) {
-            case null -> {
-            }
             case BlockStatement statement -> {
                 SymbolTable symbolTable = new SymbolTable(context.getSymbolTable());
                 statement.statements.stream().map(SyntaxTree::context).forEach(c -> c.setSymbolTable(symbolTable));
@@ -28,6 +42,9 @@ public class InitializeSymbolTable implements AnalyzeStep {
             case ClassDeclaration ignored -> context.setSymbolTable(new SymbolTable(context.getSymbolTable()));
             case FunctionDeclaration statement -> statement.body.context().setSymbolTable(new SymbolTable(context.getSymbolTable()));
             case Source source -> {
+                ModuleHeader header = source.header;
+                Module module = environment.foundModule(header.name);
+                context.setCurrentModule(module);
                 context.setSymbolTable(new SymbolTable());
                 SymbolTable symbolTable = new SymbolTable(context.getSymbolTable());
                 source.statements.stream().map(SyntaxTree::context).forEach(c -> c.setSymbolTable(symbolTable));
@@ -35,5 +52,6 @@ public class InitializeSymbolTable implements AnalyzeStep {
             case TraitDeclaration ignored -> context.setSymbolTable(new SymbolTable(context.getSymbolTable()));
             default -> tree.children().stream().filter(Objects::nonNull).map(SyntaxTree::context).forEach(c -> c.setSymbolTable(context.getSymbolTable()));
         }
+        tree.children().forEach(t -> initializeScopes(t, environment));
     }
 }

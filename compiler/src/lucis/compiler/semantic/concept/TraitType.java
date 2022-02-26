@@ -6,7 +6,12 @@ public class TraitType extends LucisType {
     }
 
     @Override
-    public boolean is(LucisType type) {
+    public boolean match(LucisType type) {
+        return false;
+    }
+
+    @Override
+    public boolean assignable(LucisType type) {
         return false;
     }
 }

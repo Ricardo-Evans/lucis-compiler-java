@@ -1,8 +1,10 @@
 package lucis.compiler.semantic.concept;
 
-public class ClassType extends LucisType {
-    public ClassType(String module, String name) {
-        super(module, name);
+public class WildcardType extends LucisType {
+    public static final WildcardType instance = new WildcardType();
+
+    private WildcardType() {
+        super("?", "?");
     }
 
     @Override

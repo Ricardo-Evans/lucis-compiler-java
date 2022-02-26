@@ -22,7 +22,6 @@ public class KindType extends LucisType {
 
         @Override
         public int compareTo(Parameter o) {
-
             return 0;
         }
     }
@@ -35,9 +34,14 @@ public class KindType extends LucisType {
     }
 
     @Override
-    public boolean is(LucisType type) {
+    public boolean match(LucisType type) {
+        return false;
+    }
+
+    @Override
+    public boolean assignable(LucisType type) {
         if (Objects.equals(type, this)) return true;
-        if (Arrays.stream(bases).anyMatch(t -> t.is(type))) return true;
+        if (Arrays.stream(bases).anyMatch(t -> t.assignable(type))) return true;
         if (type instanceof KindType kindType) {
             if (!Objects.equals(kind, kindType.kind)) return false;
             Iterator<Parameter> iterator = kindType.parameters.iterator();
@@ -45,9 +49,9 @@ public class KindType extends LucisType {
                 if (!iterator.hasNext()) return false;
                 Parameter p2 = iterator.next();
                 boolean flag = switch (p1.variant) {
-                    case COVARIANT -> p1.type.is(p2.type);
+                    case COVARIANT -> p1.type.assignable(p2.type);
                     case INVARIANT -> Objects.equals(p1.type, p2.type);
-                    case CONTRAVARIANT -> p2.type.is(p1.type);
+                    case CONTRAVARIANT -> p2.type.assignable(p1.type);
                 };
                 if (!flag) return false;
             }

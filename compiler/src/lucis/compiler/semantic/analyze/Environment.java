@@ -1,6 +1,6 @@
 package lucis.compiler.semantic.analyze;
 
-import compiler.semantic.SemanticException;
+import lucis.compiler.semantic.Utility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +26,10 @@ public class Environment {
     }
 
     public Module requireModule(String name) {
-        return findModule(name).orElseThrow(() -> new SemanticException("module of name " + name + " not found"));
+        return findModule(name).orElseThrow(Utility.moduleNotFound(name));
+    }
+
+    public Optional<Module> coreModule() {
+        return findModule(Utility.LUCIS_CORE);
     }
 }

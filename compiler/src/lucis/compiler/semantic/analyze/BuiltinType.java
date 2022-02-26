@@ -11,9 +11,9 @@ public class BuiltinType implements AnalyzeStep {
         if (tree instanceof Source) {
             Module builtinModule = environment.findModule("lucis.core").orElseThrow(() -> new SemanticException("")); // TODO
             SymbolTable symbolTable = context.getSymbolTable();
-            builtinModule.symbols().forEach((name, symbol) -> {
-                symbolTable.foundSymbol(name).foundElement(symbol.candidates());
-                symbolTable.foundSymbol(builtinModule.name() + ":" + name).foundElement(symbol.candidates());
+            builtinModule.symbols().forEach((name, symbols) -> {
+                symbolTable.foundMultipleSymbols(name, symbols);
+                symbolTable.foundMultipleSymbols(builtinModule.name() + ":" + name, symbols);
             });
         }
     }

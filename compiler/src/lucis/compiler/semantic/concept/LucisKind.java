@@ -35,8 +35,8 @@ public record LucisKind(String module, String name, List<Parameter> parameters, 
 
         public boolean satisfy(LucisType target) {
             return switch (type) {
-                case SUPERTYPE -> reference.is(target);
-                case SUBTYPE -> target.is(reference);
+                case SUPERTYPE -> reference.assignable(target);
+                case SUBTYPE -> target.assignable(reference);
             };
         }
 

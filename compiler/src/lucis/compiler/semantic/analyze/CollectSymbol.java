@@ -1,6 +1,5 @@
 package lucis.compiler.semantic.analyze;
 
-import compiler.semantic.SemanticException;
 import lucis.compiler.semantic.AnalyzeStep;
 import lucis.compiler.semantic.Utility;
 import lucis.compiler.semantic.concept.*;
@@ -16,12 +15,12 @@ public class CollectSymbol implements AnalyzeStep {
             case null, default -> {
             }
             case ClassDeclaration declaration -> {
-                LucisKind typeKind = Utility.TypeKind(context);
+                LucisKind typeKind = Utility.typeKind(environment);
                 Module module = context.getCurrentModule();
                 ClassType type = new ClassType(module.name(), declaration.name);
                 context.setBuildingObject(type);
-                module.foundSymbol(type.name());
-                module.findSymbol(type.name()).foundElement(new Element(type.name(), typeKind.apply(type), false, type));
+                Symbol symbol = new Symbol(type.name(), typeKind.apply(type), false, type);
+                module.foundSymbol(type.name(),symbol);
             }
             case FunctionDeclaration declaration -> {
                 Module module = context.getCurrentModule();
@@ -29,12 +28,12 @@ public class CollectSymbol implements AnalyzeStep {
                 context.setBuildingObject(function);
             }
             case TraitDeclaration declaration -> {
-                LucisKind typeKind = Utility.TypeKind(context);
+                LucisKind typeKind = Utility.typeKind(environment);
                 Module module = context.getCurrentModule();
                 TraitType type = new TraitType(module.name(), declaration.name);
                 context.setBuildingObject(type);
-                module.foundSymbol(type.name());
-                module.findSymbol(type.name()).foundElement(new Element(type.name(), typeKind.apply(type), false, type));
+                Symbol symbol = new Symbol(type.name(), typeKind.apply(type), false, type);
+                module.foundSymbol(type.name(),symbol);
             }
         }
     }

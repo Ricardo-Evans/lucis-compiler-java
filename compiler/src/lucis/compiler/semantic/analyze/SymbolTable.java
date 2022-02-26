@@ -1,13 +1,15 @@
 package lucis.compiler.semantic.analyze;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import compiler.semantic.SemanticException;
+import lucis.compiler.semantic.Utility;
+import lucis.compiler.semantic.concept.LucisType;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SymbolTable {
     private final SymbolTable parent;
-    private final Map<String, Symbol> symbols = new HashMap<>();
+    private final Map<String, Set<Symbol>> storage = new HashMap<>();
 
     public SymbolTable() {
         this(null);
@@ -21,13 +23,34 @@ public class SymbolTable {
         return Optional.ofNullable(parent);
     }
 
-    public Optional<Symbol> findSymbol(String name) {
-        return Optional.ofNullable(symbols.get(name)).or(() -> parent().flatMap(s -> s.findSymbol(name)));
+    public Optional<Symbol> findSymbol(String name, LucisType type) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(type);
+        return Optional.ofNullable(storage.get(name)).orElseThrow().stream()
+                .filter(s -> s.type().match(type))
+                .reduce(Utility.unique(Utility.ambitiousSymbolsFound(name, type)))
+                .or(() -> parent().flatMap(s -> s.findSymbol(name, type)));
     }
 
-    public Symbol foundSymbol(String name) {
+    public Set<Symbol> findMultipleSymbols(String name, LucisType type) {
         Objects.requireNonNull(name);
-        symbols.putIfAbsent(name, new Symbol(name));
-        return symbols.get(name);
+        Objects.requireNonNull(type);
+        return storage.getOrDefault(name, Set.of()).stream().filter(s -> s.type().match(type)).collect(Collectors.toUnmodifiableSet());
+    }
+
+    public void foundSymbol(String name, Symbol symbol) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(symbol);
+        storage.putIfAbsent(name, new HashSet<>());
+        if (!storage.get(name).add(symbol)) throw Utility.symbolAlreadyExist(symbol).get();
+    }
+
+    public void foundMultipleSymbols(String name, Iterable<? extends Symbol> symbols) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(symbols);
+        storage.putIfAbsent(name, new HashSet<>());
+        symbols.forEach(symbol -> {
+            if (!storage.get(name).add(symbol)) throw Utility.symbolAlreadyExist(symbol).get();
+        });
     }
 }
