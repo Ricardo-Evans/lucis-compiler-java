@@ -1,10 +1,8 @@
 package lucis.compiler.semantic;
 
 import compiler.semantic.SemanticException;
-import lucis.compiler.semantic.analyze.Context;
 import lucis.compiler.semantic.analyze.Environment;
 import lucis.compiler.semantic.analyze.Symbol;
-import lucis.compiler.semantic.concept.Element;
 import lucis.compiler.semantic.concept.LucisKind;
 import lucis.compiler.semantic.concept.LucisType;
 
