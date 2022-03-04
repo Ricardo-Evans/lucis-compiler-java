@@ -8,14 +8,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface DefinePass {
-    String value();
-
-    Type type();
-
-    boolean parallel() default false;
-
-    enum Type {
-        BFS,
-        DFS,
-    }
 }

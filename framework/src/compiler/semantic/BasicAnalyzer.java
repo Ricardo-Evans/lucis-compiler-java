@@ -4,10 +4,10 @@ import compiler.entity.SyntaxTree;
 
 import java.util.*;
 
-public class BasicAnalyzer<T extends SyntaxTree<T, C>, C, E> implements Analyzer<T, C, E> {
-    private final List<Pass<T, C, E>> passes;
+public class BasicAnalyzer<T extends SyntaxTree<T, ?>, E> implements Analyzer<T, E> {
+    private final List<Pass<T, E>> passes;
 
-    private BasicAnalyzer(List<Pass<T, C, E>> passes) {
+    private BasicAnalyzer(List<Pass<T, E>> passes) {
         this.passes = passes;
     }
 
@@ -20,16 +20,16 @@ public class BasicAnalyzer<T extends SyntaxTree<T, C>, C, E> implements Analyzer
         }));
     }
 
-    public static class Builder<T extends SyntaxTree<T, C>, C, E> implements Analyzer.Builder<T, C, E> {
-        private final List<Pass<T, C, E>> passes = new LinkedList<>();
+    public static class Builder<T extends SyntaxTree<T, ?>, E> implements Analyzer.Builder<T, E> {
+        private final List<Pass<T, E>> passes = new LinkedList<>();
 
         @Override
-        public BasicAnalyzer<T, C, E> build() {
+        public BasicAnalyzer<T, E> build() {
             return new BasicAnalyzer<>(passes);
         }
 
         @Override
-        public Builder<T, C, E> definePass(Pass<T, C, E> pass) {
+        public Builder<T, E> definePass(Pass<T, E> pass) {
             passes.add(pass);
             return this;
         }

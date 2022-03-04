@@ -113,7 +113,7 @@ public interface Parser extends Serializable {
                 try {
                     return method.invoke(null, handle);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException(e);
+                    throw new GrammaticalException(e);
                 }
             };
         }

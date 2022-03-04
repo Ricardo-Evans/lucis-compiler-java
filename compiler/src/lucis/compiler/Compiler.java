@@ -28,17 +28,17 @@ import java.util.stream.Stream;
 public class Compiler {
     private static Lexer defaultLexer = null;
     private static Parser defaultParser = null;
-    private static Analyzer<SyntaxTree, Context, Environment> defaultAnalyzer = null;
+    private static Analyzer<SyntaxTree, Environment> defaultAnalyzer = null;
 
     private final Lexer lexer;
     private final Parser parser;
-    private final Analyzer<SyntaxTree, Context, Environment> analyzer;
+    private final Analyzer<SyntaxTree, Environment> analyzer;
 
     public Compiler() {
         this(defaultLexer(), defaultParser(), defaultAnalyzer());
     }
 
-    public Compiler(Lexer lexer, Parser parser, Analyzer<SyntaxTree, Context, Environment> analyzer) {
+    public Compiler(Lexer lexer, Parser parser, Analyzer<SyntaxTree, Environment> analyzer) {
         this.lexer = lexer;
         this.parser = parser;
         this.analyzer = analyzer;
@@ -69,7 +69,7 @@ public class Compiler {
         return defaultParser;
     }
 
-    private static Analyzer<SyntaxTree, Context, Environment> defaultAnalyzer() {
+    private static Analyzer<SyntaxTree, Environment> defaultAnalyzer() {
         return null;
     }
 

@@ -5,7 +5,7 @@ import compiler.entity.SyntaxTree;
 import java.util.Deque;
 
 @FunctionalInterface
-public interface Pass<T extends SyntaxTree<T, C>, C, E> {
+public interface Pass<T extends SyntaxTree<T, ?>, E> {
     default void setup() {
     }
 
@@ -13,10 +13,4 @@ public interface Pass<T extends SyntaxTree<T, C>, C, E> {
     }
 
     void process(T tree, E environment);
-
-    interface Builder<T extends SyntaxTree<T, C>, C, E> {
-        Pass<T, C, E> build();
-
-        Builder<T, C, E> step(Step<T, C, E> step);
-    }
 }

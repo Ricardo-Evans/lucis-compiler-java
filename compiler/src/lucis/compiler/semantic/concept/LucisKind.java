@@ -1,10 +1,11 @@
 package lucis.compiler.semantic.concept;
 
 import compiler.semantic.SemanticException;
+import lucis.compiler.semantic.Utility;
 
 import java.util.*;
 
-public record LucisKind(String module, String name, List<Parameter> parameters, StubType... bases) implements LucisObject {
+public record LucisKind(String module, String name, List<Parameter> parameters, StubType... bases) implements NamedObject {
 
     public LucisType apply(LucisType... types) {
         Objects.requireNonNull(types);
@@ -25,6 +26,12 @@ public record LucisKind(String module, String name, List<Parameter> parameters, 
         }
         LucisType[] bases = Arrays.stream(bases()).map(stub -> stub.apply(parametersMap)).toArray(LucisType[]::new);
         return new KindType(this, appliedParameters, bases);
+    }
+
+    @Override
+    public String signature() {
+        return module + Utility.LUCIS_DELIMITER_MODULE_SYMBOL + name
+                + "<" + parameters.stream().map(Parameter::toString).reduce(String::concat).orElse("") + ">";
     }
 
     public record Constraint(Type type, LucisType reference) {
@@ -50,6 +57,10 @@ public record LucisKind(String module, String name, List<Parameter> parameters, 
     }
 
     public record Parameter(String name, Variant variant, Constraint... constraints) {
+        @Override
+        public String toString() {
+            return name + variant;
+        }
     }
 
     @Override
