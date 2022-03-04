@@ -13,6 +13,7 @@ public final class Utility {
     public static final String LUCIS_CORE = "lucis.core";
     public static final String LUCIS_DELIMITER_MODULE_SYMBOL = ":";
     public static final String LUCIS_TYPE = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Type";
+    public static final String LUCIS_KIND = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Kind";
     public static final String LUCIS_STRING = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "String";
     public static final String LUCIS_INTEGER = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Integer";
     public static final String LUCIS_DECIMAL = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Decimal";
@@ -20,9 +21,8 @@ public final class Utility {
     private Utility() {
     }
 
-    public static LucisKind typeKind(Environment environment) {
-        return (LucisKind) environment.coreModule()
-                .orElseThrow(Utility.moduleNotFound(LUCIS_CORE))
+    public static LucisKind lucisType(Environment environment) {
+        return (LucisKind) environment.requireCoreModule()
                 .findSymbol(LUCIS_TYPE, null) // TODO
                 .value();
     }
