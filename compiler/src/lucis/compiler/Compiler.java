@@ -9,11 +9,11 @@ import compiler.parser.LRParser;
 import compiler.parser.Parser;
 import compiler.semantic.Analyzer;
 import compiler.semantic.BasicAnalyzer;
-import lucis.compiler.semantic.analyze.Context;
+import lucis.compiler.semantic.analyze.CollectPasses;
 import lucis.compiler.semantic.analyze.Environment;
+import lucis.compiler.semantic.analyze.InitializePasses;
 import lucis.compiler.syntax.Source;
 import lucis.compiler.syntax.SyntaxTree;
-import lucis.compiler.utility.AnalyzePasses;
 import lucis.compiler.utility.GrammarRules;
 import lucis.compiler.utility.LexicalRules;
 
@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Compiler {
-    private static Lexer defaultLexer = null;
-    private static Parser defaultParser = null;
-    private static Analyzer<SyntaxTree, Environment> defaultAnalyzer = null;
+    private static volatile Lexer defaultLexer = null;
+    private static volatile Parser defaultParser = null;
+    private static volatile Analyzer<SyntaxTree, Environment> defaultAnalyzer = null;
 
     private final Lexer lexer;
     private final Parser parser;
@@ -70,7 +70,15 @@ public class Compiler {
     }
 
     private static Analyzer<SyntaxTree, Environment> defaultAnalyzer() {
-        return null;
+        if (defaultAnalyzer != null) return defaultAnalyzer;
+        synchronized (Compiler.class) {
+            if (defaultAnalyzer != null) return defaultAnalyzer;
+            defaultAnalyzer = new BasicAnalyzer.Builder<SyntaxTree, Environment>()
+                    .definePasses(InitializePasses.class)
+                    .definePasses(CollectPasses.class)
+                    .build();
+        }
+        return defaultAnalyzer;
     }
 
     public void compile(File... files) throws IOException {

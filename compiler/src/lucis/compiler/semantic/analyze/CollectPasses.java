@@ -1,5 +1,6 @@
 package lucis.compiler.semantic.analyze;
 
+import compiler.semantic.DefinePass;
 import lucis.compiler.semantic.Utility;
 import lucis.compiler.semantic.concept.ClassType;
 import lucis.compiler.semantic.concept.LucisFunction;
@@ -11,6 +12,7 @@ public final class CollectPasses {
     private CollectPasses() {
     }
 
+    @DefinePass
     public static void collectSymbol(SyntaxTree tree, Environment environment) {
         if (tree == null) return;
         Context context = tree.context();

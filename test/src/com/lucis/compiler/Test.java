@@ -10,8 +10,8 @@ public class Test {
     public static void main(String[] args) throws IOException {
         Compiler compiler = new Compiler();
         compiler.compile(
-                new File("lucis.core.lux"),
-                new File("test-source.lux")
+                new File("lucis.core.lux")
+                // new File("test-source.lux")
         );
     }
 

@@ -1,5 +1,6 @@
 package lucis.compiler.semantic.analyze;
 
+import compiler.semantic.DefinePass;
 import lucis.compiler.syntax.*;
 
 import java.util.Objects;
@@ -11,6 +12,7 @@ public final class InitializePasses {
     /**
      * Simply initialize context for each syntax tree recursively, necessary for other analysis
      */
+    @DefinePass
     public static void initializeContext(SyntaxTree tree, Environment environment) {
         if (tree == null) return;
         Context context = new Context();
@@ -21,6 +23,7 @@ public final class InitializePasses {
     /**
      * Detect module information and create symbol table according to grammar structures
      */
+    @DefinePass
     public static void initializeScopes(SyntaxTree tree, Environment environment) {
         if (tree == null) return;
         Context context = tree.context();
