@@ -1,11 +1,11 @@
 package compiler.lexer;
 
 import compiler.entity.Unit;
-import compiler.io.Reader;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
 /**
@@ -19,10 +19,10 @@ public interface Lexer extends Serializable {
     /**
      * Get the lexeme stream resolved from the given reader, without filter
      *
-     * @param reader reader of source
+     * @param path the path of the source file
      * @return the lexeme stream
      */
-    Stream<Unit> resolve(Reader reader);
+    Stream<Unit> resolve(Path path);
 
     interface Builder {
         Lexer build();

@@ -1,8 +1,6 @@
 package lucis.compiler;
 
 import compiler.entity.Unit;
-import compiler.io.ChannelReader;
-import compiler.io.Reader;
 import compiler.lexer.DFALexer;
 import compiler.lexer.Lexer;
 import compiler.parser.LRParser;
@@ -18,9 +16,6 @@ import lucis.compiler.utility.GrammarRules;
 import lucis.compiler.utility.LexicalRules;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -81,11 +76,10 @@ public class Compiler {
         return defaultAnalyzer;
     }
 
-    public void compile(File... files) throws IOException {
+    public void compile(File... files) {
         List<SyntaxTree> trees = new LinkedList<>();
         for (File file : files) {
-            Reader reader = new ChannelReader(FileChannel.open(file.toPath(), StandardOpenOption.READ));
-            Stream<Unit> lexemes = lexer.resolve(reader)
+            Stream<Unit> lexemes = lexer.resolve(file.toPath())
                     .filter(unit -> !"line-comment".equals(unit.name()))
                     .filter(unit -> !"block-comment".equals(unit.name()))
                     .filter(unit -> !"blank".equals(unit.name()));

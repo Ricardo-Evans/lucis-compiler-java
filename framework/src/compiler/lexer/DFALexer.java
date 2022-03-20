@@ -2,11 +2,14 @@ package compiler.lexer;
 
 import compiler.entity.Position;
 import compiler.entity.Unit;
-import compiler.io.Reader;
 
+import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -26,35 +29,78 @@ public class DFALexer implements Lexer {
     }
 
     @Override
-    public Stream<Unit> resolve(Reader reader) {
-        Objects.requireNonNull(reader);
-        return Stream.generate(() -> {
-            try {
-                if (!reader.available()) return null;
+    public Stream<Unit> resolve(Path path) {
+        int[] data;
+        try {
+            data = Files.readString(path).codePoints().toArray();
+        } catch (IOException e) {
+            throw new LexicalException(e);
+        }
+        return Stream.generate(new Supplier<Unit>() {
+            private int currentOffset = 0;
+            private int markedOffset = -1;
+            private int lastLineOffset = -1;
+            private int line = 1;
+            private Position markedPosition = null;
+            private static final int LINE_SEPARATOR = '\n';
+
+            // mark current position, use reset to recover
+            private Position mark() {
+                markedOffset = currentOffset;
+                markedPosition = new Position(line, currentOffset - lastLineOffset, currentOffset);
+                return markedPosition;
+            }
+
+            // reset to the last marked position, do nothing if not marked since last reset
+            private void reset() {
+                if (markedPosition == null) return;
+                line = markedPosition.line();
+                lastLineOffset = markedPosition.offset() - markedPosition.column();
+                currentOffset = markedOffset;
+                markedOffset = -1;
+                markedPosition = null;
+            }
+
+            // called when a line separator is consumed
+            private void newline() {
+                lastLineOffset = currentOffset - 1;
+                ++line;
+            }
+
+            // return the next codepoint, shift position by 1 codepoint
+            private int nextCodepoint() {
+                if (currentOffset < 0 || currentOffset >= data.length) return -1;
+                return data[currentOffset++];
+            }
+
+            private boolean hasNext() {
+                return currentOffset >= 0 && currentOffset < data.length;
+            }
+
+            @Override
+            public Unit get() {
+                if (!hasNext()) return null;
                 DFAState state = initialState;
                 DFAState terminate = null;
                 String content = null;
-                Position position = reader.position();
                 StringBuilder builder = new StringBuilder();
-                reader.mark();
+                Position position = mark();
                 while (state != null) {
                     if (state.name != null) {
                         terminate = state;
                         content = builder.toString();
-                        reader.mark();
+                        mark();
                     }
-                    Integer codepoint = reader.next();
-                    if (codepoint == null) break;
+                    int codepoint = nextCodepoint();
+                    if (codepoint < 0) break;
+                    if (codepoint == LINE_SEPARATOR) newline();
                     state = state.handle(codepoint);
                     builder.appendCodePoint(codepoint);
                 }
-                reader.reset();
+                reset();
                 if (terminate == null)
                     throw new LexicalException("cannot recognize " + builder + " at " + position + " as a lexical unit");
                 return new Unit(terminate.name, content, position);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new LexicalException(e);
             }
         }).takeWhile(Objects::nonNull);
     }
@@ -68,8 +114,7 @@ public class DFALexer implements Lexer {
             return this.start <= range.start && this.end >= range.end;
         }
 
-        public boolean contains(Integer value) {
-            if (value == null) return false;
+        public boolean contains(int value) {
             return start <= value && value < end;
         }
 
@@ -93,9 +138,10 @@ public class DFALexer implements Lexer {
         private final Map<Range, DFAState> transfer = new HashMap<>();
         private String name = null;
 
-        public DFAState handle(Integer character) {
+        // TODO: maybe using tree map with binary search to optimize
+        public DFAState handle(int codepoint) {
             for (Map.Entry<Range, DFAState> entry : transfer.entrySet())
-                if (entry.getKey().contains(character)) return entry.getValue();
+                if (entry.getKey().contains(codepoint)) return entry.getValue();
             return null;
         }
 
