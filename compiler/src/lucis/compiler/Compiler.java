@@ -56,10 +56,7 @@ public class Compiler {
             if (defaultParser != null) return defaultParser;
             defaultParser = new LRParser.Builder("source")
                     .define(GrammarRules.class)
-                    .build((object, position) -> {
-                        if (object instanceof SyntaxTree tree) return tree.position(position);
-                        else return object;
-                    });
+                    .build();
         }
         return defaultParser;
     }

@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -30,79 +29,86 @@ public class DFALexer implements Lexer {
 
     @Override
     public Stream<Unit> resolve(Path path) {
-        int[] data;
         try {
-            data = Files.readString(path).codePoints().toArray();
-        } catch (IOException e) {
-            throw new LexicalException(e);
-        }
-        return Stream.generate(new Supplier<Unit>() {
-            private int currentOffset = 0;
-            private int markedOffset = -1;
-            private int lastLineOffset = -1;
-            private int line = 1;
-            private Position markedPosition = null;
-            private static final int LINE_SEPARATOR = '\n';
-
-            // mark current position, use reset to recover
-            private Position mark() {
-                markedOffset = currentOffset;
-                markedPosition = new Position(line, currentOffset - lastLineOffset, currentOffset);
-                return markedPosition;
-            }
-
-            // reset to the last marked position, do nothing if not marked since last reset
-            private void reset() {
-                if (markedPosition == null) return;
-                line = markedPosition.line();
-                lastLineOffset = markedPosition.offset() - markedPosition.column();
-                currentOffset = markedOffset;
-                markedOffset = -1;
-                markedPosition = null;
-            }
-
-            // called when a line separator is consumed
-            private void newline() {
-                lastLineOffset = currentOffset - 1;
-                ++line;
-            }
-
-            // return the next codepoint, shift position by 1 codepoint
-            private int nextCodepoint() {
-                if (currentOffset < 0 || currentOffset >= data.length) return -1;
-                return data[currentOffset++];
-            }
-
-            private boolean hasNext() {
-                return currentOffset >= 0 && currentOffset < data.length;
-            }
-
-            @Override
-            public Unit get() {
-                if (!hasNext()) return null;
+            PositionHelper positionHelper = new PositionHelper(Files.readString(path).codePoints().toArray());
+            return Stream.generate(() -> {
+                if (!positionHelper.hasNext()) return null;
                 DFAState state = initialState;
                 DFAState terminate = null;
                 String content = null;
                 StringBuilder builder = new StringBuilder();
-                Position position = mark();
+                Position startPosition = positionHelper.mark();
                 while (state != null) {
                     if (state.name != null) {
                         terminate = state;
                         content = builder.toString();
-                        mark();
+                        positionHelper.mark();
                     }
-                    int codepoint = nextCodepoint();
+                    int codepoint = positionHelper.nextCodepoint();
                     if (codepoint < 0) break;
-                    if (codepoint == LINE_SEPARATOR) newline();
+                    if (codepoint == PositionHelper.LINE_SEPARATOR) positionHelper.newline();
                     state = state.handle(codepoint);
                     builder.appendCodePoint(codepoint);
                 }
-                reset();
+                Position endPosition = positionHelper.reset();
                 if (terminate == null)
-                    throw new LexicalException("cannot recognize " + builder + " at " + position + " as a lexical unit");
-                return new Unit(terminate.name, content, position);
-            }
-        }).takeWhile(Objects::nonNull);
+                    throw new LexicalException("cannot recognize " + builder + " at " + startPosition + " as a lexical unit");
+                return new Unit(terminate.name, content, startPosition, endPosition);
+            }).takeWhile(Objects::nonNull);
+        } catch (IOException e) {
+            throw new LexicalException(e);
+        }
+    }
+
+    // manage codepoints, support mark & reset operation, determine line & column
+    private static class PositionHelper {
+        private final int[] data;
+        private int currentOffset = 0;
+        private int markedOffset = -1;
+        private int lastLineOffset = -1;
+        private int line = 1;
+        private Position markedPosition = null;
+        private static final int LINE_SEPARATOR = '\n';
+
+        public PositionHelper(int[] data) {
+            this.data = data;
+        }
+
+        // mark current position, use reset to recover, return position represents current line & column
+        private Position mark() {
+            markedOffset = currentOffset;
+            markedPosition = new Position(line, currentOffset - lastLineOffset, currentOffset);
+            return markedPosition;
+        }
+
+        // reset to the last marked position, do nothing if not marked since last reset, return position represents line & column before the operation
+        private Position reset() {
+            Position position = new Position(line, currentOffset - lastLineOffset, currentOffset);
+            if (markedPosition == null) return position;
+            line = markedPosition.line();
+            lastLineOffset = markedPosition.offset() - markedPosition.column();
+            currentOffset = markedOffset;
+            markedOffset = -1;
+            markedPosition = null;
+            return position;
+        }
+
+        // called when a line separator is consumed
+        private void newline() {
+            lastLineOffset = currentOffset - 1;
+            ++line;
+        }
+
+        // return the next codepoint, shift position by 1 codepoint
+        private int nextCodepoint() {
+            if (currentOffset < 0 || currentOffset >= data.length) return -1;
+            return data[currentOffset++];
+        }
+
+        // whether EOF is not reached
+        private boolean hasNext() {
+            return currentOffset >= 0 && currentOffset < data.length;
+        }
     }
 
     private record Range(int start, int end) implements Serializable {

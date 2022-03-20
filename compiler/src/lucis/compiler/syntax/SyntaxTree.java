@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTree, Context> {
-    private Position position;
+    private Position startPosition, endPosition;
     private Context context;
     protected List<? extends SyntaxTree> children;
 
@@ -26,14 +26,20 @@ public abstract class SyntaxTree implements compiler.entity.SyntaxTree<SyntaxTre
         this.children = children;
     }
 
-    public SyntaxTree position(Position position) {
-        this.position = position;
-        return this;
+    @Override
+    public void position(Position startPosition, Position endPosition) {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
     }
 
     @Override
-    public Position position() {
-        return position;
+    public Position startPosition() {
+        return startPosition;
+    }
+
+    @Override
+    public Position endPosition() {
+        return endPosition;
     }
 
     @Override

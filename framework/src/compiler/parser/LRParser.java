@@ -1,6 +1,7 @@
 package compiler.parser;
 
 import compiler.entity.Position;
+import compiler.entity.SyntaxTree;
 import compiler.entity.Unit;
 
 import java.io.Serial;
@@ -30,7 +31,7 @@ public class LRParser implements Parser {
             assert state != null;
             Action action = state.handle(unit);
             if (action == null)
-                throw new GrammaticalException("cannot handle '" + string(units) + "' before " + unit.position() + " as a grammatical structure");
+                throw new GrammaticalException("cannot handle '" + string(units) + "' before " + unit.startPosition() + " as a grammatical structure");
             action.act(unit, units, states);
         });
         State state = states.peek();
@@ -66,13 +67,13 @@ public class LRParser implements Parser {
     private interface Action extends Serializable {
         void act(Unit unit, Deque<Unit> units, Deque<State> states);
 
-        private static Action accept(Grammar grammar, Hook<?> hook) {
-            return (unit, units, states) -> units.push(applyReduction(grammar, units, states, hook));
+        private static Action accept(Grammar grammar) {
+            return (unit, units, states) -> units.push(applyReduction(grammar, units, states));
         }
 
-        private static Action reduce(Grammar grammar, Hook<?> hook) {
+        private static Action reduce(Grammar grammar) {
             return (unit, units, states) -> {
-                Unit reduced = applyReduction(grammar, units, states, hook);
+                Unit reduced = applyReduction(grammar, units, states);
                 State state = states.peek();
                 assert state != null;
                 state.handle(reduced).act(reduced, units, states);
@@ -89,20 +90,21 @@ public class LRParser implements Parser {
             };
         }
 
-        private static Unit applyReduction(Grammar grammar, Deque<Unit> units, Deque<State> states, Hook<?> hook) {
+        private static Unit applyReduction(Grammar grammar, Deque<Unit> units, Deque<State> states) {
             int length = grammar.length();
-            Position position = null;
+            Position startPosition = null;
+            Position endPosition = null;
             List<Object> objects = new LinkedList<>();
             for (int i = 0; i < length; ++i) {
                 Unit u = units.pop();
-                position = u.position();
-                if (grammar.right()[length - i - 1].capture() == Grammar.Capture.INCLUDE)
-                    objects.add(0, u.value());
+                startPosition = u.startPosition();
+                if (endPosition == null) endPosition = u.endPosition();
+                if (grammar.right()[length - i - 1].capture() == Grammar.Capture.INCLUDE) objects.add(0, u.value());
                 states.pop();
             }
             Object value = grammar.reduction().apply(objects.toArray());
-            if (hook != null) value = hook.hook(value, position);
-            return new Unit(grammar.left(), value, position);
+            if (value instanceof SyntaxTree<?, ?> tree) tree.position(startPosition, endPosition);
+            return new Unit(grammar.left(), value, startPosition, endPosition);
         }
     }
 
@@ -129,7 +131,7 @@ public class LRParser implements Parser {
             return this;
         }
 
-        public Parser build(Hook<?> hook) {
+        public Parser build() {
             Map<String, Set<Grammar>> grammars = aggregateGrammar();
             Map<String, Set<String>> peekMap = calculatePeekMap(grammars);
             Map<Set<Item>, State> cc = new HashMap<>();
@@ -149,9 +151,9 @@ public class LRParser implements Parser {
                         if (item.isComplete()) {
                             if (actionMap.containsKey(item.peek)) conflictGrammars(ccx);
                             if (Objects.equals(item.grammar.left(), goal))
-                                actionMap.put(item.peek, Action.accept(item.grammar, hook));
+                                actionMap.put(item.peek, Action.accept(item.grammar));
                             else
-                                actionMap.put(item.peek, Action.reduce(item.grammar, hook));
+                                actionMap.put(item.peek, Action.reduce(item.grammar));
                         } else {
                             movement.putIfAbsent(item.current(), new HashSet<>());
                             movement.get(item.current()).add(item.next());

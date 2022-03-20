@@ -17,11 +17,6 @@ import java.util.stream.Stream;
 public interface Parser extends Serializable {
     <T> T parse(Stream<? extends Unit> lexemes);
 
-    @FunctionalInterface
-    interface Hook<T> {
-        T hook(Object value, Position position);
-    }
-
     interface Builder {
         Builder define(Grammar grammar);
 
@@ -59,11 +54,7 @@ public interface Parser extends Serializable {
             return this;
         }
 
-        default Parser build() {
-            return build(null);
-        }
-
-        Parser build(Hook<?> hook);
+        Parser build();
 
         private void definePriorities(String group, Map<String, Integer> priorities) {
             List<Grammar> grammars = new LinkedList<>();
