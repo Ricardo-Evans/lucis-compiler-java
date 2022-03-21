@@ -1,6 +1,5 @@
 package lucis.compiler.semantic.analyze;
 
-import compiler.semantic.SemanticException;
 import lucis.compiler.semantic.Utility;
 
 import java.util.HashMap;

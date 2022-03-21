@@ -2,17 +2,11 @@ package lucis.compiler.semantic.analyze;
 
 import compiler.semantic.SemanticException;
 import lucis.compiler.semantic.Utility;
-import lucis.compiler.semantic.concept.LucisObject;
 import lucis.compiler.semantic.concept.LucisType;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.*;
-import java.util.function.Supplier;
 
-public class Module implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 8968825529218018034L;
+public class Module {
     private final String name;
     private final Map<String, Set<Symbol>> symbols = new HashMap<>();
 
