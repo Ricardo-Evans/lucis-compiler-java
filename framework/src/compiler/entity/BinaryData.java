@@ -9,6 +9,7 @@ public class BinaryData {
     private int offset; // subscript, point to the byte haven't read yet
     private int size;
     private final int[] use; // point to the next unwritten byte, use[1]:0~511
+    private int mode; // 0 means read, 1 means write
 
     // deprecated field, delete after review
     //    private int available;
@@ -47,7 +48,6 @@ public class BinaryData {
     public int getUse() {
         return use[0] * basicSize + use[1];
     }
-
     private void updateUse(int n) {
         if (n + offset > getUse()) {
             int[] location = getLocation(offset + n);
@@ -57,10 +57,12 @@ public class BinaryData {
     }
 
     private void checkReadIndex(int n) {
+        if (mode != 0) throw new IllegalStateException("cannot read in write mode!");
         if (n + offset >= getUse() - 1 || n + offset < 0) throw new IndexOutOfBoundsException(n);
     }
 
     private int checkWriteIndexAndExpand(int n) {
+        if (mode != 1) throw new IllegalStateException("cannot write in read mode!");
         if (n + offset < 0) throw new IndexOutOfBoundsException(n);
         if (n + offset < size) return 0; // if exactly equal, expand, too. or field 'use' will fail update
 
@@ -77,33 +79,30 @@ public class BinaryData {
         size += basicSize;
     }
 
-    // public functions===========================================================================
-
-    public int offset() {
-        return offset;
-    }
-
-    public int[] use() {
-        return use;
-    }
-
-    public void shift(int n) {
+    private void shift(int n) {
         if (n + offset >= size || n + offset < 0) throw new IndexOutOfBoundsException(n);
         offset += n;
     }
 
-    public byte get(int n) {
+    private byte get(int n) {
         checkReadIndex(n);
         int[] location = getLocation(offset + n);
         offset += n;
         return byteList.get(location[0])[location[1]];
     }
-    public void set(byte b, int n) {
+    private void set(byte b, int n) {
         checkWriteIndexAndExpand(n);
         int[] location = getLocation(offset + n);
         offset += n;
         byteList.get(location[0])[location[1]] = b;
         updateUse(n);
+    }
+
+    // public functions===========================================================================
+
+
+    public int[] use() {
+        return use;
     }
 
     public byte get() {
@@ -222,11 +221,25 @@ public class BinaryData {
     public double getDecimal64() {
         return Double.longBitsToDouble(getInteger64());
     }
-
     public void setDecimal64(double data) {
         setInteger64(Double.doubleToLongBits(data));
     }
 
+    public void setWrite() {
+        use[0] = 0;
+        use[1] = 0;
+        offset = 0;
+        size = basicSize;
+        mode = 1;
+        byteList.clear();
+        byteList.add(new byte[basicSize]);
+    }
+    public void setRead() {
+        offset = 0;
+        mode = 0;
+    }
+
+// deprecated
 //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;
