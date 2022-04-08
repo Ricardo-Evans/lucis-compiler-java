@@ -3,6 +3,8 @@ package compiler.entity;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -158,6 +160,14 @@ public class BinaryData {
 
     public void writeDecimal64(double data) {
         writeInteger64(Double.doubleToLongBits(data));
+    }
+
+    public <T> T readObject(Function<BinaryData, T> reader) {
+        return reader.apply(this);
+    }
+
+    public void writeObject(Consumer<BinaryData> writer) {
+        writer.accept(this);
     }
 
     public void prepareForRead() {
