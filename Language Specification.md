@@ -35,16 +35,16 @@ For example: 0b10000010 00000001 is actually 0b100000001.
 
 **Type Flag of Constant:**
 
-|       name       | value |
-|:----------------:|:-----:|
-|     Integer      | 0x01  |
-|     Decimal      | 0x02  |
-|      String      | 0x04  |
-|     Function     | 0x08  |
-|    Class Type    | 0x10  |
-|    Trait Type    | 0x20  |
-|       Kind       | 0x40  |
-| Dynamic Function | 0x80  |
+|   name    | value |
+|:---------:|:-----:|
+|  Integer  | 0x01  |
+|  Decimal  | 0x02  |
+|  String   | 0x04  |
+| Function  | 0x08  |
+|   Type    | 0x10  |
+|   Kind    | 0x20  |
+| Signature | 0x40  |
+|   Tuple   | 0x80  |
 
 ### Format of a symbol:
 
