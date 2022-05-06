@@ -1,9 +1,9 @@
 package lucis.compiler.semantic.concept;
 
 public class LucisInteger implements LucisObject {
-    private byte[] bytes;
+    public final long value;
 
-    public LucisInteger() {
-
+    public LucisInteger(long value) {
+        this.value = value;
     }
 }

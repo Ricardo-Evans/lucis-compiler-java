@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class LucisType implements LucisObject {
-    private static final LucisKind TypeKind = new LucisKind(Utility.LUCIS_CORE, "Type", List.of(new LucisKind.Parameter("type", Variant.INVARIANT)), StubType.fromName("type"));
+    public static final LucisKind TypeKind = new LucisKind(Utility.LUCIS_CORE, "Type", List.of(new LucisKind.Parameter("type", Variant.INVARIANT)), StubType.fromName("type"));
     private final String signature;
     private final String name;
 

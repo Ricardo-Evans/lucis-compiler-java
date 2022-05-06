@@ -22,7 +22,7 @@ public final class CollectPasses {
                 Module module = context.getCurrentModule();
                 ClassType type = new ClassType(module.name(), declaration.name);
                 context.setBuildingObject(type);
-                Symbol symbol = new Symbol(type.name(), typeKind.apply(type), false, type);
+                Symbol symbol = new Symbol(type.name(), module.name(), typeKind.apply(type), false, type);
                 module.foundSymbol(type.name(), symbol);
             }
             case FunctionDeclaration declaration -> {
@@ -44,7 +44,7 @@ public final class CollectPasses {
                 Module module = context.getCurrentModule();
                 TraitType type = new TraitType(module.name(), declaration.name);
                 context.setBuildingObject(type);
-                Symbol symbol = new Symbol(type.name(), typeKind.apply(type), false, type);
+                Symbol symbol = new Symbol(type.name(), module.name(), typeKind.apply(type), false, type);
                 module.foundSymbol(type.name(), symbol);
             }
             case default -> {

@@ -1,8 +1,11 @@
 package lucis.compiler.semantic.concept;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class LucisString implements LucisObject {
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public final byte[] bytes;
 
     public LucisString(byte[] bytes) {
@@ -20,5 +23,10 @@ public class LucisString implements LucisObject {
     @Override
     public int hashCode() {
         return Arrays.hashCode(bytes);
+    }
+
+    @Override
+    public String toString() {
+        return new String(bytes, DEFAULT_CHARSET);
     }
 }
