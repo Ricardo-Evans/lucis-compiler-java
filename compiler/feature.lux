@@ -1,0 +1,87 @@
+module test
+
+Unit f(A a, B b) {}
+
+Unit g(Function<Unit,B> t) {}
+
+class A : B {
+    print ("result: ${x}")
+    print (`result: ${x}`)
+    'a'
+}
+
+Integer add(Integer a, Integer b) : a + b
+
+Unit main() {
+    A a = null
+    String s = if a == null : "null" else : "a"
+    while a == null : {
+
+    }
+    if a == null : {
+        java.lang::String t = "null"
+    }
+    a.type = A
+    A.type = Type<A>
+    Function<Unit, (A, B)> h = lambda (t1, t2) : something
+
+    a:x = h
+    a.f
+    a.f()
+}
+
+trait Function<T1, T2> where T1 is Tuple<Type<?>...> and T2 is Tuple<Type<?>...> {
+    T1 apply(T2 parameter)
+}
+
+trait Tuple<T> where T is Tuple<Type<?>...> {
+
+}
+
+Integer type|class
+Addable<Integer> type|trait
+Addable kind
+f<Integer> Function<Unit, Integer>
+f kind
+
+Unit f<T>(T t){}
+
+trait Addable<T> {
+    Addable<T> add(Addable<T> t1 self, T t2)
+
+    Addable<T> add(T t1, Addable<T> t2 self)
+}
+
+class Integer {
+}
+
+Integer add(Integer t1, Integer t2) {}
+
+Integer is Addable<Integer> {}
+
+Decimal is Addable<Integer> {}
+
+trait TestTrait {
+    Unit constraint(TestTrait t1 self, TestClass1 t2)
+
+    Unit constraint(TestClass1 t1, TestTrait t2 self)
+}
+
+class TestClass1 {
+    String s
+}
+
+class TestClass2 {
+    Integer i
+}
+
+Unit constraint(TestClass1 t1, TestClass1 t2) {
+}
+
+TestClass1 is TestTrait {
+}
+
+TestClass2 is TestTrait {
+    Unit constraint(TestClass2 t) {
+    }
+}

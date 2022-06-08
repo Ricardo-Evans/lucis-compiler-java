@@ -9,18 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public final class ModuleParser {
-    private static final int MAGIC = 0xB09AFC73;
-    private static final byte EXTEND_MASK = (byte) 0X80;
-    private static final byte NUMBER_MASK = (byte) 0X7F;
-    private static final byte INTEGER_FLAG = (byte) 0X01;
-    private static final byte DECIMAL_FLAG = (byte) 0X02;
-    private static final byte STRING_FLAG = (byte) 0X04;
-    private static final byte FUNCTION_FLAG = (byte) 0X08;
-    private static final byte TYPE_FLAG = (byte) 0X10;
-    private static final byte KIND_FLAG = (byte) 0X20;
-    private static final byte SIGNATURE_FLAG = (byte) 0X40;
-    private static final byte TUPLE_FLAG = (byte) 0X80;
-
     private final BinaryData data;
     private final Environment environment;
     private String moduleName;
@@ -39,7 +27,7 @@ public final class ModuleParser {
 
     private Module parseModule() {
         int magic = parseMagic();
-        if (magic != MAGIC) throw new SemanticException();
+        if (magic != ModuleConstants.MAGIC) throw new SemanticException();
         int nameLength = parseExtendableNumber();
         moduleName = data.readString(nameLength, StandardCharsets.UTF_8);
         version = parseExtendableNumber();
@@ -59,8 +47,8 @@ public final class ModuleParser {
         do {
             b = data.read();
             result <<= 7;
-            result |= b & NUMBER_MASK;
-        } while ((b & EXTEND_MASK) != 0);
+            result |= b & ModuleConstants.NUMBER_MASK;
+        } while ((b & ModuleConstants.EXTEND_MASK) != 0);
         return result;
     }
 
@@ -80,18 +68,23 @@ public final class ModuleParser {
 
     private LucisObject parseConstant() {
         byte flag = data.read();
-        return switch (flag) {
-            case INTEGER_FLAG -> parseInteger();
-            case DECIMAL_FLAG -> parseDecimal();
-            case STRING_FLAG -> parseString();
-            case SIGNATURE_FLAG -> parseSignature();
-            case TUPLE_FLAG -> parseTuple();
+        byte higher = (byte) (flag & ModuleConstants.HIGHER_MASK);
+        byte lower = (byte) (flag & ModuleConstants.LOWER_MASK);
+        return switch (higher) {
+            case ModuleConstants.INTEGER_FLAG -> parseInteger(lower);
+            case ModuleConstants.DECIMAL_FLAG -> parseDecimal(lower);
+            case ModuleConstants.STRING_FLAG -> parseString();
+            case ModuleConstants.FUNCTION_FLAG -> parseFunction(lower);
+            case ModuleConstants.TYPE_FLAG -> parseType(lower);
+            case ModuleConstants.SIGNATURE_FLAG -> parseSignature();
+            case ModuleConstants.TUPLE_FLAG -> parseTuple();
             default -> throw new SemanticException("unsupported constant flag: " + flag);
         };
     }
 
-    private LucisInteger parseInteger() {
-        int size = parseExtendableNumber();
+    private LucisInteger parseInteger(byte flag) {
+        if (flag == 0) return new LucisInteger(parseExtendableNumber());
+        int size = 1 << (flag - 1);
         long value = switch (size) {
             case 4 -> data.readInteger32();
             case 8 -> data.readInteger64();
@@ -100,8 +93,9 @@ public final class ModuleParser {
         return new LucisInteger(value);
     }
 
-    private LucisDecimal parseDecimal() {
-        int size = parseExtendableNumber();
+    private LucisDecimal parseDecimal(byte flag) {
+        if (flag == 0) return new LucisDecimal(Float.intBitsToFloat(parseExtendableNumber()));
+        int size = 1 << (flag - 1);
         double value = switch (size) {
             case 4 -> data.readDecimal32();
             case 8 -> data.readDecimal64();
@@ -114,6 +108,14 @@ public final class ModuleParser {
         int size = parseExtendableNumber();
         byte[] binaryString = data.readNBytes(size);
         return new LucisString(binaryString);
+    }
+
+    private LucisFunction parseFunction(byte flag) {
+        return null;
+    }
+
+    private LucisType parseType(byte flag) {
+        return null;
     }
 
     private LucisObject parseSignature() {
