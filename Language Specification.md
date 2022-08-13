@@ -71,14 +71,23 @@ The constant data contains an extendable number n, followed n bytes represent th
 
 **Constant Flag(Lower Half)**
 
-|  field   | size(bits) |
-|:--------:|:----------:|
-| dynamic  |     1      |
-| override |     1      |
-|  final   |     1      |
-|  native  |     1      |
+|    field    | value  |
+|:-----------:|:------:|
+|   dynamic   | 0b0001 |
+|  override   | 0b0010 |
+|   native    | 0b0100 |
+|  abstract   | 0b1000 |
+| kind_result | 0b1111 |
+
+dynamic and override flags can be set with other flags
+
+native and abstract flags can not be set at the same time
+
+kind_result flag is a special case. if set, the actual flag is determined according to the prototype (see: kind - kind result section)
 
 **The Constant Data Field Format**
+
+if kind_result flag is set, see kind -> kind result section; otherwise:
 
 |         field         |     exist condition     |   type    |               description               |
 |:---------------------:|:-----------------------:|:---------:|:---------------------------------------:|
@@ -88,31 +97,40 @@ The constant data contains an extendable number n, followed n bytes represent th
 |   override_function   |  override flag is set   | function  |   extendable pointer to constant pool   |
 |  dynamic_parameters   |   dynamic flag is set   |   tuple   |   extendable pointer to constant pool   |
 |      stack_size       | native flag is not set  |  integer  |            extendable number            |
-| function_content_size | native flag is not set  |  integer  |               extendable                |
+| function_content_size | native flag is not set  |  integer  |            extendable number            |
 |   function_content    | native flag is not set  | bytecodes | consists of function_content_size codes |
 
 ### Format of Types
 
 **Constant Flag(Lower Half)**
 
-|    field    | size(bit) |
-|:-----------:|:---------:|
-|    class    |     1     |
-|    trait    |     1     |
-| kind_result |     1     |
-|    stub     |     1     |
+|    field    | value  |
+|:-----------:|:------:|
+|    class    | 0b0001 |
+|    trait    | 0b0010 |
+| kind_result | 0b1111 |
 
 #### Class Types
 #### Trait Types
+
+**The Constant Data Field Format**
+
+|       field       |       type        |                description                 |
+|:-----------------:|:-----------------:|:------------------------------------------:|
+| requirement_count |      integer      |             extendable number              |
+|   requirements    | requirement array | consists of requirement_count requirements |
+
+**The Requirement Format**
+
+|   field    |              type              |                description                |
+|:----------:|:------------------------------:|:-----------------------------------------:|
+| prototype  |       pointer(function)        |    extendable pointer to constant pool    |
+| stub_count |            integer             |             extendable number             |
+|   stubs    | integer array(0-based indexes) |         size equals to stub_count         |
+
 #### Kind Result Types
-#### Stub Types
 
-Stub types are only used in constraints of traits. When a class declares it has a trait, all stub types in the corresponding constraints should be replaced with the class type.
-
-|   field   |  type   |             description             |
-|:---------:|:-------:|:-----------------------------------:|
-|  method   |  byte   |      how to process stub type       |
-| reference | integer | extendable pointer to constant pool |
+see kind -> kind result section
 
 ### Format of a Symbol
 
@@ -121,8 +139,6 @@ Stub types are only used in constraints of traits. When a class declares it has 
 | name  | extendable pointer to constant pool |
 | type  | extendable pointer to constant pool |
 | value | extendable pointer to constant pool |
-
-Note that the type field may point to a type constant, or a string constant representing the type name.
 
 ### Table of Bytecode
 
