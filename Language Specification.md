@@ -23,7 +23,8 @@
 
 ## Format of Extendable Number
 
-For each byte, only lower 7-bit is regard as number, the highest 1 bit indicates whether next byte should be considered in this number.
+For each byte, only lower 7-bit is regarded as number, the highest 1 bit indicates whether next byte should be considered
+in this number.
 
 For example: 0b10000010 00000001 is actually 0b100000001.
 
@@ -59,7 +60,8 @@ assuming the lower half of the constant flag is n:
 
 if n is not zero, $2^{n-1}$ is the size of this constant in bytes, and the constant data contains $2^{n-1}$ bytes
 
-if n is zero, the size of this constant is not determined, and the constant data need to be parsed as an extendable number
+if n is zero, the size of this constant is not determined, and the constant data need to be parsed as an extendable
+number
 
 ### Format of Strings
 
@@ -83,7 +85,8 @@ dynamic and override flags can be set with other flags
 
 native and abstract flags can not be set at the same time
 
-kind_result flag is a special case. if set, the actual flag is determined according to the prototype (see: kind - kind result section)
+kind_result flag is a special case. if set, the actual flag is determined according to the prototype (see: kind - kind
+result section)
 
 **The Constant Data Field Format**
 
@@ -111,14 +114,36 @@ if kind_result flag is set, see kind -> kind result section; otherwise:
 | kind_result | 0b1111 |
 
 #### Class Types
+
+**The Constant Data Field Format**
+
+|    field    |    type     |                         description                         |
+|:-----------:|:-----------:|:-----------------------------------------------------------:|
+|  type_name  |   string    |             extendable pointer to constant pool             |
+|    base     |    type     |             extendable pointer to constant pool             |
+| trait_count |   integer   |                      extendable number                      |
+|   traits    | type array  | consists of trait_count extendable pointer to constant pool |
+| field_count |   integer   |                      extendable number                      |
+|   fields    | field array |               consists of field_count fields                |
+
+**The Field Format**
+
+| field |  type  |             description             |
+|:-----:|:------:|:-----------------------------------:|
+| name  | string | extendable pointer to constant pool |
+| type  |  type  | extendable pointer to constant pool |
+
 #### Trait Types
 
 **The Constant Data Field Format**
 
-|       field       |       type        |                description                 |
-|:-----------------:|:-----------------:|:------------------------------------------:|
-| requirement_count |      integer      |             extendable number              |
-|   requirements    | requirement array | consists of requirement_count requirements |
+|       field       |       type        |                              description                               |
+|:-----------------:|:-----------------:|:----------------------------------------------------------------------:|
+|     type_name     |      string       |                  extendable pointer to constant pool                   |
+|    base_count     |      integer      |                           extendable number                            |
+|       bases       |    type array     | consists of base_count extendable pointer to constant pool(base types) |
+| requirement_count |      integer      |                           extendable number                            |
+|   requirements    | requirement array |               consists of requirement_count requirements               |
 
 **The Requirement Format**
 
@@ -134,7 +159,7 @@ see kind -> kind result section
 
 ### Format of a Symbol
 
-| name  |                size                 |
+| field |                size                 |
 |:-----:|:-----------------------------------:|
 | name  | extendable pointer to constant pool |
 | type  | extendable pointer to constant pool |
