@@ -30,8 +30,7 @@ public record LucisKind(String module, String name, List<Parameter> parameters, 
 
     @Override
     public String signature() {
-        return module + Utility.LUCIS_DELIMITER_MODULE_SYMBOL + name
-                + "<" + parameters.stream().map(Parameter::toString).reduce(String::concat).orElse("") + ">";
+        return Utility.signature(module, name + "<" + parameters.stream().map(Parameter::toString).reduce(String::concat).orElse("") + ">");
     }
 
     public record Constraint(Type type, LucisType reference) {

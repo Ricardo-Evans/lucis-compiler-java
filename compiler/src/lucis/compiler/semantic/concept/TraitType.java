@@ -1,6 +1,6 @@
 package lucis.compiler.semantic.concept;
 
-public class TraitType extends LucisType {
+public class TraitType extends BasicType {
     public TraitType(String module, String name) {
         super(module, name);
     }

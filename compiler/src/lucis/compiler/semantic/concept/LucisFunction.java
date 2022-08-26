@@ -1,8 +1,17 @@
 package lucis.compiler.semantic.concept;
 
-public class LucisFunction implements LucisObject {
-    public String name;
-    private LucisType parameterType;
-    public LucisType resultType;
-    private int stackSize;
+public interface LucisFunction extends NamedObject {
+    LucisType parameterType();
+
+    LucisType resultType();
+
+    int stackSize();
+
+    boolean isDynamic();
+
+    boolean isOverride();
+
+    boolean isNative();
+
+    boolean isAbstract();
 }

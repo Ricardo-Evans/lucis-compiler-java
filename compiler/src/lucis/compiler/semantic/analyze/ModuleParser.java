@@ -76,6 +76,7 @@ public final class ModuleParser {
             case ModuleConstants.STRING_FLAG -> parseString();
             case ModuleConstants.FUNCTION_FLAG -> parseFunction(lower);
             case ModuleConstants.TYPE_FLAG -> parseType(lower);
+            case ModuleConstants.KIND_FLAG -> parseKind(lower);
             case ModuleConstants.SIGNATURE_FLAG -> parseSignature();
             case ModuleConstants.TUPLE_FLAG -> parseTuple();
             default -> throw new SemanticException("unsupported constant flag: " + flag);
@@ -111,10 +112,28 @@ public final class ModuleParser {
     }
 
     private LucisFunction parseFunction(byte flag) {
+        if (flag == ModuleConstants.KIND_RESULT_FLAG) {
+        }
+        boolean isDynamic = (flag & ModuleConstants.FUNCTION_DYNAMIC_MASK) != 0;
+        boolean isOverride = (flag & ModuleConstants.FUNCTION_OVERRIDE_MASK) != 0;
+        boolean isNative = (flag & ModuleConstants.FUNCTION_NATIVE_MASK) != 0;
+        boolean isAbstract = (flag & ModuleConstants.FUNCTION_ABSTRACT_MASK) != 0;
+        String functionName = parseString().toString();
+        LucisTuple parameterTypes = (LucisTuple) constantPool.get(parseExtendableNumber());
+        LucisTuple resultTypes = (LucisTuple) constantPool.get(parseExtendableNumber());
+        LucisFunction overrideFunction = isOverride ? (LucisFunction) constantPool.get(parseExtendableNumber()) : null;
+        LucisTuple dynamicParameters = isDynamic ? (LucisTuple) constantPool.get(parseExtendableNumber()) : null;
+        int stackSize = isNative ? -1 : parseExtendableNumber();
+        int functionContentSize = isNative ? -1 : parseExtendableNumber();
+        // TODO: parse bytecodes
         return null;
     }
 
     private LucisType parseType(byte flag) {
+        return null;
+    }
+
+    private LucisKind parseKind(byte flag) {
         return null;
     }
 

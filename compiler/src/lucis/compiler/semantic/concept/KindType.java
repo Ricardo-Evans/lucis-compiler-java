@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class KindType extends LucisType {
+public class KindType extends BasicType {
     private final LucisType[] bases;
     private final LucisKind kind;
     private final List<Parameter> parameters;
@@ -27,7 +27,7 @@ public class KindType extends LucisType {
     }
 
     public KindType(LucisKind kind, List<Parameter> parameters, LucisType... bases) {
-        super(kind.module(), stringify(kind, parameters));
+        super(kind.module(), stringify(kind, parameters)); // TODO: signature format
         this.kind = kind;
         this.parameters = parameters;
         this.bases = bases;

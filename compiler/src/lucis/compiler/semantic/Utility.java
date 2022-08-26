@@ -14,11 +14,11 @@ public final class Utility {
     public static final String LUCIS_DELIMITER_MODULE_SYMBOL = ":";
     public static final String LUCIS_SIGNATURE_DELIMITER = "#";
 
-    public static final String LUCIS_TYPE = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Type";
-    public static final String LUCIS_KIND = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Kind";
-    public static final String LUCIS_STRING = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "String";
-    public static final String LUCIS_INTEGER = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Integer";
-    public static final String LUCIS_DECIMAL = LUCIS_CORE + LUCIS_DELIMITER_MODULE_SYMBOL + "Decimal";
+    public static final String LUCIS_TYPE = signature(LUCIS_CORE, "Type");
+    public static final String LUCIS_KIND = signature(LUCIS_CORE, "Kind");
+    public static final String LUCIS_STRING = signature(LUCIS_CORE, "String");
+    public static final String LUCIS_INTEGER = signature(LUCIS_CORE, "Integer");
+    public static final String LUCIS_DECIMAL = signature(LUCIS_CORE, "Decimal");
 
     private Utility() {
     }
@@ -57,5 +57,9 @@ public final class Utility {
 
     public static Supplier<SemanticException> symbolAlreadyExist(Symbol symbol) {
         return () -> new SemanticException("symbol: " + symbol + " already exists");
+    }
+
+    public static String signature(String module, String name) {
+        return module + LUCIS_DELIMITER_MODULE_SYMBOL + name;
     }
 }

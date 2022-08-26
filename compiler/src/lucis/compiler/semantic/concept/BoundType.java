@@ -3,12 +3,12 @@ package lucis.compiler.semantic.concept;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class BoundType extends LucisType {
+public class BoundType extends BasicType {
     private LucisType baseline;
     private Bound bound;
 
     private BoundType(LucisType baseline, Bound bound) {
-        super(baseline.name() + bound, baseline.signature() + bound);
+        super(null, baseline.name() + bound, baseline.signature() + bound);
     }
 
     @Override

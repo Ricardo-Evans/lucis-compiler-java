@@ -15,6 +15,12 @@ public final class ModuleConstants {
     public static final byte KIND_FLAG = (byte) 0X60;
     public static final byte SIGNATURE_FLAG = (byte) 0X70;
     public static final byte TUPLE_FLAG = (byte) 0X80;
+    public static final byte KIND_RESULT_FLAG = (byte) 0X0F;
+    @SuppressWarnings("PointlessBitwiseExpression")
+    public static final byte FUNCTION_DYNAMIC_MASK = (byte) 1 << 0;
+    public static final byte FUNCTION_OVERRIDE_MASK = (byte) 1 << 1;
+    public static final byte FUNCTION_NATIVE_MASK = (byte) 1 << 2;
+    public static final byte FUNCTION_ABSTRACT_MASK = (byte) 1 << 3;
 
     private ModuleConstants() {
     }

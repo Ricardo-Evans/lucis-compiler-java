@@ -92,16 +92,16 @@ result section)
 
 if kind_result flag is set, see kind -> kind result section; otherwise:
 
-|         field         |     exist condition     |   type    |               description               |
-|:---------------------:|:-----------------------:|:---------:|:---------------------------------------:|
-|     function_name     |         always          |  string   |   extendable pointer to constant pool   |
-|    parameter_types    |         always          |   tuple   |   extendable pointer to constant pool   |
-|     result_types      |         always          |   tuple   |   extendable pointer to constant pool   |
-|   override_function   |  override flag is set   | function  |   extendable pointer to constant pool   |
-|  dynamic_parameters   |   dynamic flag is set   |   tuple   |   extendable pointer to constant pool   |
-|      stack_size       | native flag is not set  |  integer  |            extendable number            |
-| function_content_size | native flag is not set  |  integer  |            extendable number            |
-|   function_content    | native flag is not set  | bytecodes | consists of function_content_size codes |
+|         field         |     exist condition     |      type       |               description               |
+|:---------------------:|:-----------------------:|:---------------:|:---------------------------------------:|
+|     function_name     |         always          |     string      |   extendable pointer to constant pool   |
+|    parameter_types    |         always          |      tuple      |   extendable pointer to constant pool   |
+|     result_types      |         always          |      tuple      |   extendable pointer to constant pool   |
+|   override_function   |  override flag is set   |    function     |   extendable pointer to constant pool   |
+|  dynamic_parameters   |   dynamic flag is set   |      tuple      |   extendable pointer to constant pool   |
+|      stack_size       | native flag is not set  |     integer     |            extendable number            |
+| function_content_size | native flag is not set  |     integer     |            extendable number            |
+|   function_content    | native flag is not set  | bytecodes array | consists of function_content_size codes |
 
 ### Format of Types
 

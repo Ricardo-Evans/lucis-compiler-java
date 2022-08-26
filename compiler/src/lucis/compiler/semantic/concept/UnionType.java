@@ -2,11 +2,11 @@ package lucis.compiler.semantic.concept;
 
 import java.util.Arrays;
 
-public class UnionType extends LucisType {
+public class UnionType extends BasicType {
     private final LucisType[] types;
 
     public UnionType(LucisType... types) {
-        super(formatName(types), formatSignature(types));
+        super(null, formatName(types), formatSignature(types));
         this.types = types;
     }
 

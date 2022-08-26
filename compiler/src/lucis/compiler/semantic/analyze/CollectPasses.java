@@ -27,8 +27,8 @@ public final class CollectPasses {
             }
             case FunctionDeclaration declaration -> {
                 Module module = context.getCurrentModule();
-                LucisFunction function = new LucisFunction();
-                context.setBuildingObject(function);
+                // LucisFunction function = new LucisFunction();
+                // context.setBuildingObject(function);
             }
             case Source source -> {
                 if (Utility.LUCIS_CORE.equals(source.header.name)) break;
